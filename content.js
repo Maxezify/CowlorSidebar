@@ -2,7 +2,7 @@
 (function() {
     'use strict';
 
-    console.log("--- Cowlor's Sidebar Extension Initializing (Final, i18n Ready) ---");
+    console.log("--- Cowlor's Sidebar Extension Initializing (Optimized v2.0) ---");
 
     // --- CONFIGURATION ---
     const CONFIG = {
@@ -28,14 +28,15 @@
             INITIAL_SETTLE_DELAY: 2000,
             EXPANSION_CLICK_DELAY: 1000,
             MUTATION_DEBOUNCE: 200,
-            RESUME_IMMEDIATE_UPDATE_DELAY: 500, // Délai court pour l'update immédiat après sortie du mode studio
+            RESUME_IMMEDIATE_UPDATE_DELAY: 500,
         },
         API: {
             EXPANSION_MAX_ATTEMPTS: 20,
             CACHE_DURATION: 15000,
+            MAX_CHANNELS_PER_REQUEST: 100,
         },
         CSS: {
-             HYPE_TRAIN_CLASSES: {
+            HYPE_TRAIN_CLASSES: {
                 CONTAINER: 'hype-train-container',
                 LEVEL_TEXT: 'hype-train-level-text',
                 BLUE: 'ht-blue', GREEN: 'ht-green', YELLOW: 'ht-yellow',
@@ -55,25 +56,201 @@
         MAX_SELECTOR_CACHE_SIZE: 50,
     };
 
-    // --- CACHES ET ÉTAT GLOBAL ---
+    // --- MÉTRIQUES ET MONITORING ---
+    const metrics = {
+        apiCalls: 0,
+        cacheHits: 0,
+        cacheMisses: 0,
+        lastReportTime: Date.now(),
+        
+        report() {
+            const hitRate = this.cacheHits / (this.cacheHits + this.cacheMisses) || 0;
+            const timeSinceLastReport = (Date.now() - this.lastReportTime) / 1000 / 60;
+            console.log(`[Metrics] Time: ${timeSinceLastReport.toFixed(1)}min, API calls: ${this.apiCalls}, Cache hit rate: ${(hitRate * 100).toFixed(1)}%`);
+            this.lastReportTime = Date.now();
+        }
+    };
+
+    // Reporter les métriques toutes les 5 minutes
+    setInterval(() => {
+        if (!state.isPaused) metrics.report();
+    }, 5 * 60 * 1000);
+
+    // --- CLASSES UTILITAIRES ---
+    
+    // Classe pour un cache LRU (Least Recently Used) plus efficace
+    class LRUCache {
+        constructor(maxSize = 50, ttl = 15000) {
+            this.maxSize = maxSize;
+            this.ttl = ttl;
+            this.cache = new Map();
+        }
+        
+        get(key) {
+            const item = this.cache.get(key);
+            if (!item) {
+                metrics.cacheMisses++;
+                return null;
+            }
+            
+            // Vérifier l'expiration
+            if (Date.now() - item.timestamp > this.ttl) {
+                this.cache.delete(key);
+                metrics.cacheMisses++;
+                return null;
+            }
+            
+            // Déplacer en fin (most recently used)
+            this.cache.delete(key);
+            this.cache.set(key, item);
+            metrics.cacheHits++;
+            
+            return item.data;
+        }
+        
+        set(key, data) {
+            // Si la clé existe déjà, la supprimer pour la réordonner
+            if (this.cache.has(key)) {
+                this.cache.delete(key);
+            }
+            
+            // Si on atteint la taille max, supprimer le plus ancien (premier élément)
+            if (this.cache.size >= this.maxSize) {
+                const firstKey = this.cache.keys().next().value;
+                this.cache.delete(firstKey);
+            }
+            
+            this.cache.set(key, { data, timestamp: Date.now() });
+        }
+        
+        clear() {
+            this.cache.clear();
+        }
+        
+        cleanup() {
+            const now = Date.now();
+            let cleaned = 0;
+            for (const [key, item] of this.cache.entries()) {
+                if (now - item.timestamp > this.ttl) {
+                    this.cache.delete(key);
+                    cleaned++;
+                }
+            }
+            if (cleaned > 0) {
+                console.log(`[Cache Cleanup] Removed ${cleaned} expired entries`);
+            }
+        }
+    }
+
+    // Classe pour gérer le batching intelligent des requêtes
+    class SmartBatchManager {
+        constructor(batchSize = 100, delayMs = 100) {
+            this.batchSize = batchSize;
+            this.delayMs = delayMs;
+            this.pendingChannels = new Map();
+            this.batchTimeoutId = null;
+            this.processing = false;
+        }
+        
+        add(login, element) {
+            if (!login || !element) return;
+            
+            this.pendingChannels.set(login, element);
+            
+            // Si on atteint la taille du batch, traiter immédiatement
+            if (this.pendingChannels.size >= this.batchSize) {
+                this.processBatch();
+            } else {
+                // Sinon, programmer le traitement avec un délai
+                this.scheduleBatch();
+            }
+        }
+        
+        scheduleBatch() {
+            if (this.batchTimeoutId) return;
+            
+            this.batchTimeoutId = setTimeout(() => {
+                this.processBatch();
+            }, this.delayMs);
+        }
+        
+        async processBatch() {
+            if (this.processing || state.isPaused || this.pendingChannels.size === 0) {
+                return;
+            }
+            
+            clearTimeout(this.batchTimeoutId);
+            this.batchTimeoutId = null;
+            this.processing = true;
+            
+            // Créer une copie du batch actuel
+            const batchToProcess = new Map(this.pendingChannels);
+            this.pendingChannels.clear();
+            
+            try {
+                // Diviser en sous-batches si nécessaire
+                const chunks = this.chunkMap(batchToProcess, CONFIG.API.MAX_CHANNELS_PER_REQUEST);
+                
+                for (const chunk of chunks) {
+                    if (state.isPaused) break;
+                    
+                    await throttledExecuteBatchApiUpdate(chunk);
+                    
+                    // Petit délai entre les chunks pour éviter la surcharge
+                    if (chunks.length > 1) {
+                        await new Promise(resolve => setTimeout(resolve, 50));
+                    }
+                }
+            } finally {
+                this.processing = false;
+                
+                // Si de nouveaux channels ont été ajoutés pendant le traitement
+                if (this.pendingChannels.size > 0) {
+                    this.scheduleBatch();
+                }
+            }
+        }
+        
+        chunkMap(map, size) {
+            const chunks = [];
+            const entries = Array.from(map.entries());
+            
+            for (let i = 0; i < entries.length; i += size) {
+                chunks.push(new Map(entries.slice(i, i + size)));
+            }
+            
+            return chunks;
+        }
+        
+        clear() {
+            clearTimeout(this.batchTimeoutId);
+            this.pendingChannels.clear();
+            this.batchTimeoutId = null;
+            this.processing = false;
+        }
+    }
+
+    // --- ÉTAT GLOBAL ET CACHES ---
     const state = {
         liveChannelElements: new Map(),
         originalGameTitles: new Map(),
         domElements: { sidebar: null },
         observers: { mainObserver: null },
         mainUpdateTimeoutId: null,
-        resumeUpdateTimeoutId: null, // Nouveau timeout pour l'update immédiat
+        resumeUpdateTimeoutId: null,
         isPaused: false,
-        previousPauseState: false, // Pour détecter les changements d'état
+        previousPauseState: false,
         isInitialized: false,
         animationFrameId: null,
     };
 
-    const selectorCache = new Map();
-    const apiCache = new Map();
+    const selectorCache = new LRUCache(CONFIG.MAX_SELECTOR_CACHE_SIZE, Infinity); // Sélecteurs sans expiration
+    const apiCache = new LRUCache(100, CONFIG.API.CACHE_DURATION); // API avec TTL de 15s
+    const batchManager = new SmartBatchManager(CONFIG.API.MAX_CHANNELS_PER_REQUEST, 200);
 
     // --- FONCTIONS UTILITAIRES ---
     const getI18nMessage = (key) => chrome.i18n.getMessage(key) || key;
+    
     const debounce = (func, wait) => {
         let timeout;
         return (...args) => {
@@ -82,12 +259,28 @@
         };
     };
 
-    function getCachedSelector(key, builder) {
-        if (selectorCache.size > CONFIG.MAX_SELECTOR_CACHE_SIZE) {
-            const oldestKey = selectorCache.keys().next().value;
-            selectorCache.delete(oldestKey);
+    // Wrapper pour les opérations critiques
+    async function safeExecute(operation, fallback = null) {
+        try {
+            return await operation();
+        } catch (error) {
+            console.error('[SafeExecute] Error:', error);
+            return fallback;
         }
-        if (!selectorCache.has(key)) {
+    }
+
+    // Configuration adaptative
+    const adaptiveConfig = {
+        getUpdateInterval() {
+            const channelCount = state.liveChannelElements.size;
+            if (channelCount > 50) return 60000; // 1 minute si beaucoup de channels
+            if (channelCount > 20) return 45000; // 45 secondes
+            return CONFIG.TIMINGS_MS.API_UPDATE_INTERVAL; // 30 secondes par défaut
+        }
+    };
+
+    function getCachedSelector(key, builder) {
+        if (!selectorCache.get(key)) {
             selectorCache.set(key, builder());
         }
         return selectorCache.get(key);
@@ -112,6 +305,36 @@
         const m = Math.floor((totalSeconds % 3600) / 60);
         return `${String(h).padStart(2, '0')}h ${String(m).padStart(2, '0')}m`;
     };
+
+    // Throttle function avec queue
+    function createThrottledFunction(func, limit, interval) {
+        const queue = [];
+        let inProgress = 0;
+        
+        const processQueue = async () => {
+            while (queue.length > 0 && inProgress < limit) {
+                const { args, resolve, reject } = queue.shift();
+                inProgress++;
+                
+                try {
+                    const result = await func(...args);
+                    resolve(result);
+                } catch (error) {
+                    reject(error);
+                } finally {
+                    inProgress--;
+                    setTimeout(processQueue, interval / limit);
+                }
+            }
+        };
+        
+        return (...args) => {
+            return new Promise((resolve, reject) => {
+                queue.push({ args, resolve, reject });
+                processQueue();
+            });
+        };
+    }
 
     // --- MANIPULATION DU DOM ET CSS ---
     function injectCss() {
@@ -172,9 +395,42 @@
         }
     }
 
+    // --- GESTION DE LA MÉMOIRE ---
+    function releaseInvisibleElements() {
+        const elementsToRelease = [];
+        
+        for (const [login, element] of state.liveChannelElements.entries()) {
+            // Vérifier si l'élément est toujours dans le DOM et visible
+            if (!document.body.contains(element) || element.offsetParent === null) {
+                elementsToRelease.push(login);
+            }
+        }
+        
+        // Nettoyer les éléments non visibles
+        elementsToRelease.forEach(login => {
+            state.liveChannelElements.delete(login);
+            state.originalGameTitles.delete(login);
+        });
+        
+        if (elementsToRelease.length > 0) {
+            console.log(`[Memory] Released ${elementsToRelease.length} invisible channel elements`);
+        }
+    }
+
+    // Nettoyage périodique
+    setInterval(() => {
+        if (!state.isPaused) {
+            apiCache.cleanup();
+            releaseInvisibleElements();
+        }
+    }, 30000); // Toutes les 30 secondes
+
     // --- LOGIQUE D'ANIMATION ET DE MISE À JOUR ---
     function animationLoop() {
         if (state.isPaused) return;
+        
+        performance.mark('animation-frame-start');
+        
         const visibleElements = Array.from(state.liveChannelElements.values())
             .filter(el => el.offsetParent !== null);
 
@@ -195,6 +451,9 @@
             }
         });
 
+        performance.mark('animation-frame-end');
+        performance.measure('animation-frame', 'animation-frame-start', 'animation-frame-end');
+
         if (!state.isPaused) {
             state.animationFrameId = requestAnimationFrame(animationLoop);
         } else {
@@ -211,43 +470,64 @@
     // --- GESTION DES APPELS API AVEC CACHE ---
     async function getUptimesWithCache(logins) {
         if (state.isPaused) return null;
-        const cacheKey = logins.sort().join(',');
+        
+        // Limiter le nombre de logins pour éviter les requêtes trop larges
+        const sanitizedLogins = logins
+            .filter(login => login && typeof login === 'string')
+            .slice(0, CONFIG.API.MAX_CHANNELS_PER_REQUEST);
+        
+        if (sanitizedLogins.length === 0) return null;
+        
+        const cacheKey = sanitizedLogins.sort().join(',');
         const cached = apiCache.get(cacheKey);
-
-        if (cached && (Date.now() - cached.timestamp < CONFIG.API.CACHE_DURATION)) {
-            return cached.data;
+        
+        if (cached) {
+            console.log(`[API Cache] Hit for ${sanitizedLogins.length} channels`);
+            return cached;
         }
 
         try {
-            const response = await chrome.runtime.sendMessage({ type: 'GET_UPTIMES_FOR_CHANNELS', logins });
+            metrics.apiCalls++;
+            const response = await chrome.runtime.sendMessage({ 
+                type: 'GET_UPTIMES_FOR_CHANNELS', 
+                logins: sanitizedLogins 
+            });
+            
             if (response && response.success) {
-                apiCache.set(cacheKey, { data: response, timestamp: Date.now() });
+                apiCache.set(cacheKey, response);
                 return response;
             }
-            console.error('[API Cache] Erreur de réponse du background:', response?.error || 'Réponse invalide');
+            
+            console.error('[API Cache] Erreur de réponse:', response?.error || 'Réponse invalide');
             return null;
         } catch(error) {
-            console.error('[API Cache] Échec de la communication avec le background script:', error.message);
+            console.error('[API Cache] Échec de communication:', error.message);
             return null;
         }
     }
 
     async function executeBatchApiUpdate(channelsMap) {
         if (state.isPaused || channelsMap.size === 0) return;
+        
+        performance.mark('api-batch-start');
+        
         const logins = Array.from(channelsMap.keys());
-
         const response = await getUptimesWithCache(logins);
+        
         if (!response) return;
-
+        
         const uptimeData = new Map(response.data);
         
-        for (const login of channelsMap.keys()) {
-            if (!uptimeData.has(login.toLowerCase())) {
-                uptimeData.set(login.toLowerCase(), null);
+        // Traitement optimisé avec requestIdleCallback
+        const processChannel = (entries, index = 0) => {
+            if (index >= entries.length || state.isPaused) {
+                performance.mark('api-batch-end');
+                performance.measure('api-batch', 'api-batch-start', 'api-batch-end');
+                return;
             }
-        }
-
-        for (const [login, element] of channelsMap.entries()) {
+            
+            const [login, element] = entries[index];
+            
             if (document.body.contains(element)) {
                 const startedAtString = uptimeData.get(login.toLowerCase()) || null;
                 updateChannelDisplay(element, login, startedAtString);
@@ -255,9 +535,25 @@
                 state.liveChannelElements.delete(login);
                 state.originalGameTitles.delete(login);
             }
-        }
+            
+            // Utiliser requestIdleCallback pour un traitement non-bloquant
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(() => processChannel(entries, index + 1), { timeout: 50 });
+            } else {
+                setTimeout(() => processChannel(entries, index + 1), 0);
+            }
+        };
+        
+        processChannel(Array.from(channelsMap.entries()));
         startAnimationIfNeeded();
     }
+
+    // Version throttled de executeBatchApiUpdate
+    const throttledExecuteBatchApiUpdate = createThrottledFunction(
+        executeBatchApiUpdate,
+        2, // Maximum 2 requêtes simultanées
+        1000 // Sur une période de 1 seconde
+    );
     
     // --- LOGIQUE D'AFFICHAGE DES CHAÎNES ---
     function updateChannelDisplay(element, login, startedAt) {
@@ -439,14 +735,14 @@
         }
     }
 
-    // --- GESTION DE LA PAUSE (AMÉLIORÉE POUR LE MODE STUDIO) ---
+    // --- GESTION DE LA PAUSE (OPTIMISÉE POUR LE MODE STUDIO) ---
     function updatePauseState() {
         const sidebarToggleButton = document.querySelector(CONFIG.SELECTORS.SIDEBAR_TOGGLE_BUTTON());
         const playerModeButton = document.querySelector(CONFIG.SELECTORS.PLAYER_MODE_BUTTON());
 
         const sidebarCollapsedText = getI18nMessage('selectorSidebarExpand'); 
         const playerModeExitText = getI18nMessage('selectorTheatreModeExit');
-        const studioModeExitText = "Quitter le mode Studio"; // Texte spécifique au mode studio
+        const studioModeExitText = "Quitter le mode Studio";
 
         let isSidebarCollapsed = false;
         if (sidebarToggleButton) {
@@ -459,7 +755,6 @@
             isInPlayerMode = playerLabel.includes(playerModeExitText) || playerLabel.includes(studioModeExitText);
         }
         
-        // Sauvegarder l'état précédent pour détecter les changements
         state.previousPauseState = state.isPaused;
         const newPauseState = isSidebarCollapsed || isInPlayerMode;
 
@@ -467,71 +762,113 @@
             state.isPaused = newPauseState;
             console.log(`[Cowlor's Sidebar] Pause state updated to: ${state.isPaused}`);
             
-            if (!state.isPaused && state.previousPauseState) {
-                // On sort du mode pause (notamment du mode studio)
-                console.log("[Cowlor's Sidebar] Resuming operations - immediate update triggered.");
+            if (state.isPaused) {
+                // Arrêter immédiatement toutes les opérations
+                console.log("[Cowlor's Sidebar] Pausing operations - clearing all timeouts and cache.");
+                
+                // Arrêter tous les timeouts
+                clearTimeout(state.mainUpdateTimeoutId);
+                clearTimeout(state.resumeUpdateTimeoutId);
+                
+                // Arrêter l'animation frame
+                if (state.animationFrameId) {
+                    cancelAnimationFrame(state.animationFrameId);
+                    state.animationFrameId = null;
+                }
+                
+                // Vider le cache API pour économiser la mémoire
+                apiCache.clear();
+                
+                // Déconnecter temporairement l'observer pour économiser les ressources
+                if (state.observers.mainObserver) {
+                    state.observers.mainObserver.disconnect();
+                }
+                
+            } else if (!state.isPaused && state.previousPauseState) {
+                // Sortie du mode pause
+                console.log("[Cowlor's Sidebar] Resuming operations - reconnecting observer.");
+                
+                // Reconnecter l'observer
+                if (state.observers.mainObserver && state.domElements.sidebar) {
+                    state.observers.mainObserver.observe(document.body, {
+                        childList: true,
+                        subtree: true,
+                        attributes: true,
+                        attributeFilter: ['aria-label']
+                    });
+                }
                 
                 // Annuler tout timeout de reprise en cours
                 clearTimeout(state.resumeUpdateTimeoutId);
                 
-                // Programmer un appel API immédiat mais avec un petit délai pour que la sidebar soit bien affichée
+                // Programmer un appel API immédiat avec délai court
                 state.resumeUpdateTimeoutId = setTimeout(async () => {
-                    if (!state.isPaused) { // Double vérification
+                    if (!state.isPaused) {
                         console.log("[Cowlor's Sidebar] Executing immediate update after resume.");
-                        
-                        // Forcer l'invalidation du cache pour avoir des données fraîches
-                        apiCache.clear();
                         
                         // Expansion et scan immédiat
                         await expandFollowedChannels();
                         await initialScan();
                         startAnimationIfNeeded();
+                        
+                        // Redémarrer la boucle de mise à jour principale
+                        scheduleNextUpdate();
                     }
                 }, CONFIG.TIMINGS_MS.RESUME_IMMEDIATE_UPDATE_DELAY);
-                
-            } else if (state.isPaused) {
-                console.log("[Cowlor's Sidebar] Pausing operations.");
-                // Annuler les timeouts de reprise si on entre en pause
-                clearTimeout(state.resumeUpdateTimeoutId);
             }
         }
     }
 
-    // --- OBSERVATEUR DE MUTATIONS UNIQUE ET OPTIMISÉ ---
+    // Fonction séparée pour la planification des mises à jour
+    function scheduleNextUpdate() {
+        if (state.isPaused) return;
+        
+        clearTimeout(state.mainUpdateTimeoutId);
+        const interval = adaptiveConfig.getUpdateInterval();
+        
+        state.mainUpdateTimeoutId = setTimeout(async () => {
+            updatePauseState();
+            if (!state.isPaused) {
+                await initialScan();
+                scheduleNextUpdate();
+            }
+        }, interval);
+    }
+
+    // --- OBSERVATEUR DE MUTATIONS OPTIMISÉ ---
     const processMutations = debounce((mutations) => {
         updatePauseState();
         if (state.isPaused) return;
-
-        const channelsForUpdate = new Map();
+        
         let eventCheckNeeded = false;
-
+        
         for (const mutation of mutations) {
             if (mutation.type === 'childList') {
                 for (const node of mutation.addedNodes) {
                     if (node.nodeType !== Node.ELEMENT_NODE) continue;
+                    
                     const channelLinkSelector = getCachedSelector('CHANNEL_LINK_ITEM', CONFIG.SELECTORS.CHANNEL_LINK_ITEM);
                     const matchingElements = node.matches(channelLinkSelector) ? [node] : node.querySelectorAll(channelLinkSelector);
-
+                    
                     matchingElements.forEach(el => {
                         const login = extractChannelLogin(el.href);
                         if (login && el.querySelector(getCachedSelector('LIVE_INDICATOR', CONFIG.SELECTORS.LIVE_INDICATOR))) {
-                           channelsForUpdate.set(login, el);
+                            // Utiliser le batch manager au lieu d'appeler directement
+                            batchManager.add(login, el);
                         }
                     });
-
+                    
                     if (node.querySelector(CONFIG.SELECTORS.HYPE_TRAIN_TEXT_CONTAINER())) {
                         eventCheckNeeded = true;
                     }
                 }
-                 if (mutation.target.closest(CONFIG.SELECTORS.HYPE_TRAIN_TEXT_CONTAINER())) {
+                
+                if (mutation.target.closest(CONFIG.SELECTORS.HYPE_TRAIN_TEXT_CONTAINER())) {
                     eventCheckNeeded = true;
                 }
             }
         }
-
-        if (channelsForUpdate.size > 0) {
-            executeBatchApiUpdate(channelsForUpdate);
-        }
+        
         if (eventCheckNeeded) {
             processSpecialEvents();
         }
@@ -564,16 +901,22 @@
         });
 
         if (channelsForApiUpdate.size > 0) {
-            await executeBatchApiUpdate(channelsForApiUpdate);
+            await throttledExecuteBatchApiUpdate(channelsForApiUpdate);
         }
         processSpecialEvents();
     }
 
     function cleanup(isFullCleanup = false) {
         console.log(`[Cowlor's Sidebar] Nettoyage (Complet: ${isFullCleanup})...`);
+        
+        // Nettoyer le batch manager
+        batchManager.clear();
+        
         clearTimeout(state.mainUpdateTimeoutId);
-        clearTimeout(state.resumeUpdateTimeoutId); // Nettoyer le nouveau timeout
+        clearTimeout(state.resumeUpdateTimeoutId);
+        
         if (state.animationFrameId) cancelAnimationFrame(state.animationFrameId);
+        
         state.observers.mainObserver?.disconnect();
         state.liveChannelElements.clear();
         state.originalGameTitles.clear();
@@ -581,7 +924,7 @@
         state.isInitialized = false;
         state.animationFrameId = null;
         state.previousPauseState = false;
-
+        
         if (isFullCleanup) {
             apiCache.clear();
         }
@@ -597,23 +940,15 @@
         }
 
         state.isInitialized = true;
-        console.log("[Cowlor's Sidebar] Initialisation principale...");
+        console.log("[Cowlor's Sidebar] Initialisation principale (v2.0 optimisée)...");
         injectCss();
         setupMainObserver();
         
         await new Promise(res => setTimeout(res, CONFIG.TIMINGS_MS.INITIAL_SETTLE_DELAY));
-        await expandFollowedChannels();
+        await safeExecute(() => expandFollowedChannels());
         
         await initialScan();
-
-        const updateLoop = async () => {
-            updatePauseState();
-            if (!state.isPaused) {
-                await initialScan();
-            }
-            state.mainUpdateTimeoutId = setTimeout(updateLoop, CONFIG.TIMINGS_MS.API_UPDATE_INTERVAL);
-        };
-        updateLoop();
+        scheduleNextUpdate();
     }
 
     const entryObserver = new MutationObserver((mutations, observer) => {
@@ -640,5 +975,8 @@
         setTimeout(initialize, CONFIG.TIMINGS_MS.REINITIALIZE_DELAY);
       }
     }).observe(document.body, { subtree: true, childList: true });
+
+    // Log de démarrage avec version
+    console.log("[Cowlor's Sidebar] Extension loaded - v2.0 with performance optimizations");
 
 })();

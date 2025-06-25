@@ -1,0 +1,86 @@
+{
+  "extensionDescription": {
+    "message": "Visualizza la durata degli stream in tempo reale, non perdere mai più un Treno Hype con spettacolari effetti visivi!",
+    "description": "La descrizione dell'estensione mostrata nel web store."
+  },
+  "popupLoading": {
+    "message": "Caricamento...",
+    "description": "Testo del pulsante durante l'inizializzazione."
+  },
+  "popupLogin": {
+    "message": "Accedi a Twitch",
+    "description": "Testo del pulsante per invitare all'accesso."
+  },
+  "popupLogout": {
+    "message": "Esci da Twitch",
+    "description": "Testo del pulsante per disconnettersi."
+  },
+  "popupStatusConnected": {
+    "message": "✅ Sei connesso ✅",
+    "description": "Messaggio di stato quando l'utente è connesso."
+  },
+  "popupStatusDisconnected": {
+    "message": "Effettua l'accesso per attivare il contatore.",
+    "description": "Messaggio di stato quando l'utente non è connesso."
+  },
+  "popupReloadMessage": {
+    "message": "Ricarica la pagina di Twitch per abilitare le funzionalità.",
+    "description": "Messaggio che invita a ricaricare la pagina di Twitch."
+  },
+  "popupErrorCommunicating": {
+    "message": "❌ Errore di comunicazione ❌",
+    "description": "Messaggio di errore generico per il popup."
+  },
+  "popupActionFailed": {
+    "message": "❌ Azione non riuscita ❌",
+    "description": "Messaggio di errore quando un'azione di accesso/disconnessione fallisce."
+  },
+  "buttonInProgress": {
+    "message": "In corso...",
+    "description": "Testo del pulsante durante un'azione."
+  },
+  "notificationTokenExpired": {
+    "message": "Il token di Twitch è scaduto. Effettua nuovamente l'accesso.",
+    "description": "Notifica sull'icona dell'estensione."
+  },
+  "notificationApiUnavailable": {
+    "message": "L'API di Twitch è temporaneamente non disponibile o la connessione è stata persa.",
+    "description": "Notifica sull'icona dell'estensione."
+  },
+  "contentOfflineMessage": {
+    "message": "Canale offline",
+    "description": "Testo visualizzato per un canale offline."
+  },
+  "selectorSidebarExpand": {
+    "message": "Espandi",
+    "description": "Parte del selettore aria-label per la barra laterale espansa."
+  },
+  "selectorSidebarCollapse": {
+    "message": "Comprimi",
+    "description": "Parte del selettore aria-label per la barra laterale compressa."
+  },
+  "selectorTheatreModeExit": {
+    "message": "Esci",
+    "description": "Parte del selettore aria-label per uscire dalla modalità cinema."
+  },
+  "selectorHypeTrainTitle": {
+    "message": "Hype Train",
+    "description": "Titolo usato da Twitch per il Hype Train."
+  },
+  "selectorSharedHypeTrainTitle": {
+    "message": "Hype Train condiviso",
+    "description": "Titolo usato da Twitch per il Treno Hype condiviso."
+  },
+  "selectorTreasureTrainTitle": {
+    "message": "Treno del tesoro",
+    "description": "Titolo usato da Twitch per il Treno del tesoro."
+  },
+  "selectorKappaTrainTitle": {
+    "message": "Treno Kappa dorato",
+    "description": "Titolo usato da Twitch per il Treno Kappa d'oro."
+  },
+  "selectorDiscountTrainTitle": {
+    "message": "Sconto",
+    "description": "Titolo utilizzato da Twitch per un evento di sconto."
+  }
+}

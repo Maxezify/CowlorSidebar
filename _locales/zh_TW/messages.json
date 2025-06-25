@@ -1,0 +1,26 @@
+{
+  "extensionDescription": {
+    "message": "即時顯示直播時長，再也不會錯過帶有壯觀視覺效果的 Hype Train！",
+    "description": "在線上應用程式商店中顯示的擴充功能說明。"
+  },
+  "popupLoading": { "message": "載入中...", "description": "初始化期間的按鈕文字。" },
+  "popupLogin": { "message": "登入 Twitch", "description": "提示登入的按鈕文字。" },
+  "popupLogout": { "message": "從 Twitch 登出", "description": "用於登出的按鈕文字。" },
+  "popupStatusConnected": { "message": "✅ 您已連線 ✅", "description": "使用者登入時的狀態訊息。" },
+  "popupStatusDisconnected": { "message": "請登入以啟動計數器。", "description": "使用者未登入時的狀態訊息。" },
+  "popupReloadMessage": { "message": "請重新載入您的 Twitch 頁面以啟用功能。", "description": "提示重新載入 Twitch 頁面的訊息。" },
+  "popupErrorCommunicating": { "message": "❌ 通訊錯誤 ❌", "description": "彈出視窗的通用錯誤訊息。" },
+  "popupActionFailed": { "message": "❌ 操作失敗 ❌", "description": "登入/登出操作失敗時的錯誤訊息。" },
+  "buttonInProgress": { "message": "進行中...", "description": "操作期間的按鈕文字。" },
+  "notificationTokenExpired": { "message": "Twitch 權杖已過期。請重新登入。", "description": "擴充功能圖示上的通知。" },
+  "notificationApiUnavailable": { "message": "Twitch API 暫時無法使用或連線已中斷。", "description": "擴充功能圖示上的通知。" },
+  "contentOfflineMessage": { "message": "頻道離線", "description": "為離線頻道顯示的文字。" },
+  "selectorSidebarExpand": { "message": "展開", "description": "用於展開側邊欄的 aria-label 選擇器的一部分。" },
+  "selectorSidebarCollapse": { "message": "折疊", "description": "用於折疊側邊欄的 aria-label 選擇器的一部分。" },
+  "selectorTheatreModeExit": { "message": "退出", "description": "用於退出劇院模式的 aria-label 選擇器的一部分。" },
+  "selectorHypeTrainTitle": { "message": "發燒列車", "description": "Twitch 用於 Hype Train 的標題。" },
+  "selectorSharedHypeTrainTitle": { "message": "共享發燒列車", "description": "Twitch 用於分享的 Hype Train 的標題。" },
+  "selectorTreasureTrainTitle": { "message": "寶藏列車", "description": "Twitch 用於寶藏列車的標題。" },
+  "selectorKappaTrainTitle": { "message": "黃金 Kappa 發燒列車", "description": "Twitch 用於金色 Kappa 列車的標題。" },
+  "selectorDiscountTrainTitle": { "message": "折扣", "description": "Twitch 用於折扣活動的標題。" }
+}

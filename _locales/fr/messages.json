@@ -1,0 +1,86 @@
+{
+  "extensionDescription": {
+    "message": "Affichez la durée des streams en temps réel, ne manquez plus jamais un Train de la Hype avec des effets visuels spectaculaires !",
+    "description": "La description de l'extension affichée dans le store."
+  },
+  "popupLoading": {
+    "message": "Chargement...",
+    "description": "Texte du bouton pendant l'initialisation."
+  },
+  "popupLogin": {
+    "message": "Se connecter à Twitch",
+    "description": "Texte du bouton pour inviter à la connexion."
+  },
+  "popupLogout": {
+    "message": "Se déconnecter de Twitch",
+    "description": "Texte du bouton pour se déconnecter."
+  },
+  "popupStatusConnected": {
+    "message": "✅ Vous êtes connecté ✅",
+    "description": "Message de statut quand l'utilisateur est connecté."
+  },
+  "popupStatusDisconnected": {
+    "message": "Veuillez vous connecter pour activer le compteur.",
+    "description": "Message de statut quand l'utilisateur est déconnecté."
+  },
+  "popupReloadMessage": {
+    "message": "Veuillez recharger votre page Twitch pour activer les fonctionnalités.",
+    "description": "Message invitant à recharger la page Twitch."
+  },
+  "popupErrorCommunicating": {
+    "message": "❌ Erreur de communication ❌",
+    "description": "Message d'erreur générique pour le popup."
+  },
+  "popupActionFailed": {
+    "message": "❌ L'action a échoué ❌",
+    "description": "Message d'erreur quand une action de connexion/déconnexion échoue."
+  },
+  "buttonInProgress": {
+    "message": "En cours...",
+    "description": "Texte du bouton pendant une action."
+  },
+  "notificationTokenExpired": {
+    "message": "Le token Twitch a expiré. Veuillez vous reconnecter.",
+    "description": "Notification sur l'icône de l'extension."
+  },
+  "notificationApiUnavailable": {
+    "message": "L'API Twitch est momentanément indisponible ou la connexion est perdue.",
+    "description": "Notification sur l'icône de l'extension."
+  },
+  "contentOfflineMessage": {
+    "message": "Chaine déconnectée",
+    "description": "Texte affiché pour une chaîne hors-ligne."
+  },
+  "selectorSidebarExpand": {
+    "message": "Développer",
+    "description": "Partie du sélecteur aria-label pour la barre latérale développée."
+  },
+  "selectorSidebarCollapse": {
+    "message": "Réduire",
+    "description": "Partie du sélecteur aria-label pour la barre latérale réduite."
+  },
+  "selectorTheatreModeExit": {
+    "message": "Quitter",
+    "description": "Partie du sélecteur aria-label pour quitter le mode théâtre."
+  },
+  "selectorHypeTrainTitle": {
+    "message": "Train de la Hype",
+    "description": "Titre utilisé par Twitch pour le Hype Train."
+  },
+  "selectorSharedHypeTrainTitle": {
+    "message": "Train de la Hype partagé",
+    "description": "Titre utilisé par Twitch pour le Hype Train partagé."
+  },
+  "selectorTreasureTrainTitle": {
+    "message": "Train au trésor",
+    "description": "Titre utilisé par Twitch pour le Train au trésor."
+  },
+  "selectorKappaTrainTitle": {
+    "message": "Train de kappa doré",
+    "description": "Titre utilisé par Twitch pour le Train de Kappa Doré."
+  },
+  "selectorDiscountTrainTitle": {
+    "message": "Réduction",
+    "description": "Titre utilisé par Twitch pour un événement de réduction."
+  }
+}

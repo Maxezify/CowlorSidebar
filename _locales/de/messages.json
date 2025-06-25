@@ -1,0 +1,86 @@
+{
+  "extensionDescription": {
+    "message": "Zeige die Dauer von Streams in Echtzeit an, verpasse nie wieder einen Hype Train mit spektakulären visuellen Effekten!",
+    "description": "Die Beschreibung der Erweiterung, die im Web Store angezeigt wird."
+  },
+  "popupLoading": {
+    "message": "Wird geladen...",
+    "description": "Schaltflächentext während der Initialisierung."
+  },
+  "popupLogin": {
+    "message": "Mit Twitch anmelden",
+    "description": "Schaltflächentext zur Aufforderung der Anmeldung."
+  },
+  "popupLogout": {
+    "message": "Von Twitch abmelden",
+    "description": "Schaltflächentext zum Abmelden."
+  },
+  "popupStatusConnected": {
+    "message": "✅ Du bist verbunden ✅",
+    "description": "Statusmeldung, wenn der Benutzer angemeldet ist."
+  },
+  "popupStatusDisconnected": {
+    "message": "Bitte melde dich an, um den Zähler zu aktivieren.",
+    "description": "Statusmeldung, wenn der Benutzer nicht angemeldet ist."
+  },
+  "popupReloadMessage": {
+    "message": "Bitte lade deine Twitch-Seite neu, um die Funktionen zu aktivieren.",
+    "description": "Meldung, die zum Neuladen der Twitch-Seite auffordert."
+  },
+  "popupErrorCommunicating": {
+    "message": "❌ Kommunikationsfehler ❌",
+    "description": "Allgemeine Fehlermeldung für das Popup."
+  },
+  "popupActionFailed": {
+    "message": "❌ Aktion fehlgeschlagen ❌",
+    "description": "Fehlermeldung, wenn eine Anmelde-/Abmeldeaktion fehlschlägt."
+  },
+  "buttonInProgress": {
+    "message": "In Bearbeitung...",
+    "description": "Schaltflächentext während einer Aktion."
+  },
+  "notificationTokenExpired": {
+    "message": "Das Twitch-Token ist abgelaufen. Bitte melde dich erneut an.",
+    "description": "Benachrichtigung auf dem Erweiterungssymbol."
+  },
+  "notificationApiUnavailable": {
+    "message": "Die Twitch-API ist vorübergehend nicht verfügbar oder die Verbindung wurde getrennt.",
+    "description": "Benachrichtigung auf dem Erweiterungssymbol."
+  },
+  "contentOfflineMessage": {
+    "message": "Kanal offline",
+    "description": "Text, der für einen Offline-Kanal angezeigt wird."
+  },
+  "selectorSidebarExpand": {
+    "message": "erweitern",
+    "description": "Teil des aria-label-Selektors für die erweiterte Seitenleiste."
+  },
+  "selectorSidebarCollapse": {
+    "message": "reduzieren",
+    "description": "Teil des aria-label-Selektors für die reduzierte Seitenleiste."
+  },
+  "selectorTheatreModeExit": {
+    "message": "verlassen",
+    "description": "Teil des aria-label-Selektors zum Verlassen des Kinomodus."
+  },
+  "selectorHypeTrainTitle": {
+    "message": "Hype Train",
+    "description": "Von Twitch verwendeter Titel für den Hype Train."
+  },
+  "selectorSharedHypeTrainTitle": {
+    "message": "Gemeinsamer Hype Train",
+    "description": "Von Twitch verwendeter Titel für den geteilten Hype Train."
+  },
+  "selectorTreasureTrainTitle": {
+    "message": "Treasure Train",
+    "description": "Von Twitch verwendeter Titel für den Schatz-Train."
+  },
+  "selectorKappaTrainTitle": {
+    "message": "goldener Kappa-Train",
+    "description": "Von Twitch verwendeter Titel für den Goldenen Kappa-Train."
+  },
+  "selectorDiscountTrainTitle": {
+    "message": "Rabatt",
+    "description": "Von Twitch verwendeter Titel für ein Rabatt-Event."
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "extensionDescription": {
+    "message": "Yayınların süresini gerçek zamanlı olarak görüntüleyin, muhteşem görsel efektlerle bir Hype Treni'ni bir daha asla kaçırmayın!",
+    "description": "Uzantının web mağazasında gösterilen açıklaması."
+  },
+  "popupLoading": {
+    "message": "Yükleniyor...",
+    "description": "Başlatma sırasındaki düğme metni."
+  },
+  "popupLogin": {
+    "message": "Twitch ile giriş yap",
+    "description": "Giriş yapmaya davet eden düğme metni."
+  },
+  "popupLogout": {
+    "message": "Twitch'ten çıkış yap",
+    "description": "Oturumu kapatmak için düğme metni."
+  },
+  "popupStatusConnected": {
+    "message": "✅ Bağlandınız ✅",
+    "description": "Kullanıcı bağlandığında durum mesajı."
+  },
+  "popupStatusDisconnected": {
+    "message": "Sayacı etkinleştirmek için lütfen giriş yapın.",
+    "description": "Kullanıcı bağlı olmadığında durum mesajı."
+  },
+  "popupReloadMessage": {
+    "message": "Özellikleri etkinleştirmek için lütfen Twitch sayfanızı yeniden yükleyin.",
+    "description": "Twitch sayfasını yeniden yüklemeyi isteyen mesaj."
+  },
+  "popupErrorCommunicating": {
+    "message": "❌ İletişim hatası ❌",
+    "description": "Açılır pencere için genel hata mesajı."
+  },
+  "popupActionFailed": {
+    "message": "❌ İşlem başarısız ❌",
+    "description": "Giriş/çıkış işlemi başarısız olduğunda hata mesajı."
+  },
+  "buttonInProgress": {
+    "message": "İşleniyor...",
+    "description": "Bir işlem sırasında düğme metni."
+  },
+  "notificationTokenExpired": {
+    "message": "Twitch jetonunun süresi doldu. Lütfen tekrar giriş yapın.",
+    "description": "Uzantı simgesindeki bildirim."
+  },
+  "notificationApiUnavailable": {
+    "message": "Twitch API geçici olarak kullanılamıyor veya bağlantı kesildi.",
+    "description": "Uzantı simgesindeki bildirim."
+  },
+  "contentOfflineMessage": {
+    "message": "Kanal çevrimdışı",
+    "description": "Çevrimdışı bir kanal için görüntülenen metin."
+  },
+  "selectorSidebarExpand": {
+    "message": "Genişlet",
+    "description": "Genişletilmiş kenar çubuğu için aria-label seçicisinin bir parçası."
+  },
+  "selectorSidebarCollapse": {
+    "message": "Daralt",
+    "description": "Daraltılmış kenar çubuğu için aria-label seçicisinin bir parçası."
+  },
+  "selectorTheatreModeExit": {
+    "message": "Çık",
+    "description": "Sinema modundan çıkmak için aria-label seçicisinin bir parçası."
+  },
+  "selectorHypeTrainTitle": {
+    "message": "Hype Train",
+    "description": "Twitch tarafından Hype Treni için kullanılan başlık."
+  },
+  "selectorSharedHypeTrainTitle": {
+    "message": "Ortak Hype Train",
+    "description": "Twitch tarafından Paylaşılan Hype Treni için kullanılan başlık."
+  },
+  "selectorTreasureTrainTitle": {
+    "message": "Hazine Treni",
+    "description": "Twitch tarafından Hazine Treni için kullanılan başlık."
+  },
+  "selectorKappaTrainTitle": {
+    "message": "Altın Kappa Train",
+    "description": "Twitch tarafından Altın Kappa Treni için kullanılan başlık."
+  },
+  "selectorDiscountTrainTitle": {
+    "message": "İndirim",
+    "description": "Twitch tarafından bir indirim etkinliği için kullanılan başlık."
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "extensionDescription": {
+    "message": "Отображайте длительность стримов в реальном времени, никогда больше не пропускайте Hype Train с впечатляющими визуальными эффектами!",
+    "description": "Описание расширения, отображаемое в интернет-магазине."
+  },
+  "popupLoading": {
+    "message": "Загрузка...",
+    "description": "Текст кнопки во время инициализации."
+  },
+  "popupLogin": {
+    "message": "Войти на Twitch",
+    "description": "Текст кнопки для входа."
+  },
+  "popupLogout": {
+    "message": "Выйти из Twitch",
+    "description": "Текст кнопки для выхода."
+  },
+  "popupStatusConnected": {
+    "message": "✅ Вы подключены ✅",
+    "description": "Сообщение о статусе, когда пользователь вошел в систему."
+  },
+  "popupStatusDisconnected": {
+    "message": "Пожалуйста, войдите, чтобы активировать счетчик.",
+    "description": "Сообщение о статусе, когда пользователь не вошел в систему."
+  },
+  "popupReloadMessage": {
+    "message": "Пожалуйста, перезагрузите страницу Twitch, чтобы включить функции.",
+    "description": "Сообщение с просьбой перезагрузить страницу Twitch."
+  },
+  "popupErrorCommunicating": {
+    "message": "❌ Ошибка связи ❌",
+    "description": "Общее сообщение об ошибке для всплывающего окна."
+  },
+  "popupActionFailed": {
+    "message": "❌ Действие не удалось ❌",
+    "description": "Сообщение об ошибке при сбое действия входа/выхода."
+  },
+  "buttonInProgress": {
+    "message": "Выполняется...",
+    "description": "Текст кнопки во время выполнения действия."
+  },
+  "notificationTokenExpired": {
+    "message": "Токен Twitch истек. Пожалуйста, войдите снова.",
+    "description": "Уведомление на значке расширения."
+  },
+  "notificationApiUnavailable": {
+    "message": "API Twitch временно недоступен или соединение потеряно.",
+    "description": "Уведомление на значке расширения."
+  },
+  "contentOfflineMessage": {
+    "message": "Канал оффлайн",
+    "description": "Текст, отображаемый для оффлайн-канала."
+  },
+  "selectorSidebarExpand": {
+    "message": "Развернуть",
+    "description": "Часть селектора aria-label для развернутой боковой панели."
+  },
+  "selectorSidebarCollapse": {
+    "message": "Свернуть",
+    "description": "Часть селектора aria-label для свернутой боковой панели."
+  },
+  "selectorTheatreModeExit": {
+    "message": "Выйти",
+    "description": "Часть селектора aria-label для выхода из режима кинотеатра."
+  },
+  "selectorHypeTrainTitle": {
+    "message": "Hype Train",
+    "description": "Название, используемое Twitch для Hype Train."
+  },
+  "selectorSharedHypeTrainTitle": {
+    "message": "Мегахайповоз",
+    "description": "Название, используемое Twitch для общего Hype Train."
+  },
+  "selectorTreasureTrainTitle": {
+    "message": "Поезд с сокровищами",
+    "description": "Название, используемое Twitch для Поезда с сокровищами."
+  },
+  "selectorKappaTrainTitle": {
+    "message": "хайповоз с золотым Kappa",
+    "description": "Название, используемое Twitch для Золотого поезда Каппы."
+  },
+  "selectorDiscountTrainTitle": {
+    "message": "Скидка",
+    "description": "Название, используемое Twitch для события со скидкой."
+  }
+}

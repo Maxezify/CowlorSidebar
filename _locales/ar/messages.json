@@ -1,0 +1,47 @@
+{
+  "extensionDescription": {
+    "message": "عرض مدة البث المباشر في الوقت الفعلي، ولا تفوّت قطار الحماس مع تأثيرات بصرية مذهلة!",
+    "description": "وصف الإضافة المعروض في المتجر."
+  },
+  "popupLoading": { "message": "جارٍ التحميل...", "description": "نص الزر أثناء التهيئة." },
+  "popupLogin": { "message": "تسجيل الدخول إلى Twitch", "description": "نص الزر لطلب تسجيل الدخول." },
+  "popupLogout": { "message": "تسجيل الخروج من Twitch", "description": "نص الزر لتسجيل الخروج." },
+  "popupStatusConnected": { "message": "✅ أنت متصل ✅", "description": "رسالة الحالة عندما يكون المستخدم متصلاً." },
+  "popupStatusDisconnected": { "message": "الرجاء تسجيل الدخول لتمكين العداد.", "description": "رسالة الحالة عندما يكون المستخدم غير متصل." },
+  "popupReloadMessage": { "message": "يرجى إعادة تحميل صفحة Twitch لتمكين الميزات.", "description": "رسالة تطلب إعادة تحميل صفحة Twitch." },
+  "popupErrorCommunicating": { "message": "❌ خطأ في الاتصال ❌", "description": "رسالة خطأ عامة للنافذة المنبثقة." },
+  "popupActionFailed": { "message": "❌ فشل الإجراء ❌", "description": "رسالة خطأ عند فشل إجراء تسجيل الدخول/الخروج." },
+  "buttonInProgress": { "message": "قيد التقدم...", "description": "نص الزر أثناء تنفيذ إجراء." },
+  "notificationTokenExpired": { "message": "انتهت صلاحية رمز Twitch. يرجى تسجيل الدخول مرة أخرى.", "description": "إشعار على أيقونة الإضافة." },
+  "notificationApiUnavailable": { "message": "واجهة برمجة تطبيقات Twitch غير متاحة مؤقتًا أو انقطع الاتصال.", "description": "إشعار على أيقونة الإضافة." },
+  "contentOfflineMessage": { "message": "القناة غير متصلة", "description": "النص المعروض لقناة غير متصلة بالإنترنت." },
+  "selectorSidebarExpand": {
+    "message": "توسيع",
+    "description": "جزء من محدد aria-label للشريط الجانبي الموسع."
+  },
+  "selectorSidebarCollapse": {
+    "message": "إخفاء",
+    "description": "جزء من محدد aria-label للشريط الجانبي المطوي."
+  },
+  "selectorTheatreModeExit": {
+    "message": "الخروج",
+    "description": "جزء من محدد aria-label للخروج من وضع المسرح."
+  },
+  "selectorHypeTrainTitle": { "message": "قطار الحماس", "description": "العنوان المستخدم من قبل Twitch لقطار الحماس." },
+  "selectorSharedHypeTrainTitle": {
+    "message": "قطار الهايب المشترك",
+    "description": "العنوان المستخدم من قبل Twitch لقطار الحماس المشترك."
+  },
+  "selectorTreasureTrainTitle": {
+    "message": "قطار الكنز",
+    "description": "العنوان المستخدم من قبل Twitch لقطار الكنز."
+  },
+  "selectorKappaTrainTitle": {
+    "message": "قطار Kappa الذهبي",
+    "description": "العنوان المستخدم من قبل Twitch لقطار Kappa الذهبي."
+  },
+  "selectorDiscountTrainTitle": {
+    "message": "خصم",
+    "description": "العنوان المستخدم من قبل Twitch لحدث خصم."
+  }
+}

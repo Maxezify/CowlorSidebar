@@ -1,0 +1,26 @@
+{
+  "extensionDescription": {
+    "message": "Afișați durata stream-urilor în timp real, nu mai ratați niciodată un Hype Train cu efecte vizuale spectaculoase!",
+    "description": "Descrierea extensiei afișată în magazinul web."
+  },
+  "popupLoading": { "message": "Se încarcă...", "description": "Textul butonului în timpul inițializării." },
+  "popupLogin": { "message": "Conectează-te la Twitch", "description": "Textul butonului care îndeamnă la conectare." },
+  "popupLogout": { "message": "Deconectează-te de la Twitch", "description": "Textul butonului pentru deconectare." },
+  "popupStatusConnected": { "message": "✅ Ești conectat ✅", "description": "Mesaj de stare când utilizatorul este conectat." },
+  "popupStatusDisconnected": { "message": "Te rugăm să te conectezi pentru a activa contorul.", "description": "Mesaj de stare când utilizatorul nu este conectat." },
+  "popupReloadMessage": { "message": "Te rugăm să reîncarci pagina Twitch pentru a activa funcționalitățile.", "description": "Mesaj care solicită reîncărcarea paginii Twitch." },
+  "popupErrorCommunicating": { "message": "❌ Eroare de comunicare ❌", "description": "Mesaj de eroare generic pentru pop-up." },
+  "popupActionFailed": { "message": "❌ Acțiunea a eșuat ❌", "description": "Mesaj de eroare când o acțiune de conectare/deconectare eșuează." },
+  "buttonInProgress": { "message": "În desfășurare...", "description": "Textul butonului în timpul unei acțiuni." },
+  "notificationTokenExpired": { "message": "Token-ul Twitch a expirat. Te rugăm să te conectezi din nou.", "description": "Notificare pe pictograma extensiei." },
+  "notificationApiUnavailable": { "message": "API-ul Twitch este temporar indisponibil sau conexiunea a fost pierdută.", "description": "Notificare pe pictograma extensiei." },
+  "contentOfflineMessage": { "message": "Canal offline", "description": "Text afișat pentru un canal offline." },
+  "selectorSidebarExpand": { "message": "Extinde", "description": "Parte a selectorului aria-label pentru bara laterală extinsă." },
+  "selectorSidebarCollapse": { "message": "Restrânge", "description": "Parte a selectorului aria-label pentru bara laterală restrânsă." },
+  "selectorTheatreModeExit": { "message": "Ieși", "description": "Parte a selectorului aria-label pentru a ieși din modul cinema." },
+  "selectorHypeTrainTitle": { "message": "Tren cu entuziasm", "description": "Titlu folosit de Twitch pentru Hype Train." },
+  "selectorSharedHypeTrainTitle": { "message": "Tren cu entuziasm împărțit", "description": "Titlu folosit de Twitch pentru Hype Train partajat." },
+  "selectorTreasureTrainTitle": { "message": "Trenul cu comori", "description": "Titlu folosit de Twitch pentru Trenul cu comori." },
+  "selectorKappaTrainTitle": { "message": "Trenul Kappa de Aur", "description": "Titlu folosit de Twitch pentru Trenul Kappa de Aur." },
+  "selectorDiscountTrainTitle": { "message": "Reducere", "description": "Titlu folosit de Twitch pentru un eveniment de reducere." }
+}

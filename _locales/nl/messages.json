@@ -1,0 +1,86 @@
+{
+  "extensionDescription": {
+    "message": "Toon de duur van streams in realtime, mis nooit meer een Hype Train met spectaculaire visuele effecten!",
+    "description": "De beschrijving van de extensie in de web store."
+  },
+  "popupLoading": {
+    "message": "Laden...",
+    "description": "Knoptekst tijdens initialisatie."
+  },
+  "popupLogin": {
+    "message": "Inloggen op Twitch",
+    "description": "Knoptekst om in te loggen."
+  },
+  "popupLogout": {
+    "message": "Uitloggen van Twitch",
+    "description": "Knoptekst om uit te loggen."
+  },
+  "popupStatusConnected": {
+    "message": "✅ Je bent verbonden ✅",
+    "description": "Statusbericht wanneer de gebruiker is ingelogd."
+  },
+  "popupStatusDisconnected": {
+    "message": "Log in om de teller te activeren.",
+    "description": "Statusbericht wanneer de gebruiker is uitgelogd."
+  },
+  "popupReloadMessage": {
+    "message": "Herlaad je Twitch-pagina om de functies in te schakelen.",
+    "description": "Bericht dat vraagt om de Twitch-pagina te herladen."
+  },
+  "popupErrorCommunicating": {
+    "message": "❌ Communicatiefout ❌",
+    "description": "Algemeen foutbericht voor de popup."
+  },
+  "popupActionFailed": {
+    "message": "❌ Actie mislukt ❌",
+    "description": "Foutbericht wanneer een inlog-/uitlogactie mislukt."
+  },
+  "buttonInProgress": {
+    "message": "Bezig...",
+    "description": "Knoptekst tijdens een actie."
+  },
+  "notificationTokenExpired": {
+    "message": "Twitch-token is verlopen. Log opnieuw in.",
+    "description": "Melding op het extensiepictogram."
+  },
+  "notificationApiUnavailable": {
+    "message": "De Twitch API is tijdelijk niet beschikbaar of de verbinding is verbroken.",
+    "description": "Melding op het extensiepictogram."
+  },
+  "contentOfflineMessage": {
+    "message": "Kanaal offline",
+    "description": "Tekst voor een offline kanaal."
+  },
+  "selectorSidebarExpand": {
+    "message": "Uitvouwen",
+    "description": "Deel van de aria-label selector voor de uitgevouwen zijbalk."
+  },
+  "selectorSidebarCollapse": {
+    "message": "Samenvouwen",
+    "description": "Deel van de aria-label selector voor de samengevouwen zijbalk."
+  },
+  "selectorTheatreModeExit": {
+    "message": "Verlaten",
+    "description": "Deel van de aria-label selector om de theatermodus te verlaten."
+  },
+  "selectorHypeTrainTitle": {
+    "message": "Hype Train",
+    "description": "Titel gebruikt door Twitch voor de Hype Train."
+  },
+  "selectorSharedHypeTrainTitle": {
+    "message": "Shared Hype Train",
+    "description": "Titel gebruikt door Twitch voor de Gedeelde Hype Train."
+  },
+  "selectorTreasureTrainTitle": {
+    "message": "Treasure Train",
+    "description": "Titel gebruikt door Twitch voor de Schattrein."
+  },
+  "selectorKappaTrainTitle": {
+    "message": "Golden Kappa Train",
+    "description": "Titel gebruikt door Twitch voor de Gouden Kappa Trein."
+  },
+  "selectorDiscountTrainTitle": {
+    "message": "Korting",
+    "description": "Titel gebruikt door Twitch voor een kortingsevenement."
+  }
+}

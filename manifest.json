@@ -1,0 +1,57 @@
+{
+    "manifest_version": 3,
+    "name": "Cowlor's Sidebar",
+    "version": "1.7.0",
+    "default_locale": "en_US",
+    "description": "__MSG_extensionDescription__",
+    "permissions": [
+        "storage",
+        "identity"
+    ],
+    "host_permissions": [
+        "https://api.twitch.tv/*"
+    ],
+    "content_scripts": [
+        {
+            "matches": [
+                "*://*.twitch.tv/*"
+            ],
+            "js": [
+                "content.js"
+            ]
+        }
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "icons/icon16.png",
+                "icons/icon48.png",
+                "icons/icon128.png",
+                "gold_kappa.png"
+            ],
+            "matches": [
+                "*://*.twitch.tv/*"
+            ]
+        }
+    ],
+    "action": {
+        "default_popup": "popup.html",
+        "default_icon": {
+            "16": "icons/icon16.png",
+            "48": "icons/icon48.png",
+            "128": "icons/icon128.png"
+        }
+    },
+    "icons": {
+        "16": "icons/icon16.png",
+        "48": "icons/icon48.png",
+        "128": "icons/icon128.png"
+    },
+    "oauth2": {
+        "client_id": "xuofnrpussbx78a95m7kgn8ojr296n",
+        "scopes": []
+    }
+}

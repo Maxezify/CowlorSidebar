@@ -1,0 +1,40 @@
+/* popup.css */
+
+body {
+    font-family: sans-serif;
+    width: 250px;
+    padding: 10px;
+    text-align: center;
+    color: #fff;
+    
+    /* MODIFIÉ : Utilisation d'un dégradé statique pour de meilleures performances */
+    background: linear-gradient(135deg, #6441A5, #2A0845);
+}
+
+h3 {
+    margin-top: 0;
+    color: #fff; 
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #fff;
+    background-color: #9146ff;
+    border: none;
+    transition: background-color 0.2s ease;
+}
+
+button:hover {
+    background-color: #772ce8;
+}
+
+p {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.9);
+    margin-top: 15px;
+}

@@ -51,24 +51,12 @@
     "message": "Kanaal offline",
     "description": "Tekst voor een offline kanaal."
   },
-  "selectorSidebarExpand": {
-    "message": "Uitvouwen",
-    "description": "Deel van de aria-label selector voor de uitgevouwen zijbalk."
-  },
-  "selectorSidebarCollapse": {
-    "message": "Samenvouwen",
-    "description": "Deel van de aria-label selector voor de samengevouwen zijbalk."
-  },
-  "selectorTheatreModeExit": {
-    "message": "Verlaten",
-    "description": "Deel van de aria-label selector om de theatermodus te verlaten."
-  },
   "selectorHypeTrainTitle": {
-    "message": "Hype Train",
+    "message": "Hypetrein",
     "description": "Titel gebruikt door Twitch voor de Hype Train."
   },
   "selectorSharedHypeTrainTitle": {
-    "message": "Shared Hype Train",
+    "message": "Gedeelde hypetrein",
     "description": "Titel gebruikt door Twitch voor de Gedeelde Hype Train."
   },
   "selectorTreasureTrainTitle": {
@@ -78,9 +66,5 @@
   "selectorKappaTrainTitle": {
     "message": "Golden Kappa Train",
     "description": "Titel gebruikt door Twitch voor de Gouden Kappa Trein."
-  },
-  "selectorDiscountTrainTitle": {
-    "message": "Korting",
-    "description": "Titel gebruikt door Twitch voor een kortingsevenement."
   }
 }

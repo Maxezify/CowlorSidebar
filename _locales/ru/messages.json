@@ -51,20 +51,8 @@
     "message": "Канал оффлайн",
     "description": "Текст, отображаемый для оффлайн-канала."
   },
-  "selectorSidebarExpand": {
-    "message": "Развернуть",
-    "description": "Часть селектора aria-label для развернутой боковой панели."
-  },
-  "selectorSidebarCollapse": {
-    "message": "Свернуть",
-    "description": "Часть селектора aria-label для свернутой боковой панели."
-  },
-  "selectorTheatreModeExit": {
-    "message": "Выйти",
-    "description": "Часть селектора aria-label для выхода из режима кинотеатра."
-  },
   "selectorHypeTrainTitle": {
-    "message": "Hype Train",
+    "message": "Хайповоз",
     "description": "Название, используемое Twitch для Hype Train."
   },
   "selectorSharedHypeTrainTitle": {
@@ -72,15 +60,11 @@
     "description": "Название, используемое Twitch для общего Hype Train."
   },
   "selectorTreasureTrainTitle": {
-    "message": "Поезд с сокровищами",
+    "message": "Кладовоз",
     "description": "Название, используемое Twitch для Поезда с сокровищами."
   },
   "selectorKappaTrainTitle": {
     "message": "хайповоз с золотым Kappa",
     "description": "Название, используемое Twitch для Золотого поезда Каппы."
-  },
-  "selectorDiscountTrainTitle": {
-    "message": "Скидка",
-    "description": "Название, используемое Twitch для события со скидкой."
   }
 }

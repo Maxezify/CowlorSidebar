@@ -15,12 +15,8 @@
   "notificationTokenExpired": { "message": "Twitch 令牌已过期。请重新登录。", "description": "扩展程序图标上的通知。" },
   "notificationApiUnavailable": { "message": "Twitch API 暂时不可用或连接已断开。", "description": "扩展程序图标上的通知。" },
   "contentOfflineMessage": { "message": "频道离线", "description": "为离线频道显示的文本。" },
-  "selectorSidebarExpand": { "message": "展开", "description": "用于展开侧边栏的 aria-label 选择器的一部分。" },
-  "selectorSidebarCollapse": { "message": "折叠", "description": "用于折叠侧边栏的 aria-label 选择器的一部分。" },
-  "selectorTheatreModeExit": { "message": "退出", "description": "用于退出影院模式的 aria-label 选择器的一部分。" },
-  "selectorHypeTrainTitle": { "message": "Hype Train", "description": "Twitch 用于 Hype Train 的标题。" },
+  "selectorHypeTrainTitle": { "message": "热潮列车", "description": "Twitch 用于 Hype Train 的标题。" },
   "selectorSharedHypeTrainTitle": { "message": "共享热潮列车", "description": "Twitch 用于共享的 Hype Train 的标题。" },
   "selectorTreasureTrainTitle": { "message": "宝藏列车", "description": "Twitch 用于宝藏列车的标题。" },
-  "selectorKappaTrainTitle": { "message": "金色 Kappa 列车", "description": "Twitch 用于金色 Kappa 列车的标题。" },
-  "selectorDiscountTrainTitle": { "message": "折扣", "description": "Twitch 用于折扣活动的标题。" }
+  "selectorKappaTrainTitle": { "message": "金色 Kappa 列车", "description": "Twitch 用于金色 Kappa 列车的标题。" }
 }

@@ -15,12 +15,8 @@
   "notificationTokenExpired": { "message": "Token Twitch wygasł. Zaloguj się ponownie.", "description": "Powiadomienie na ikonie rozszerzenia." },
   "notificationApiUnavailable": { "message": "API Twitcha jest tymczasowo niedostępne lub utracono połączenie.", "description": "Powiadomienie na ikonie rozszerzenia." },
   "contentOfflineMessage": { "message": "Kanał offline", "description": "Tekst wyświetlany dla kanału offline." },
-  "selectorSidebarExpand": { "message": "Rozwiń", "description": "Część selektora aria-label dla rozwiniętego paska bocznego." },
-  "selectorSidebarCollapse": { "message": "Zwiń", "description": "Część selektora aria-label dla zwiniętego paska bocznego." },
-  "selectorTheatreModeExit": { "message": "Opuść", "description": "Część selektora aria-label do opuszczania trybu kinowego." },
   "selectorHypeTrainTitle": { "message": "Hype Train", "description": "Tytuł używany przez Twitcha dla Hype Train." },
   "selectorSharedHypeTrainTitle": { "message": "Wspólny Hype Train", "description": "Tytuł używany przez Twitcha dla współdzielonego Hype Train." },
-  "selectorTreasureTrainTitle": { "message": "Treasure Train", "description": "Tytuł używany przez Twitcha dla Pociągu ze skarbami." },
-  "selectorKappaTrainTitle": { "message": "Golden Kappa Trainem", "description": "Tytuł używany przez Twitcha для Złotego Pociągu Kappa." },
-  "selectorDiscountTrainTitle": { "message": "Rabat", "description": "Tytuł używany przez Twitcha dla wydarzenia rabatowego." }
+  "selectorTreasureTrainTitle": { "message": "Pociąg skarbów", "description": "Tytuł używany przez Twitcha dla Pociągu ze skarbami." },
+  "selectorKappaTrainTitle": { "message": "Golden Kappa Trainem", "description": "Tytuł używany przez Twitcha для Złotego Pociągu Kappa." }
 }

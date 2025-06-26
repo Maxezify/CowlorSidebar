@@ -15,12 +15,8 @@
   "notificationTokenExpired": { "message": "Twitch token has expired. Please login again.", "description": "Notification on the extension icon." },
   "notificationApiUnavailable": { "message": "The Twitch API is temporarily unavailable or connection has been lost.", "description": "Notification on the extension icon." },
   "contentOfflineMessage": { "message": "Channel Offline", "description": "Text displayed for an offline channel." },
-  "selectorSidebarExpand": { "message": "Expand", "description": "Part of the aria-label selector for the expanded sidebar." },
-  "selectorSidebarCollapse": { "message": "Collapse", "description": "Part of the aria-label selector for the collapsed sidebar." },
-  "selectorTheatreModeExit": { "message": "Exit", "description": "Part of the aria-label selector to exit theater mode." },
   "selectorHypeTrainTitle": { "message": "Hype Train", "description": "Title used by Twitch for the Hype Train." },
   "selectorSharedHypeTrainTitle": { "message": "Shared Hype Train", "description": "Title used by Twitch for the Shared Hype Train." },
   "selectorTreasureTrainTitle": { "message": "Treasure Train", "description": "Title used by Twitch for the Treasure Train." },
-  "selectorKappaTrainTitle": { "message": "Golden Kappa Train", "description": "Title used by Twitch for the Golden Kappa Train." },
-  "selectorDiscountTrainTitle": { "message": "Discount", "description": "Title used by Twitch for a discount event." }
+  "selectorKappaTrainTitle": { "message": "Golden Kappa Train", "description": "Title used by Twitch for the Golden Kappa Train." }
 }

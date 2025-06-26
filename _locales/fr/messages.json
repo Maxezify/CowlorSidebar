@@ -51,18 +51,6 @@
     "message": "Chaine déconnectée",
     "description": "Texte affiché pour une chaîne hors-ligne."
   },
-  "selectorSidebarExpand": {
-    "message": "Développer",
-    "description": "Partie du sélecteur aria-label pour la barre latérale développée."
-  },
-  "selectorSidebarCollapse": {
-    "message": "Réduire",
-    "description": "Partie du sélecteur aria-label pour la barre latérale réduite."
-  },
-  "selectorTheatreModeExit": {
-    "message": "Quitter",
-    "description": "Partie du sélecteur aria-label pour quitter le mode théâtre."
-  },
   "selectorHypeTrainTitle": {
     "message": "Train de la Hype",
     "description": "Titre utilisé par Twitch pour le Hype Train."
@@ -78,9 +66,5 @@
   "selectorKappaTrainTitle": {
     "message": "Train de kappa doré",
     "description": "Titre utilisé par Twitch pour le Train de Kappa Doré."
-  },
-  "selectorDiscountTrainTitle": {
-    "message": "Réduction",
-    "description": "Titre utilisé par Twitch pour un événement de réduction."
   }
 }

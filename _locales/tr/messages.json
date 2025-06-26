@@ -51,18 +51,6 @@
     "message": "Kanal çevrimdışı",
     "description": "Çevrimdışı bir kanal için görüntülenen metin."
   },
-  "selectorSidebarExpand": {
-    "message": "Genişlet",
-    "description": "Genişletilmiş kenar çubuğu için aria-label seçicisinin bir parçası."
-  },
-  "selectorSidebarCollapse": {
-    "message": "Daralt",
-    "description": "Daraltılmış kenar çubuğu için aria-label seçicisinin bir parçası."
-  },
-  "selectorTheatreModeExit": {
-    "message": "Çık",
-    "description": "Sinema modundan çıkmak için aria-label seçicisinin bir parçası."
-  },
   "selectorHypeTrainTitle": {
     "message": "Hype Train",
     "description": "Twitch tarafından Hype Treni için kullanılan başlık."
@@ -78,9 +66,5 @@
   "selectorKappaTrainTitle": {
     "message": "Altın Kappa Train",
     "description": "Twitch tarafından Altın Kappa Treni için kullanılan başlık."
-  },
-  "selectorDiscountTrainTitle": {
-    "message": "İndirim",
-    "description": "Twitch tarafından bir indirim etkinliği için kullanılan başlık."
   }
 }

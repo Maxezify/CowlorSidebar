@@ -15,12 +15,8 @@
   "notificationTokenExpired": { "message": "Twitch 權杖已過期。請重新登入。", "description": "擴充功能圖示上的通知。" },
   "notificationApiUnavailable": { "message": "Twitch API 暫時無法使用或連線已中斷。", "description": "擴充功能圖示上的通知。" },
   "contentOfflineMessage": { "message": "頻道離線", "description": "為離線頻道顯示的文字。" },
-  "selectorSidebarExpand": { "message": "展開", "description": "用於展開側邊欄的 aria-label 選擇器的一部分。" },
-  "selectorSidebarCollapse": { "message": "折疊", "description": "用於折疊側邊欄的 aria-label 選擇器的一部分。" },
-  "selectorTheatreModeExit": { "message": "退出", "description": "用於退出劇院模式的 aria-label 選擇器的一部分。" },
   "selectorHypeTrainTitle": { "message": "發燒列車", "description": "Twitch 用於 Hype Train 的標題。" },
   "selectorSharedHypeTrainTitle": { "message": "共享發燒列車", "description": "Twitch 用於分享的 Hype Train 的標題。" },
   "selectorTreasureTrainTitle": { "message": "寶藏列車", "description": "Twitch 用於寶藏列車的標題。" },
-  "selectorKappaTrainTitle": { "message": "黃金 Kappa 發燒列車", "description": "Twitch 用於金色 Kappa 列車的標題。" },
-  "selectorDiscountTrainTitle": { "message": "折扣", "description": "Twitch 用於折扣活動的標題。" }
+  "selectorKappaTrainTitle": { "message": "黃金 Kappa 發燒列車", "description": "Twitch 用於金色 Kappa 列車的標題。" }
 }

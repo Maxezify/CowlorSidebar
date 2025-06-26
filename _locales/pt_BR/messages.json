@@ -15,18 +15,6 @@
   "notificationTokenExpired": { "message": "O token da Twitch expirou. Por favor, conecte-se novamente.", "description": "Notificação no ícone da extensão." },
   "notificationApiUnavailable": { "message": "A API da Twitch está temporariamente indisponível ou a conexão foi perdida.", "description": "Notificação no ícone da extensão." },
   "contentOfflineMessage": { "message": "Canal offline", "description": "Texto exibido para um canal offline." },
-  "selectorSidebarExpand": {
-    "message": "Expandir",
-    "description": "Parte do seletor aria-label para a barra lateral expandida."
-  },
-  "selectorSidebarCollapse": {
-    "message": "Ocultar",
-    "description": "Parte do seletor aria-label para a barra lateral recolhida."
-  },
-  "selectorTheatreModeExit": {
-    "message": "Sair",
-    "description": "Parte do seletor aria-label para sair do modo cinema."
-  },
   "selectorHypeTrainTitle": { "message": "Hype Train", "description": "Título usado pela Twitch para o Trem do Hype." },
   "selectorSharedHypeTrainTitle": {
     "message": "Hype Train Coletivo",
@@ -39,9 +27,5 @@
   "selectorKappaTrainTitle": {
     "message": "Golden Kappa Train",
     "description": "Título usado pela Twitch para o Trem de Kappa Dourado."
-  },
-  "selectorDiscountTrainTitle": {
-    "message": "Desconto",
-    "description": "Título usado pela Twitch para um evento de desconto."
   }
 }

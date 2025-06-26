@@ -15,19 +15,7 @@
   "notificationTokenExpired": { "message": "انتهت صلاحية رمز Twitch. يرجى تسجيل الدخول مرة أخرى.", "description": "إشعار على أيقونة الإضافة." },
   "notificationApiUnavailable": { "message": "واجهة برمجة تطبيقات Twitch غير متاحة مؤقتًا أو انقطع الاتصال.", "description": "إشعار على أيقونة الإضافة." },
   "contentOfflineMessage": { "message": "القناة غير متصلة", "description": "النص المعروض لقناة غير متصلة بالإنترنت." },
-  "selectorSidebarExpand": {
-    "message": "توسيع",
-    "description": "جزء من محدد aria-label للشريط الجانبي الموسع."
-  },
-  "selectorSidebarCollapse": {
-    "message": "إخفاء",
-    "description": "جزء من محدد aria-label للشريط الجانبي المطوي."
-  },
-  "selectorTheatreModeExit": {
-    "message": "الخروج",
-    "description": "جزء من محدد aria-label للخروج من وضع المسرح."
-  },
-  "selectorHypeTrainTitle": { "message": "قطار الحماس", "description": "العنوان المستخدم من قبل Twitch لقطار الحماس." },
+  "selectorHypeTrainTitle": { "message": "قطار الهايب", "description": "العنوان المستخدم من قبل Twitch لقطار الحماس." },
   "selectorSharedHypeTrainTitle": {
     "message": "قطار الهايب المشترك",
     "description": "العنوان المستخدم من قبل Twitch لقطار الحماس المشترك."
@@ -39,9 +27,5 @@
   "selectorKappaTrainTitle": {
     "message": "قطار Kappa الذهبي",
     "description": "العنوان المستخدم من قبل Twitch لقطار Kappa الذهبي."
-  },
-  "selectorDiscountTrainTitle": {
-    "message": "خصم",
-    "description": "العنوان المستخدم من قبل Twitch لحدث خصم."
   }
 }

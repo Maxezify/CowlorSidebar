@@ -15,12 +15,8 @@
   "notificationTokenExpired": { "message": "Token-ul Twitch a expirat. Te rugăm să te conectezi din nou.", "description": "Notificare pe pictograma extensiei." },
   "notificationApiUnavailable": { "message": "API-ul Twitch este temporar indisponibil sau conexiunea a fost pierdută.", "description": "Notificare pe pictograma extensiei." },
   "contentOfflineMessage": { "message": "Canal offline", "description": "Text afișat pentru un canal offline." },
-  "selectorSidebarExpand": { "message": "Extinde", "description": "Parte a selectorului aria-label pentru bara laterală extinsă." },
-  "selectorSidebarCollapse": { "message": "Restrânge", "description": "Parte a selectorului aria-label pentru bara laterală restrânsă." },
-  "selectorTheatreModeExit": { "message": "Ieși", "description": "Parte a selectorului aria-label pentru a ieși din modul cinema." },
   "selectorHypeTrainTitle": { "message": "Tren cu entuziasm", "description": "Titlu folosit de Twitch pentru Hype Train." },
   "selectorSharedHypeTrainTitle": { "message": "Tren cu entuziasm împărțit", "description": "Titlu folosit de Twitch pentru Hype Train partajat." },
-  "selectorTreasureTrainTitle": { "message": "Trenul cu comori", "description": "Titlu folosit de Twitch pentru Trenul cu comori." },
-  "selectorKappaTrainTitle": { "message": "Trenul Kappa de Aur", "description": "Titlu folosit de Twitch pentru Trenul Kappa de Aur." },
-  "selectorDiscountTrainTitle": { "message": "Reducere", "description": "Titlu folosit de Twitch pentru un eveniment de reducere." }
+  "selectorTreasureTrainTitle": { "message": "Tren cu comori", "description": "Titlu folosit de Twitch pentru Trenul cu comori." },
+  "selectorKappaTrainTitle": { "message": "Trenul Kappa de Aur", "description": "Titlu folosit de Twitch pentru Trenul Kappa de Aur." }
 }

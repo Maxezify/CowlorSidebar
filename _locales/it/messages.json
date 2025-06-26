@@ -51,18 +51,6 @@
     "message": "Canale offline",
     "description": "Testo visualizzato per un canale offline."
   },
-  "selectorSidebarExpand": {
-    "message": "Espandi",
-    "description": "Parte del selettore aria-label per la barra laterale espansa."
-  },
-  "selectorSidebarCollapse": {
-    "message": "Comprimi",
-    "description": "Parte del selettore aria-label per la barra laterale compressa."
-  },
-  "selectorTheatreModeExit": {
-    "message": "Esci",
-    "description": "Parte del selettore aria-label per uscire dalla modalità cinema."
-  },
   "selectorHypeTrainTitle": {
     "message": "Hype Train",
     "description": "Titolo usato da Twitch per il Hype Train."
@@ -78,9 +66,5 @@
   "selectorKappaTrainTitle": {
     "message": "Treno Kappa dorato",
     "description": "Titolo usato da Twitch per il Treno Kappa d'oro."
-  },
-  "selectorDiscountTrainTitle": {
-    "message": "Sconto",
-    "description": "Titolo utilizzato da Twitch per un evento di sconto."
   }
 }

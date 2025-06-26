@@ -7,7 +7,7 @@ body {
     text-align: center;
     color: #fff;
     
-    /* MODIFIÉ : Utilisation d'un dégradé statique pour de meilleures performances */
+    /* MODIFIÉ : On utilise un dégradé simple, sans animation et avec moins de couleurs */
     background: linear-gradient(135deg, #6441A5, #2A0845);
 }
 

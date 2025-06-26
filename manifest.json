@@ -1,13 +1,12 @@
 {
     "manifest_version": 3,
     "name": "Cowlor's Sidebar",
-    "version": "2.0.0",
+    "version": "1.8.0",
     "default_locale": "en_US",
     "description": "__MSG_extensionDescription__",
     "permissions": [
         "storage",
-        "identity",
-        "alarms"
+        "identity"
     ],
     "host_permissions": [
         "https://api.twitch.tv/*"
@@ -19,8 +18,7 @@
             ],
             "js": [
                 "content.js"
-            ],
-            "run_at": "document_idle"
+            ]
         }
     ],
     "background": {
@@ -55,8 +53,5 @@
     "oauth2": {
         "client_id": "xuofnrpussbx78a95m7kgn8ojr296n",
         "scopes": []
-    },
-    "content_security_policy": {
-        "extension_pages": "script-src 'self'; object-src 'self'"
     }
 }

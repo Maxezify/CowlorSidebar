@@ -51,18 +51,6 @@
     "message": "Kanal offline",
     "description": "Text, der für einen Offline-Kanal angezeigt wird."
   },
-  "selectorSidebarExpand": {
-    "message": "erweitern",
-    "description": "Teil des aria-label-Selektors für die erweiterte Seitenleiste."
-  },
-  "selectorSidebarCollapse": {
-    "message": "reduzieren",
-    "description": "Teil des aria-label-Selektors für die reduzierte Seitenleiste."
-  },
-  "selectorTheatreModeExit": {
-    "message": "verlassen",
-    "description": "Teil des aria-label-Selektors zum Verlassen des Kinomodus."
-  },
   "selectorHypeTrainTitle": {
     "message": "Hype Train",
     "description": "Von Twitch verwendeter Titel für den Hype Train."
@@ -78,9 +66,5 @@
   "selectorKappaTrainTitle": {
     "message": "goldener Kappa-Train",
     "description": "Von Twitch verwendeter Titel für den Goldenen Kappa-Train."
-  },
-  "selectorDiscountTrainTitle": {
-    "message": "Rabatt",
-    "description": "Von Twitch verwendeter Titel für ein Rabatt-Event."
   }
 }

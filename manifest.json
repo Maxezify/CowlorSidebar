@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Cowlor's Sidebar",
-    "version": "1.8.0",
+    "version": "1.8.1",
     "default_locale": "en_US",
     "description": "__MSG_extensionDescription__",
     "permissions": [
@@ -51,7 +51,7 @@
         "128": "icons/icon128.png"
     },
     "oauth2": {
-        "client_id": "xuofnrpussbx78a95m7kgn8ojr296n",
+        "client_id": "htp9oixccmqw91hc05r021d32hefox",
         "scopes": []
     }
 }

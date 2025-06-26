@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Cowlor's Sidebar",
-    "version": "1.8.1",
+    "version": "1.8.2",
     "default_locale": "en_US",
     "description": "__MSG_extensionDescription__",
     "permissions": [
@@ -9,7 +9,7 @@
         "identity"
     ],
     "host_permissions": [
-        "https://api.twitch.tv/*"
+        "https://api.twitch.tv/helix/streams"
     ],
     "content_scripts": [
         {

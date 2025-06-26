@@ -79,6 +79,17 @@
         const goldKappaImageUrl = chrome.runtime.getURL('gold_kappa.png');
         const css = `
             .${CONFIG.CSS_CLASSES.HIDDEN_ELEMENT} { display: none !important; }
+            /* MODIFIÉ : Le contour s'inverse pour rester visible */
+            @keyframes ht-text-color-anim {
+                0%, 100% {
+                    color: white;
+                    text-shadow: -1px -1px 0 #1f1f23, 1px -1px 0 #1f1f23, -1px 1px 0 #1f1f23, 1px 1px 0 #1f1f23;
+                }
+                50% {
+                    color: #1f1f23;
+                    text-shadow: -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white, 1px 1px 0 white;
+                }
+            }
             @keyframes ht-pulse-blue { 0%, 100% { background-color: transparent; box-shadow: none; } 50% { background-color: rgba(35, 166, 213, 0.7); box-shadow: inset 0 0 8px 2px #23a6d5, 0 0 12px #23a6d5; } }
             @keyframes ht-pulse-green { 0%, 100% { background-color: transparent; box-shadow: none; } 50% { background-color: rgba(35, 213, 171, 0.7); box-shadow: inset 0 0 8px 2px #23d5ab, 0 0 12px #23d5ab; } }
             @keyframes ht-pulse-yellow { 0%, 100% { background-color: transparent; box-shadow: none; } 50% { background-color: rgba(226, 223, 11, 0.7); box-shadow: inset 0 0 8px 2px #E2DF0B, 0 0 12px #E2DF0B; } }
@@ -102,7 +113,7 @@
             .${CONFIG.CSS.HYPE_TRAIN_CLASSES.RED} { border-color: #D93025; color: #D93025; }
             .${CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER}.${CONFIG.CSS.HYPE_TRAIN_CLASSES.GOLD}::after { content: ''; background-image: url('${goldKappaImageUrl}'); background-size: 80%; background-position: center; background-repeat: no-repeat; opacity: 0.2; box-shadow: inset 0 0 10px 3px #FFD700, 0 0 20px 5px #FFD700; animation: legendary-sparkle 1.8s ease-in-out infinite; }
             .${CONFIG.CSS.HYPE_TRAIN_CLASSES.LEVEL_TEXT}.ht-kappa-crown { content: ''; font-size: 28px; color: #FFD700; text-shadow: 0 0 4px black, 0 0 8px gold, 0 0 12px white; animation: legendary-crown-float 2.5s ease-in-out infinite; z-index: 12; }
-            .${CONFIG.CSS.HYPE_TRAIN_CLASSES.LEVEL_TEXT} { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 16px; font-weight: 800; color: white; text-shadow: 1px 1px 2px black, 0 0 5px black, 0 0 8px black; pointer-events: none; z-index: 10; }
+            .${CONFIG.CSS.HYPE_TRAIN_CLASSES.LEVEL_TEXT} { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 16px; font-weight: 900; color: white; text-shadow: -1px -1px 0 #1f1f23, 1px -1px 0 #1f1f23, -1px 1px 0 #1f1f23, 1px 1px 0 #1f1f23; pointer-events: none; z-index: 10; animation: ht-text-color-anim 1.2s ease-in-out infinite; }
         `;
         const style = document.createElement('style');
         style.id = styleId;
@@ -331,14 +342,12 @@
         state.animationFrameId = requestAnimationFrame(animationLoop);
     }
 
-    // CORRIGÉ : L'observateur gère maintenant les ajouts ET les suppressions.
     function setupSidebarObserver() {
         if (state.observers.sidebarObserver) state.observers.sidebarObserver.disconnect();
         
         state.observers.sidebarObserver = new MutationObserver((mutations) => {
             processHypeTrains(); 
             for (const mutation of mutations) {
-                // Gérer les chaînes supprimées pour nettoyer l'état interne
                 mutation.removedNodes.forEach(node => {
                     if (node.nodeType === Node.ELEMENT_NODE) {
                         const processRemovedNode = (removedEl) => {
@@ -355,7 +364,6 @@
                     }
                 });
 
-                // Gérer les chaînes ajoutées
                 mutation.addedNodes.forEach(node => {
                     if (node.nodeType === Node.ELEMENT_NODE) {
                         if (node.matches(CONFIG.SELECTORS.CHANNEL_LINK_ITEM)) {

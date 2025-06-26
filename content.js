@@ -4,13 +4,42 @@
 
     console.log("--- Cowlor's Sidebar Extension Initializing ---");
 
-    // Obtenir les chaînes traduites une seule fois au début pour la performance
+    // AMÉLIORATION ARCHITECTURE/PERFORMANCE: Implémentation d'un cache LRU (Least Recently Used)
+    class LRUCache {
+        constructor(maxSize = 100) {
+            this.cache = new Map();
+            this.maxSize = maxSize;
+        }
+        set(key, value) {
+            this.cache.delete(key);
+            this.cache.set(key, value);
+            if (this.cache.size > this.maxSize) {
+                const firstKey = this.cache.keys().next().value;
+                this.cache.delete(firstKey);
+            }
+        }
+        get(key) {
+            const value = this.cache.get(key);
+            if (value) {
+                this.cache.delete(key);
+                this.cache.set(key, value);
+            }
+            return value;
+        }
+        delete(key) {
+            this.cache.delete(key);
+        }
+    }
+
     const i18n = {
         hypeTrainTitle: chrome.i18n.getMessage('selectorHypeTrainTitle'),
         sharedHypeTrainTitle: chrome.i18n.getMessage('selectorSharedHypeTrainTitle'),
         treasureTrainTitle: chrome.i18n.getMessage('selectorTreasureTrainTitle'),
         kappaTrainTitle: chrome.i18n.getMessage('selectorKappaTrainTitle')
     };
+    
+    // AMÉLIORATION SÉCURITÉ: Regex pour valider un nom d'utilisateur Twitch
+    const TWITCH_LOGIN_REGEX = /^[a-zA-Z0-9_]{4,25}$/;
 
     const CONFIG = {
         SELECTORS: {
@@ -27,8 +56,7 @@
         TIMINGS_MS: {
             INITIAL_SETTLE_DELAY: 2000,
             EXPANSION_CLICK_DELAY: 1000,
-            EXPANSION_WAIT_DELAY: 500,
-            API_DEBOUNCE: 150, // Délai pour regrouper les appels API
+            EXPANSION_WAIT_DELAY: 500
         },
         API: {
             EXPANSION_MAX_ATTEMPTS: 20,
@@ -60,13 +88,13 @@
 
     const state = {
         liveChannelElements: new Map(),
-        domCache: new Map(),
+        domCache: new LRUCache(200), // AMÉLIORATION PERFORMANCE: Utilisation du cache LRU
         domElements: { sidebar: null },
         observers: { sidebarObserver: null, mainObserver: null },
         isInitialized: false,
         animationFrameId: null,
-        apiQueue: new Map(), // File d'attente pour les appels API
-        apiQueueTimer: null,  // Timer pour le debounce
+        apiQueue: new Map(),
+        apiQueueTimer: null,
     };
 
     const formatUptime = (totalSeconds) => {
@@ -82,16 +110,7 @@
         const goldKappaImageUrl = chrome.runtime.getURL('gold_kappa.png');
         const css = `
             .${CONFIG.CSS_CLASSES.HIDDEN_ELEMENT} { display: none !important; }
-            @keyframes ht-text-color-anim {
-                0%, 100% {
-                    color: white;
-                    text-shadow: -1px -1px 0 #1f1f23, 1px -1px 0 #1f1f23, -1px 1px 0 #1f1f23, 1px 1px 0 #1f1f23;
-                }
-                50% {
-                    color: #1f1f23;
-                    text-shadow: -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white, 1px 1px 0 white;
-                }
-            }
+            @keyframes ht-text-color-anim { 0%, 100% { color: white; text-shadow: -1px -1px 0 #1f1f23, 1px -1px 0 #1f1f23, -1px 1px 0 #1f1f23, 1px 1px 0 #1f1f23; } 50% { color: #1f1f23; text-shadow: -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white, 1px 1px 0 white; } }
             @keyframes ht-pulse-blue { 0%, 100% { background-color: transparent; box-shadow: none; } 50% { background-color: rgba(35, 166, 213, 0.7); box-shadow: inset 0 0 8px 2px #23a6d5, 0 0 12px #23a6d5; } }
             @keyframes ht-pulse-green { 0%, 100% { background-color: transparent; box-shadow: none; } 50% { background-color: rgba(35, 213, 171, 0.7); box-shadow: inset 0 0 8px 2px #23d5ab, 0 0 12px #23d5ab; } }
             @keyframes ht-pulse-yellow { 0%, 100% { background-color: transparent; box-shadow: none; } 50% { background-color: rgba(226, 223, 11, 0.7); box-shadow: inset 0 0 8px 2px #E2DF0B, 0 0 12px #E2DF0B; } }
@@ -101,8 +120,8 @@
             @keyframes legendary-sparkle { 0%, 100% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.5); opacity: 1; } }
             @keyframes legendary-crown-float { 0% { transform: translate(-50%, -50%) translateY(-5px) scale(1.1); } 50% { transform: translate(-50%, -50%) translateY(0) scale(1.05); } 100% { transform: translate(-50%, -50%) translateY(-5px) scale(1.1); } }
             .${CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER} { position: relative; border-radius: 9999px; }
-            .${CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER}::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 9999px; pointer-events: none; animation-duration: 1.2s; animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
-            .${CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER}.${CONFIG.CSS.HYPE_TRAIN_CLASSES.TREASURE_EFFECT}::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 9999px; border: 2px solid; animation: sonar-wave 1.5s ease-out infinite; animation-delay: 0.5s; }
+            .${CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER}::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 9999px; pointer-events: none; animation-duration: 1.2s; animation-timing-function: ease-in-out; animation-iteration-count: infinite; will-change: transform, opacity; }
+            .${CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER}.${CONFIG.CSS.HYPE_TRAIN_CLASSES.TREASURE_EFFECT}::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 9999px; border: 2px solid; animation: sonar-wave 1.5s ease-out infinite; animation-delay: 0.5s; will-change: transform, opacity; }
             .${CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER}.${CONFIG.CSS.HYPE_TRAIN_CLASSES.BLUE}::after { animation-name: ht-pulse-blue; }
             .${CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER}.${CONFIG.CSS.HYPE_TRAIN_CLASSES.GREEN}::after { animation-name: ht-pulse-green; }
             .${CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER}.${CONFIG.CSS.HYPE_TRAIN_CLASSES.YELLOW}::after { animation-name: ht-pulse-yellow; }
@@ -114,7 +133,7 @@
             .${CONFIG.CSS.HYPE_TRAIN_CLASSES.ORANGE} { border-color: #E4750E; color: #E4750E; }
             .${CONFIG.CSS.HYPE_TRAIN_CLASSES.RED} { border-color: #D93025; color: #D93025; }
             .${CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER}.${CONFIG.CSS.HYPE_TRAIN_CLASSES.GOLD}::after { content: ''; background-image: url('${goldKappaImageUrl}'); background-size: 80%; background-position: center; background-repeat: no-repeat; opacity: 0.2; box-shadow: inset 0 0 10px 3px #FFD700, 0 0 20px 5px #FFD700; animation: legendary-sparkle 1.8s ease-in-out infinite; }
-            .${CONFIG.CSS.HYPE_TRAIN_CLASSES.LEVEL_TEXT}.ht-kappa-crown { content: ''; font-size: 28px; color: #FFD700; text-shadow: 0 0 4px black, 0 0 8px gold, 0 0 12px white; animation: legendary-crown-float 2.5s ease-in-out infinite; z-index: 12; }
+            .${CONFIG.CSS.HYPE_TRAIN_CLASSES.LEVEL_TEXT}.ht-kappa-crown { content: ''; font-size: 28px; color: #FFD700; text-shadow: 0 0 4px black, 0 0 8px gold, 0 0 12px white; animation: legendary-crown-float 2.5s ease-in-out infinite; z-index: 12; will-change: transform; }
             .${CONFIG.CSS.HYPE_TRAIN_CLASSES.LEVEL_TEXT} { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 16px; font-weight: 900; color: white; text-shadow: -1px -1px 0 #1f1f23, 1px -1px 0 #1f1f23, -1px 1px 0 #1f1f23, 1px 1px 0 #1f1f23; pointer-events: none; z-index: 10; animation: ht-text-color-anim 1.2s ease-in-out infinite; }
         `;
         const style = document.createElement('style');
@@ -133,15 +152,19 @@
         channelElement.dataset.uptimeStatus = 'live';
         let uptimeDisplay = channelElement.querySelector(`.${CONFIG.CSS_CLASSES.CUSTOM_UPTIME_COUNTER}`);
         if (!uptimeDisplay) {
+            // AMÉLIORATION PERFORMANCE DOM: Utilisation d'un DocumentFragment
+            const fragment = document.createDocumentFragment();
             uptimeDisplay = document.createElement('div');
             uptimeDisplay.className = `${CONFIG.CSS_CLASSES.CUSTOM_UPTIME_COUNTER} tw-c-text-alt-2`;
             Object.assign(uptimeDisplay.style, CONFIG.UPTIME_COUNTER_STYLE);
+            fragment.appendChild(uptimeDisplay);
+
             const insertionPoint = channelElement.querySelector('.side-nav-card__live-status') || channelElement.querySelector('.side-nav-card__meta');
             if (insertionPoint) {
                 if (insertionPoint.classList.contains('side-nav-card__live-status')) {
                     Object.assign(insertionPoint.style, { display: 'flex', flexDirection: 'column', alignItems: 'flex-end' });
                 }
-                insertionPoint.appendChild(uptimeDisplay);
+                insertionPoint.appendChild(fragment);
             }
         }
         uptimeDisplay.dataset.startedAt = startedAtString;
@@ -267,30 +290,36 @@
         }
     }
 
-    // NOUVEAU : Fonction pour traiter la file d'attente
     function processApiQueue() {
         if (state.apiQueue.size === 0) return;
 
         console.log(`[Cowlor's Sidebar] Processing API queue with ${state.apiQueue.size} channels.`);
-        executeBatchApiUpdate(new Map(state.apiQueue)); // On passe une copie de la Map
+        executeBatchApiUpdate(new Map(state.apiQueue));
         state.apiQueue.clear();
         state.apiQueueTimer = null;
     }
     
-    // MODIFIÉ : La fonction met en file d'attente au lieu de faire un appel direct
+    function scheduleApiProcessing() {
+        if (state.apiQueueTimer) return; // Un timer est déjà en place
+        // AMÉLIORATION PERFORMANCE: Utilisation de requestIdleCallback
+        state.apiQueueTimer = requestIdleCallback(() => {
+            processApiQueue();
+        }, { timeout: 1000 }); // Timeout pour garantir l'exécution même si le navigateur est occupé
+    }
+
     function processNewChannelElement(element) {
         const channelLogin = element.href?.split('/').pop()?.toLowerCase();
-        if (!channelLogin || state.liveChannelElements.has(channelLogin)) return;
+        
+        // AMÉLIORATION SÉCURITÉ: Valider le nom de la chaîne
+        if (!channelLogin || !TWITCH_LOGIN_REGEX.test(channelLogin) || state.liveChannelElements.has(channelLogin)) return;
 
         if (isChannelElementLive(element)) {
             const cachedData = state.domCache.get(channelLogin);
             if (cachedData) {
                 setupUptimeDisplay(element, channelLogin, cachedData.startedAt);
             } else {
-                // Ajouter à la file d'attente et (ré)initialiser le timer
                 state.apiQueue.set(channelLogin, element);
-                clearTimeout(state.apiQueueTimer);
-                state.apiQueueTimer = setTimeout(processApiQueue, CONFIG.TIMINGS_MS.API_DEBOUNCE);
+                scheduleApiProcessing();
             }
         } else {
             element.dataset.uptimeStatus = 'offline';
@@ -303,7 +332,7 @@
         
         state.domElements.sidebar.querySelectorAll(CONFIG.SELECTORS.CHANNEL_LINK_ITEM).forEach(el => {
             const channelLogin = el.href?.split('/').pop()?.toLowerCase();
-            if (!channelLogin) return;
+            if (!channelLogin || !TWITCH_LOGIN_REGEX.test(channelLogin)) return;
     
             if (isChannelElementLive(el)) {
                 const cachedData = state.domCache.get(channelLogin);
@@ -367,7 +396,7 @@
                     if (node.nodeType === Node.ELEMENT_NODE) {
                         const processRemovedNode = (removedEl) => {
                             const channelLogin = removedEl.href?.split('/').pop()?.toLowerCase();
-                            if (channelLogin) {
+                            if (channelLogin && TWITCH_LOGIN_REGEX.test(channelLogin)) {
                                 state.liveChannelElements.delete(channelLogin);
                             }
                         };

@@ -3,7 +3,7 @@
 // --- CONFIGURATION ---
 const CONFIG = {
     TWITCH_AUTH_URL: 'https://id.twitch.tv/oauth2/authorize',
-    STORAGE_TOKEN_KEY: 'twitch_token',
+    STORAGE_TOKEN_KEY: 'twitch_token', // TODO: Le token doit être chiffré pour plus de sécurité.
     API_BASE_URL: 'https://api.twitch.tv/helix/streams',
     manifest: chrome.runtime.getManifest(),
 };
@@ -71,7 +71,17 @@ async function getStreamsUptimeBatch(channelLogins) {
 
         clearNotification();
         const data = await response.json();
-        const results = new Map(data.data?.map(stream => [stream.user_login.toLowerCase(), stream.started_at]));
+        
+        // AMÉLIORATION SÉCURITÉ : Valider la structure de la réponse de l'API
+        if (!data || !Array.isArray(data.data)) {
+            throw new Error("Invalid API response structure.");
+        }
+
+        const validStreams = data.data.filter(stream => 
+            typeof stream.user_login === 'string' && typeof stream.started_at === 'string'
+        );
+
+        const results = new Map(validStreams.map(stream => [stream.user_login.toLowerCase(), stream.started_at]));
         return { success: true, data: Array.from(results.entries()) };
 
     } catch (error) {

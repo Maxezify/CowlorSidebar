@@ -28,6 +28,7 @@
             INITIAL_SETTLE_DELAY: 2000,
             EXPANSION_CLICK_DELAY: 1000,
             EXPANSION_WAIT_DELAY: 500,
+            API_DEBOUNCE: 150, // Délai pour regrouper les appels API
         },
         API: {
             EXPANSION_MAX_ATTEMPTS: 20,
@@ -64,6 +65,8 @@
         observers: { sidebarObserver: null, mainObserver: null },
         isInitialized: false,
         animationFrameId: null,
+        apiQueue: new Map(), // File d'attente pour les appels API
+        apiQueueTimer: null,  // Timer pour le debounce
     };
 
     const formatUptime = (totalSeconds) => {
@@ -79,7 +82,6 @@
         const goldKappaImageUrl = chrome.runtime.getURL('gold_kappa.png');
         const css = `
             .${CONFIG.CSS_CLASSES.HIDDEN_ELEMENT} { display: none !important; }
-            /* MODIFIÉ : Le contour s'inverse pour rester visible */
             @keyframes ht-text-color-anim {
                 0%, 100% {
                     color: white;
@@ -264,7 +266,18 @@
             console.error('[API] Erreur de communication avec le background script:', error.message);
         }
     }
+
+    // NOUVEAU : Fonction pour traiter la file d'attente
+    function processApiQueue() {
+        if (state.apiQueue.size === 0) return;
+
+        console.log(`[Cowlor's Sidebar] Processing API queue with ${state.apiQueue.size} channels.`);
+        executeBatchApiUpdate(new Map(state.apiQueue)); // On passe une copie de la Map
+        state.apiQueue.clear();
+        state.apiQueueTimer = null;
+    }
     
+    // MODIFIÉ : La fonction met en file d'attente au lieu de faire un appel direct
     function processNewChannelElement(element) {
         const channelLogin = element.href?.split('/').pop()?.toLowerCase();
         if (!channelLogin || state.liveChannelElements.has(channelLogin)) return;
@@ -274,8 +287,10 @@
             if (cachedData) {
                 setupUptimeDisplay(element, channelLogin, cachedData.startedAt);
             } else {
-                const channelMap = new Map([[channelLogin, element]]);
-                executeBatchApiUpdate(channelMap);
+                // Ajouter à la file d'attente et (ré)initialiser le timer
+                state.apiQueue.set(channelLogin, element);
+                clearTimeout(state.apiQueueTimer);
+                state.apiQueueTimer = setTimeout(processApiQueue, CONFIG.TIMINGS_MS.API_DEBOUNCE);
             }
         } else {
             element.dataset.uptimeStatus = 'offline';

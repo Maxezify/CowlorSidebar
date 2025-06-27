@@ -1,20 +1,21 @@
 {
-  "extensionDescription": {
-    "message": "Display stream durations in real-time, never miss a Hype Train again with spectacular visual effects!",
-    "description": "The extension's description shown in the web store."
+  "extensionName": {
+    "message": "Cowlor's Sidebar - Twitch Superpowers !"
   },
-  "popupLoading": { "message": "Loading...", "description": "Button text during initialisation." },
-  "popupLogin": { "message": "Log in to Twitch", "description": "Button text to prompt for login." },
-  "popupLogout": { "message": "Log out from Twitch", "description": "Button text to log out." },
+  "extensionSlogan": {
+    "message": "Enhance your Twitch experience ! Displays stream durations and visual effects !"
+  },
+  "popupLoading": { "message": "Loading...", "description": "Button text during initialization." },
+  "popupLogin": { "message": "Login to Twitch", "description": "Button text to prompt for login." },
+  "popupLogout": { "message": "Logout from Twitch", "description": "Button text to log out." },
   "popupStatusConnected": { "message": "✅ You are connected ✅", "description": "Status message when the user is logged in." },
-  "popupStatusDisconnected": { "message": "Please log in to activate the counter.", "description": "Status message when the user is logged out." },
+  "popupStatusDisconnected": { "message": "Please login to activate the counter.", "description": "Status message when the user is logged out." },
   "popupReloadMessage": { "message": "Please reload your Twitch page to enable the features.", "description": "Message prompting to reload the Twitch page." },
-  "popupErrorCommunicating": { "message": "❌ Communication error ❌", "description": "Generic error message for the popup." },
-  "popupActionFailed": { "message": "❌ Action failed ❌", "description": "Error message when a login/logout action fails." },
-  "buttonInProgress": { "message": "In progress...", "description": "Button text during an action." },
-  "notificationTokenExpired": { "message": "Twitch token has expired. Please log in again.", "description": "Notification on the extension icon." },
-  "notificationApiUnavailable": { "message": "The Twitch API is temporarily unavailable or the connection is lost.", "description": "Notification on the extension icon." },
-  "contentOfflineMessage": { "message": "Channel offline", "description": "Text displayed for an offline channel." },
+  "popupErrorCommunicating": { "message": "❌ Communication Error ❌", "description": "Generic error message for the popup." },
+  "popupActionFailed": { "message": "❌ Action Failed ❌", "description": "Error message when a login/logout action fails." },
+  "buttonInProgress": { "message": "In Progress...", "description": "Button text during an action." },
+  "notificationTokenExpired": { "message": "Twitch token has expired. Please login again.", "description": "Notification on the extension icon." },
+  "notificationApiUnavailable": { "message": "The Twitch API is temporarily unavailable or connection has been lost.", "description": "Notification on the extension icon." },
   "selectorHypeTrainTitle": { "message": "Hype Train", "description": "Title used by Twitch for the Hype Train." },
   "selectorSharedHypeTrainTitle": { "message": "Shared Hype Train", "description": "Title used by Twitch for the Shared Hype Train." },
   "selectorTreasureTrainTitle": { "message": "Treasure Train", "description": "Title used by Twitch for the Treasure Train." },

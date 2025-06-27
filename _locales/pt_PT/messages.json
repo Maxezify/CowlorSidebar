@@ -1,22 +1,32 @@
 {
-  "extensionDescription": {
-    "message": "Exiba a duração das transmissões em tempo real, nunca mais perca um Comboio de Hype com efeitos visuais espetaculares!",
-    "description": "A descrição da extensão exibida na loja."
+  "extensionName": {
+    "message": "Cowlor's Sidebar - Superpoderes para a Twitch !"
   },
-  "popupLoading": { "message": "A carregar...", "description": "Texto do botão durante a inicialização." },
-  "popupLogin": { "message": "Iniciar sessão no Twitch", "description": "Texto do botão para solicitar o início de sessão." },
-  "popupLogout": { "message": "Terminar sessão do Twitch", "description": "Texto do botão para terminar la sessão." },
-  "popupStatusConnected": { "message": "✅ Está ligado ✅", "description": "Mensagem de estado quando o utilizador está ligado." },
-  "popupStatusDisconnected": { "message": "Por favor, inicie sessão para ativar o contador.", "description": "Mensagem de estado quando o utilizador não está ligado." },
-  "popupReloadMessage": { "message": "Por favor, recarregue a sua página da Twitch para ativar as funcionalidades.", "description": "Mensagem a solicitar para recarregar a página da Twitch." },
+  "extensionSlogan": {
+    "message": "Melhore sua experiência na Twitch ! Exibe a duração das streams e efeitos visuais !"
+  },
+  "popupLoading": { "message": "Carregando...", "description": "Texto do botão durante a inicialização." },
+  "popupLogin": { "message": "Conectar-se à Twitch", "description": "Texto do botão para solicitar a conexão." },
+  "popupLogout": { "message": "Desconectar-se da Twitch", "description": "Texto do botão para se desconectar." },
+  "popupStatusConnected": { "message": "✅ Você está conectado ✅", "description": "Mensagem de status quando o usuário está conectado." },
+  "popupStatusDisconnected": { "message": "Por favor, conecte-se para ativar o contador.", "description": "Mensagem de status quando o usuário está desconectado." },
+  "popupReloadMessage": { "message": "Por favor, recarregue sua página da Twitch para ativar as funcionalidades.", "description": "Mensagem solicitando para recarregar a página da Twitch." },
   "popupErrorCommunicating": { "message": "❌ Erro de comunicação ❌", "description": "Mensagem de erro genérica para o pop-up." },
-  "popupActionFailed": { "message": "❌ A ação falhou ❌", "description": "Mensagem de erro quando uma ação de início/fim de sessão falha." },
-  "buttonInProgress": { "message": "Em progresso...", "description": "Texto do botão durante uma ação." },
-  "notificationTokenExpired": { "message": "O token do Twitch expirou. Por favor, inicie sessão novamente.", "description": "Notificação no ícone da extensão." },
-  "notificationApiUnavailable": { "message": "A API do Twitch está temporariamente indisponível ou a ligação foi perdida.", "description": "Notificação no ícone da extensão." },
-  "contentOfflineMessage": { "message": "Canal offline", "description": "Texto exibido para um canal offline." },
-  "selectorHypeTrainTitle": { "message": "Hype Train", "description": "Título usado pelo Twitch para o Comboio de Hype." },
-  "selectorSharedHypeTrainTitle": { "message": "Hype Train partilhado", "description": "Título usado pelo Twitch para o Comboio de Hype Partilhado." },
-  "selectorTreasureTrainTitle": { "message": "Treasure Train", "description": "Título usado pelo Twitch para o Comboio do Tesouro." },
-  "selectorKappaTrainTitle": { "message": "Comboio de Kappa Dourado", "description": "Título usado pelo Twitch para o Comboio de Kappa Dourado." }
+  "popupActionFailed": { "message": "❌ A ação falhou ❌", "description": "Mensagem de erro quando uma ação de conexão/desconexão falha." },
+  "buttonInProgress": { "message": "Em andamento...", "description": "Texto do botão durante uma ação." },
+  "notificationTokenExpired": { "message": "O token da Twitch expirou. Por favor, conecte-se novamente.", "description": "Notificação no ícone da extensão." },
+  "notificationApiUnavailable": { "message": "A API da Twitch está temporariamente indisponível ou a conexão foi perdida.", "description": "Notificação no ícone da extensão." },
+  "selectorHypeTrainTitle": { "message": "Hype Train", "description": "Título usado pela Twitch para o Trem do Hype." },
+  "selectorSharedHypeTrainTitle": {
+    "message": "Hype Train Coletivo",
+    "description": "Título usado pela Twitch para o Trem do Hype Compartilhado."
+  },
+  "selectorTreasureTrainTitle": {
+    "message": "Trem-Tesouro",
+    "description": "Título usado pela Twitch para o Trem do Tesouro."
+  },
+  "selectorKappaTrainTitle": {
+    "message": "Golden Kappa Train",
+    "description": "Título usado pela Twitch para o Trem de Kappa Dourado."
+  }
 }

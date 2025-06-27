@@ -1,7 +1,9 @@
 {
-  "extensionDescription": {
-    "message": "Visualizza la durata degli stream in tempo reale, non perdere mai più un Treno Hype con spettacolari effetti visivi!",
-    "description": "La descrizione dell'estensione mostrata nel web store."
+  "extensionName": {
+    "message": "Cowlor's Sidebar - Superpoteri per Twitch !"
+  },
+  "extensionSlogan": {
+    "message": "Migliora la tua esperienza su Twitch ! Visualizza la durata degli stream ed effetti visivi !"
   },
   "popupLoading": {
     "message": "Caricamento...",
@@ -46,10 +48,6 @@
   "notificationApiUnavailable": {
     "message": "L'API di Twitch è temporaneamente non disponibile o la connessione è stata persa.",
     "description": "Notifica sull'icona dell'estensione."
-  },
-  "contentOfflineMessage": {
-    "message": "Canale offline",
-    "description": "Testo visualizzato per un canale offline."
   },
   "selectorHypeTrainTitle": {
     "message": "Hype Train",

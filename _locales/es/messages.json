@@ -1,7 +1,9 @@
 {
-  "extensionDescription": {
-    "message": "¡Muestra la duración de los streams en tiempo real, no te pierdas nunca más un Hype Train con espectaculares efectos visuales!",
-    "description": "La descripción de la extensión que se muestra en la tienda."
+  "extensionName": {
+    "message": "Cowlor's Sidebar - ¡Superpoderes para Twitch!"
+  },
+  "extensionSlogan": {
+    "message": "¡Mejora tu experiencia en Twitch! ¡Muestra la duración de los streams y efectos visuales!"
   },
   "popupLoading": { "message": "Cargando...", "description": "Texto del botón durante la inicialización." },
   "popupLogin": { "message": "Iniciar sesión en Twitch", "description": "Texto del botón para invitar a iniciar sesión." },
@@ -14,10 +16,8 @@
   "buttonInProgress": { "message": "En curso...", "description": "Texto del botón durante una acción." },
   "notificationTokenExpired": { "message": "El token de Twitch ha expirado. Por favor, vuelve a iniciar sesión.", "description": "Notificación en el icono de la extensión." },
   "notificationApiUnavailable": { "message": "La API de Twitch no está disponible temporalmente o se ha perdido la conexión.", "description": "Notificación en el icono de la extensión." },
-  "contentOfflineMessage": { "message": "Canal desconectado", "description": "Texto que se muestra para un canal sin conexión." },
   "selectorHypeTrainTitle": { "message": "Tren del Hype", "description": "Título utilizado por Twitch para el Hype Train." },
   "selectorSharedHypeTrainTitle": { "message": "Tren del Hype compartido", "description": "Título utilizado por Twitch para el Hype Train compartido." },
   "selectorTreasureTrainTitle": { "message": "Tren del tesoro", "description": "Título utilizado por Twitch para el Tren del tesoro." },
-  "selectorKappaTrainTitle": { "message": "Tren del Kappa dorado", "description": "Título utilizado por Twitch para el Tren de Kappa Dorado." },
-  "selectorDiscountTrainTitle": { "message": "Descuento", "description": "Título utilizado por Twitch para un evento de descuento." }
+  "selectorKappaTrainTitle": { "message": "Tren del Kappa dorado", "description": "Título utilizado por Twitch para el Tren de Kappa Dorado." }
 }

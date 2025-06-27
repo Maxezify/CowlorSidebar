@@ -1,7 +1,9 @@
 {
-  "extensionDescription": {
-    "message": "实时显示直播时长，再也不会错过带有壮观视觉效果的 Hype Train！",
-    "description": "在网上应用店中显示的扩展程序说明。"
+  "extensionName": {
+    "message": "Cowlor's Sidebar - Twitch 超能力 ！"
+  },
+  "extensionSlogan": {
+    "message": "增强您的 Twitch 体验 ！显示直播时长和视觉效果 ！"
   },
   "popupLoading": { "message": "加载中...", "description": "初始化期间的按钮文本。" },
   "popupLogin": { "message": "登录 Twitch", "description": "提示登录的按钮文本。" },
@@ -14,7 +16,6 @@
   "buttonInProgress": { "message": "进行中...", "description": "操作期间的按钮文本。" },
   "notificationTokenExpired": { "message": "Twitch 令牌已过期。请重新登录。", "description": "扩展程序图标上的通知。" },
   "notificationApiUnavailable": { "message": "Twitch API 暂时不可用或连接已断开。", "description": "扩展程序图标上的通知。" },
-  "contentOfflineMessage": { "message": "频道离线", "description": "为离线频道显示的文本。" },
   "selectorHypeTrainTitle": { "message": "热潮列车", "description": "Twitch 用于 Hype Train 的标题。" },
   "selectorSharedHypeTrainTitle": { "message": "共享热潮列车", "description": "Twitch 用于共享的 Hype Train 的标题。" },
   "selectorTreasureTrainTitle": { "message": "宝藏列车", "description": "Twitch 用于宝藏列车的标题。" },

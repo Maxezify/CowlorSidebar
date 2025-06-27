@@ -1,7 +1,9 @@
 {
-  "extensionDescription": {
-    "message": "Отображайте длительность стримов в реальном времени, никогда больше не пропускайте Hype Train с впечатляющими визуальными эффектами!",
-    "description": "Описание расширения, отображаемое в интернет-магазине."
+  "extensionName": {
+    "message": "Cowlor's Sidebar - Суперсилы для Twitch !"
+  },
+  "extensionSlogan": {
+    "message": "Улучшите свой опыт на Twitch ! Отображает продолжительность стримов и визуальные эффекты !"
   },
   "popupLoading": {
     "message": "Загрузка...",
@@ -46,10 +48,6 @@
   "notificationApiUnavailable": {
     "message": "API Twitch временно недоступен или соединение потеряно.",
     "description": "Уведомление на значке расширения."
-  },
-  "contentOfflineMessage": {
-    "message": "Канал оффлайн",
-    "description": "Текст, отображаемый для оффлайн-канала."
   },
   "selectorHypeTrainTitle": {
     "message": "Хайповоз",

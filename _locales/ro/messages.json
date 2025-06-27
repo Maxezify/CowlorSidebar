@@ -1,7 +1,9 @@
 {
-  "extensionDescription": {
-    "message": "Afișați durata stream-urilor în timp real, nu mai ratați niciodată un Hype Train cu efecte vizuale spectaculoase!",
-    "description": "Descrierea extensiei afișată în magazinul web."
+  "extensionName": {
+    "message": "Cowlor's Sidebar - Superputeri pentru Twitch !"
+  },
+  "extensionSlogan": {
+    "message": "Îmbunătățește-ți experiența pe Twitch ! Afișează durata stream-urilor și efecte vizuale !"
   },
   "popupLoading": { "message": "Se încarcă...", "description": "Textul butonului în timpul inițializării." },
   "popupLogin": { "message": "Conectează-te la Twitch", "description": "Textul butonului care îndeamnă la conectare." },
@@ -14,7 +16,6 @@
   "buttonInProgress": { "message": "În desfășurare...", "description": "Textul butonului în timpul unei acțiuni." },
   "notificationTokenExpired": { "message": "Token-ul Twitch a expirat. Te rugăm să te conectezi din nou.", "description": "Notificare pe pictograma extensiei." },
   "notificationApiUnavailable": { "message": "API-ul Twitch este temporar indisponibil sau conexiunea a fost pierdută.", "description": "Notificare pe pictograma extensiei." },
-  "contentOfflineMessage": { "message": "Canal offline", "description": "Text afișat pentru un canal offline." },
   "selectorHypeTrainTitle": { "message": "Tren cu entuziasm", "description": "Titlu folosit de Twitch pentru Hype Train." },
   "selectorSharedHypeTrainTitle": { "message": "Tren cu entuziasm împărțit", "description": "Titlu folosit de Twitch pentru Hype Train partajat." },
   "selectorTreasureTrainTitle": { "message": "Tren cu comori", "description": "Titlu folosit de Twitch pentru Trenul cu comori." },

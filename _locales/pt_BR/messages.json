@@ -1,7 +1,9 @@
 {
-  "extensionDescription": {
-    "message": "Exiba a duração das streams em tempo real, nunca mais perca um Trem do Hype com efeitos visuais espetaculares!",
-    "description": "A descrição da extensão exibida na loja."
+  "extensionName": {
+    "message": "Cowlor's Sidebar - Superpoderes para a Twitch !"
+  },
+  "extensionSlogan": {
+    "message": "Melhore sua experiência na Twitch ! Exibe a duração das streams e efeitos visuais !"
   },
   "popupLoading": { "message": "Carregando...", "description": "Texto do botão durante a inicialização." },
   "popupLogin": { "message": "Conectar-se à Twitch", "description": "Texto do botão para solicitar a conexão." },
@@ -14,7 +16,6 @@
   "buttonInProgress": { "message": "Em andamento...", "description": "Texto do botão durante uma ação." },
   "notificationTokenExpired": { "message": "O token da Twitch expirou. Por favor, conecte-se novamente.", "description": "Notificação no ícone da extensão." },
   "notificationApiUnavailable": { "message": "A API da Twitch está temporariamente indisponível ou a conexão foi perdida.", "description": "Notificação no ícone da extensão." },
-  "contentOfflineMessage": { "message": "Canal offline", "description": "Texto exibido para um canal offline." },
   "selectorHypeTrainTitle": { "message": "Hype Train", "description": "Título usado pela Twitch para o Trem do Hype." },
   "selectorSharedHypeTrainTitle": {
     "message": "Hype Train Coletivo",

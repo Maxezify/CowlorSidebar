@@ -52,6 +52,7 @@
             TREASURE_TRAIN_TEXT: `p[title*="${i18n.treasureTrainTitle}"]`,
             KAPPA_TRAIN_TEXT: `p[title*="${i18n.kappaTrainTitle}"]`,
             SHOW_MORE_BUTTON: 'button[data-test-selector="ShowMore"], a[data-test-selector="ShowMore"]',
+            GUEST_AVATAR: '.primary-with-small-avatar__mini-avatar',
         },
         TIMINGS_MS: {
             INITIAL_SETTLE_DELAY: 2000,
@@ -65,9 +66,15 @@
              HYPE_TRAIN_CLASSES: {
                 CONTAINER: 'hype-train-container',
                 LEVEL_TEXT: 'hype-train-level-text',
+                SHIFTED: 'ht-shifted', // Nouvelle classe pour le décalage
                 BLUE: 'ht-blue', GREEN: 'ht-green', YELLOW: 'ht-yellow',
                 ORANGE: 'ht-orange', RED: 'ht-red', GOLD: 'ht-gold',
                 TREASURE_EFFECT: 'ht-treasure-effect'
+            },
+            SQUAD_CLASSES: {
+                INDICATOR_HIDDEN: 'squad-indicator-hidden',
+                COUNT_CONTAINER: 'squad-count-container',
+                COUNT_TEXT: 'squad-count-text'
             }
         },
         UPTIME_COUNTER_STYLE: {
@@ -88,7 +95,7 @@
 
     const state = {
         liveChannelElements: new Map(),
-        domCache: new LRUCache(200), // AMÉLIORATION PERFORMANCE: Utilisation du cache LRU
+        domCache: new LRUCache(200),
         domElements: { sidebar: null },
         observers: { sidebarObserver: null, mainObserver: null },
         isInitialized: false,
@@ -121,7 +128,7 @@
             @keyframes legendary-crown-float { 0% { transform: translate(-50%, -50%) translateY(-5px) scale(1.1); } 50% { transform: translate(-50%, -50%) translateY(0) scale(1.05); } 100% { transform: translate(-50%, -50%) translateY(-5px) scale(1.1); } }
             .${CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER} { position: relative; border-radius: 9999px; }
             .${CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER}::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 9999px; pointer-events: none; animation-duration: 1.2s; animation-timing-function: ease-in-out; animation-iteration-count: infinite; will-change: transform, opacity; }
-            .${CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER}.${CONFIG.CSS.HYPE_TRAIN_CLASSES.TREASURE_EFFECT}::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 9999px; border: 2px solid; animation: sonar-wave 1.5s ease-out infinite; animation-delay: 0.5s; will-change: transform, opacity; }
+            .${CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER}.${CONFIG.CSS.HYPE_TRAIN_CLASSES.TREASURE_EFFECT}::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 9999px; border: 2px solid; animation: sonar-wave 1.2s ease-out infinite; animation-delay: 0.5s; will-change: transform, opacity; }
             .${CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER}.${CONFIG.CSS.HYPE_TRAIN_CLASSES.BLUE}::after { animation-name: ht-pulse-blue; }
             .${CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER}.${CONFIG.CSS.HYPE_TRAIN_CLASSES.GREEN}::after { animation-name: ht-pulse-green; }
             .${CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER}.${CONFIG.CSS.HYPE_TRAIN_CLASSES.YELLOW}::after { animation-name: ht-pulse-yellow; }
@@ -135,6 +142,33 @@
             .${CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER}.${CONFIG.CSS.HYPE_TRAIN_CLASSES.GOLD}::after { content: ''; background-image: url('${goldKappaImageUrl}'); background-size: 80%; background-position: center; background-repeat: no-repeat; opacity: 0.2; box-shadow: inset 0 0 10px 3px #FFD700, 0 0 20px 5px #FFD700; animation: legendary-sparkle 1.8s ease-in-out infinite; }
             .${CONFIG.CSS.HYPE_TRAIN_CLASSES.LEVEL_TEXT}.ht-kappa-crown { content: ''; font-size: 28px; color: #FFD700; text-shadow: 0 0 4px black, 0 0 8px gold, 0 0 12px white; animation: legendary-crown-float 2.5s ease-in-out infinite; z-index: 12; will-change: transform; }
             .${CONFIG.CSS.HYPE_TRAIN_CLASSES.LEVEL_TEXT} { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 16px; font-weight: 900; color: white; text-shadow: -1px -1px 0 #1f1f23, 1px -1px 0 #1f1f23, -1px 1px 0 #1f1f23, 1px 1px 0 #1f1f23; pointer-events: none; z-index: 10; animation: ht-text-color-anim 1.2s ease-in-out infinite; }
+            
+            /* Style pour décaler le numéro du Hype Train si un invité est présent */
+            .${CONFIG.CSS.HYPE_TRAIN_CLASSES.LEVEL_TEXT}.${CONFIG.CSS.HYPE_TRAIN_CLASSES.SHIFTED} {
+                top: 35%;
+                left: 35%;
+                font-size: 13px;
+            }
+
+            /* STYLES pour le Squad Stream */
+            .${CONFIG.CSS.SQUAD_CLASSES.INDICATOR_HIDDEN} { display: none !important; }
+            .${CONFIG.CSS.SQUAD_CLASSES.COUNT_CONTAINER} { position: relative; }
+            .${CONFIG.CSS.SQUAD_CLASSES.COUNT_TEXT} {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                color: white;
+                font-size: 13px;
+                font-weight: bold;
+                text-shadow: none;
+                pointer-events: none;
+                z-index: 1;
+                background-color: rgba(0, 0, 0, 0.7);
+                border-radius: 50%;
+                padding: 0px 4px;
+                line-height: 16px; /* Ajustement pour la nouvelle taille de police */
+            }
         `;
         const style = document.createElement('style');
         style.id = styleId;
@@ -152,7 +186,6 @@
         channelElement.dataset.uptimeStatus = 'live';
         let uptimeDisplay = channelElement.querySelector(`.${CONFIG.CSS_CLASSES.CUSTOM_UPTIME_COUNTER}`);
         if (!uptimeDisplay) {
-            // AMÉLIORATION PERFORMANCE DOM: Utilisation d'un DocumentFragment
             const fragment = document.createDocumentFragment();
             uptimeDisplay = document.createElement('div');
             uptimeDisplay.className = `${CONFIG.CSS_CLASSES.CUSTOM_UPTIME_COUNTER} tw-c-text-alt-2`;
@@ -233,20 +266,52 @@
                 const level = levelMatch ? parseInt(levelMatch[0], 10) : 1;
                 colorClass = getHypeTrainColorClass(level);
                 overlay.textContent = level;
-
-                if (textEl.matches(CONFIG.SELECTORS.TREASURE_TRAIN_TEXT)) {
-                    avatarContainer.classList.add(CONFIG.CSS.HYPE_TRAIN_CLASSES.TREASURE_EFFECT);
-                }
             }
             
             channelLink.dataset.hypeTrainActive = 'true';
             avatarContainer.classList.add(CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER, colorClass);
             avatarContainer.appendChild(overlay);
+
+            const guestAvatar = channelLink.querySelector(CONFIG.SELECTORS.GUEST_AVATAR);
+            if (guestAvatar) {
+                overlay.classList.add(CONFIG.CSS.HYPE_TRAIN_CLASSES.SHIFTED);
+            }
+
+            if (textEl.matches(CONFIG.SELECTORS.TREASURE_TRAIN_TEXT)) {
+                avatarContainer.classList.add(CONFIG.CSS.HYPE_TRAIN_CLASSES.TREASURE_EFFECT);
+            }
             
             const hypeTrainTextContainer = textEl.parentElement;
             if (hypeTrainTextContainer) {
                 hypeTrainTextContainer.classList.add(CONFIG.CSS_CLASSES.HIDDEN_ELEMENT);
                 hypeTrainTextContainer.dataset.isHypeTrainContainer = 'true';
+            }
+        });
+    }
+
+    function processSquadStreams() {
+        if (!state.domElements.sidebar) return;
+
+        state.domElements.sidebar.querySelectorAll(CONFIG.SELECTORS.CHANNEL_LINK_ITEM).forEach(channelLink => {
+            const guestAvatar = channelLink.querySelector(CONFIG.SELECTORS.GUEST_AVATAR);
+
+            if (guestAvatar && !guestAvatar.querySelector(`.${CONFIG.CSS.SQUAD_CLASSES.COUNT_TEXT}`)) {
+                const allParagraphs = Array.from(channelLink.querySelectorAll('p'));
+                const squadIndicator = allParagraphs.find(p => p.textContent.trim().startsWith('+'));
+
+                if (squadIndicator) {
+                    const numberMatch = squadIndicator.textContent.match(/\d+/);
+                    if (!numberMatch) return;
+                    const count = numberMatch[0];
+
+                    squadIndicator.classList.add(CONFIG.CSS.SQUAD_CLASSES.INDICATOR_HIDDEN);
+
+                    guestAvatar.classList.add(CONFIG.CSS.SQUAD_CLASSES.COUNT_CONTAINER);
+                    const countText = document.createElement('span');
+                    countText.className = CONFIG.CSS.SQUAD_CLASSES.COUNT_TEXT;
+                    countText.textContent = count;
+                    guestAvatar.appendChild(countText);
+                }
             }
         });
     }
@@ -300,17 +365,15 @@
     }
     
     function scheduleApiProcessing() {
-        if (state.apiQueueTimer) return; // Un timer est déjà en place
-        // AMÉLIORATION PERFORMANCE: Utilisation de requestIdleCallback
+        if (state.apiQueueTimer) return;
         state.apiQueueTimer = requestIdleCallback(() => {
             processApiQueue();
-        }, { timeout: 1000 }); // Timeout pour garantir l'exécution même si le navigateur est occupé
+        }, { timeout: 1000 });
     }
 
     function processNewChannelElement(element) {
         const channelLogin = element.href?.split('/').pop()?.toLowerCase();
         
-        // AMÉLIORATION SÉCURITÉ: Valider le nom de la chaîne
         if (!channelLogin || !TWITCH_LOGIN_REGEX.test(channelLogin) || state.liveChannelElements.has(channelLogin)) return;
 
         if (isChannelElementLive(element)) {
@@ -390,7 +453,9 @@
         if (state.observers.sidebarObserver) state.observers.sidebarObserver.disconnect();
         
         state.observers.sidebarObserver = new MutationObserver((mutations) => {
-            processHypeTrains(); 
+            processHypeTrains();
+            processSquadStreams(); 
+            
             for (const mutation of mutations) {
                 mutation.removedNodes.forEach(node => {
                     if (node.nodeType === Node.ELEMENT_NODE) {
@@ -442,7 +507,9 @@
             await expandFollowedChannels();
             await initialScanForChannels();
             setupSidebarObserver();
+            
             processHypeTrains();
+            processSquadStreams();
 
         } catch (error) {
             console.error('[Init] A critical error occurred during initialization:', error);

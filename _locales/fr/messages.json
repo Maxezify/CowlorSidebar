@@ -1,7 +1,9 @@
 {
-  "extensionDescription": {
-    "message": "Affichez la durée des streams en temps réel, ne manquez plus jamais un Train de la Hype avec des effets visuels spectaculaires !",
-    "description": "La description de l'extension affichée dans le store."
+  "extensionName": {
+    "message": "Cowlor's Sidebar - Super-pouvoirs pour Twitch !"
+  },
+  "extensionSlogan": {
+    "message": "Améliorez votre expérience Twitch ! Affiche la durée des streams et des effets visuels !"
   },
   "popupLoading": {
     "message": "Chargement...",
@@ -46,10 +48,6 @@
   "notificationApiUnavailable": {
     "message": "L'API Twitch est momentanément indisponible ou la connexion est perdue.",
     "description": "Notification sur l'icône de l'extension."
-  },
-  "contentOfflineMessage": {
-    "message": "Chaine déconnectée",
-    "description": "Texte affiché pour une chaîne hors-ligne."
   },
   "selectorHypeTrainTitle": {
     "message": "Train de la Hype",

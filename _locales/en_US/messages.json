@@ -1,7 +1,9 @@
 {
-  "extensionDescription": {
-    "message": "Display stream durations in real-time, never miss a Hype Train again with spectacular visual effects!",
-    "description": "The extension's description shown in the web store."
+  "extensionName": {
+    "message": "Cowlor's Sidebar - Twitch Superpowers !"
+  },
+  "extensionSlogan": {
+    "message": "Enhance your Twitch experience ! Displays stream durations and visual effects !"
   },
   "popupLoading": { "message": "Loading...", "description": "Button text during initialization." },
   "popupLogin": { "message": "Login to Twitch", "description": "Button text to prompt for login." },
@@ -14,7 +16,6 @@
   "buttonInProgress": { "message": "In Progress...", "description": "Button text during an action." },
   "notificationTokenExpired": { "message": "Twitch token has expired. Please login again.", "description": "Notification on the extension icon." },
   "notificationApiUnavailable": { "message": "The Twitch API is temporarily unavailable or connection has been lost.", "description": "Notification on the extension icon." },
-  "contentOfflineMessage": { "message": "Channel Offline", "description": "Text displayed for an offline channel." },
   "selectorHypeTrainTitle": { "message": "Hype Train", "description": "Title used by Twitch for the Hype Train." },
   "selectorSharedHypeTrainTitle": { "message": "Shared Hype Train", "description": "Title used by Twitch for the Shared Hype Train." },
   "selectorTreasureTrainTitle": { "message": "Treasure Train", "description": "Title used by Twitch for the Treasure Train." },

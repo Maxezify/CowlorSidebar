@@ -1,7 +1,9 @@
 {
-  "extensionDescription": {
-    "message": "Toon de duur van streams in realtime, mis nooit meer een Hype Train met spectaculaire visuele effecten!",
-    "description": "De beschrijving van de extensie in de web store."
+  "extensionName": {
+    "message": "Cowlor's Sidebar - Twitch Superkrachten !"
+  },
+  "extensionSlogan": {
+    "message": "Verbeter je Twitch-ervaring ! Toont streamduren en visuele effecten !"
   },
   "popupLoading": {
     "message": "Laden...",
@@ -46,10 +48,6 @@
   "notificationApiUnavailable": {
     "message": "De Twitch API is tijdelijk niet beschikbaar of de verbinding is verbroken.",
     "description": "Melding op het extensiepictogram."
-  },
-  "contentOfflineMessage": {
-    "message": "Kanaal offline",
-    "description": "Tekst voor een offline kanaal."
   },
   "selectorHypeTrainTitle": {
     "message": "Hypetrein",

@@ -1,7 +1,9 @@
 {
-  "extensionDescription": {
-    "message": "Yayınların süresini gerçek zamanlı olarak görüntüleyin, muhteşem görsel efektlerle bir Hype Treni'ni bir daha asla kaçırmayın!",
-    "description": "Uzantının web mağazasında gösterilen açıklaması."
+  "extensionName": {
+    "message": "Cowlor's Sidebar - Twitch Süper Güçleri !"
+  },
+  "extensionSlogan": {
+    "message": "Twitch deneyiminizi geliştirin ! Yayın sürelerini ve görsel efektleri gösterir !"
   },
   "popupLoading": {
     "message": "Yükleniyor...",
@@ -46,10 +48,6 @@
   "notificationApiUnavailable": {
     "message": "Twitch API geçici olarak kullanılamıyor veya bağlantı kesildi.",
     "description": "Uzantı simgesindeki bildirim."
-  },
-  "contentOfflineMessage": {
-    "message": "Kanal çevrimdışı",
-    "description": "Çevrimdışı bir kanal için görüntülenen metin."
   },
   "selectorHypeTrainTitle": {
     "message": "Hype Train",

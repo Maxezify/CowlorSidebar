@@ -1,7 +1,9 @@
 {
-  "extensionDescription": {
-    "message": "即時顯示直播時長，再也不會錯過帶有壯觀視覺效果的 Hype Train！",
-    "description": "在線上應用程式商店中顯示的擴充功能說明。"
+  "extensionName": {
+    "message": "Cowlor's Sidebar - Twitch 超能力 ！"
+  },
+  "extensionSlogan": {
+    "message": "增強您的 Twitch 體驗 ！顯示直播時長和視覺效果 ！"
   },
   "popupLoading": { "message": "載入中...", "description": "初始化期間的按鈕文字。" },
   "popupLogin": { "message": "登入 Twitch", "description": "提示登入的按鈕文字。" },
@@ -14,7 +16,6 @@
   "buttonInProgress": { "message": "進行中...", "description": "操作期間的按鈕文字。" },
   "notificationTokenExpired": { "message": "Twitch 權杖已過期。請重新登入。", "description": "擴充功能圖示上的通知。" },
   "notificationApiUnavailable": { "message": "Twitch API 暫時無法使用或連線已中斷。", "description": "擴充功能圖示上的通知。" },
-  "contentOfflineMessage": { "message": "頻道離線", "description": "為離線頻道顯示的文字。" },
   "selectorHypeTrainTitle": { "message": "發燒列車", "description": "Twitch 用於 Hype Train 的標題。" },
   "selectorSharedHypeTrainTitle": { "message": "共享發燒列車", "description": "Twitch 用於分享的 Hype Train 的標題。" },
   "selectorTreasureTrainTitle": { "message": "寶藏列車", "description": "Twitch 用於寶藏列車的標題。" },

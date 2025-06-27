@@ -1,7 +1,9 @@
 {
-  "extensionDescription": {
-    "message": "Wyświetlaj czas trwania streamów w czasie rzeczywistym, nigdy więcej nie przegap Hype Train dzięki spektakularnym efektom wizualnym!",
-    "description": "Opis rozszerzenia wyświetlany w sklepie internetowym."
+  "extensionName": {
+    "message": "Cowlor's Sidebar - Supermoce dla Twitcha !"
+  },
+  "extensionSlogan": {
+    "message": "Ulepsz swoje wrażenia z Twitcha ! Wyświetla czas trwania streamów i efekty wizualne !"
   },
   "popupLoading": { "message": "Ładowanie...", "description": "Tekst przycisku podczas inicjalizacji." },
   "popupLogin": { "message": "Zaloguj się do Twitcha", "description": "Tekst przycisku zachęcający do zalogowania." },
@@ -14,9 +16,8 @@
   "buttonInProgress": { "message": "W toku...", "description": "Tekst przycisku podczas akcji." },
   "notificationTokenExpired": { "message": "Token Twitch wygasł. Zaloguj się ponownie.", "description": "Powiadomienie na ikonie rozszerzenia." },
   "notificationApiUnavailable": { "message": "API Twitcha jest tymczasowo niedostępne lub utracono połączenie.", "description": "Powiadomienie na ikonie rozszerzenia." },
-  "contentOfflineMessage": { "message": "Kanał offline", "description": "Tekst wyświetlany dla kanału offline." },
   "selectorHypeTrainTitle": { "message": "Hype Train", "description": "Tytuł używany przez Twitcha dla Hype Train." },
   "selectorSharedHypeTrainTitle": { "message": "Wspólny Hype Train", "description": "Tytuł używany przez Twitcha dla współdzielonego Hype Train." },
   "selectorTreasureTrainTitle": { "message": "Pociąg skarbów", "description": "Tytuł używany przez Twitcha dla Pociągu ze skarbami." },
-  "selectorKappaTrainTitle": { "message": "Golden Kappa Trainem", "description": "Tytuł używany przez Twitcha для Złotego Pociągu Kappa." }
+  "selectorKappaTrainTitle": { "message": "Golden Kappa Trainem", "description": "Tytuł używany przez Twitcha dla Złotego Pociągu Kappa." }
 }

@@ -1,7 +1,9 @@
 {
-  "extensionDescription": {
-    "message": "عرض مدة البث المباشر في الوقت الفعلي، ولا تفوّت قطار الحماس مع تأثيرات بصرية مذهلة!",
-    "description": "وصف الإضافة المعروض في المتجر."
+  "extensionName": {
+    "message": "Cowlor's Sidebar - قوى Twitch الخارقة!"
+  },
+  "extensionSlogan": {
+    "message": "حسّن تجربتك على Twitch! يعرض مدد البث وتأثيرات بصرية!"
   },
   "popupLoading": { "message": "جارٍ التحميل...", "description": "نص الزر أثناء التهيئة." },
   "popupLogin": { "message": "تسجيل الدخول إلى Twitch", "description": "نص الزر لطلب تسجيل الدخول." },
@@ -14,7 +16,6 @@
   "buttonInProgress": { "message": "قيد التقدم...", "description": "نص الزر أثناء تنفيذ إجراء." },
   "notificationTokenExpired": { "message": "انتهت صلاحية رمز Twitch. يرجى تسجيل الدخول مرة أخرى.", "description": "إشعار على أيقونة الإضافة." },
   "notificationApiUnavailable": { "message": "واجهة برمجة تطبيقات Twitch غير متاحة مؤقتًا أو انقطع الاتصال.", "description": "إشعار على أيقونة الإضافة." },
-  "contentOfflineMessage": { "message": "القناة غير متصلة", "description": "النص المعروض لقناة غير متصلة بالإنترنت." },
   "selectorHypeTrainTitle": { "message": "قطار الهايب", "description": "العنوان المستخدم من قبل Twitch لقطار الحماس." },
   "selectorSharedHypeTrainTitle": {
     "message": "قطار الهايب المشترك",

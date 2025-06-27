@@ -39,7 +39,7 @@
     };
     
     // AMÉLIORATION SÉCURITÉ: Regex pour valider un nom d'utilisateur Twitch
-    const TWITCH_LOGIN_REGEX = /^[a-zA-Z0-9_]{4,25}$/;
+    const TWITCH_LOGIN_REGEX = /^[a-zA-Z0-9_]{3,25}$/;
 
     const CONFIG = {
         SELECTORS: {

@@ -19,5 +19,6 @@
   "selectorHypeTrainTitle": { "message": "Hype Train", "description": "Title used by Twitch for the Hype Train." },
   "selectorSharedHypeTrainTitle": { "message": "Shared Hype Train", "description": "Title used by Twitch for the Shared Hype Train." },
   "selectorTreasureTrainTitle": { "message": "Treasure Train", "description": "Title used by Twitch for the Treasure Train." },
-  "selectorKappaTrainTitle": { "message": "Golden Kappa Train", "description": "Title used by Twitch for the Golden Kappa Train." }
+  "selectorKappaTrainTitle": { "message": "Golden Kappa Train", "description": "Title used by Twitch for the Golden Kappa Train." },
+  "selectorGiftSubHypeTrainTitle": { "message": "Gift Sub", "description": "Title used by Twitch for the Discount Hype Train." }
 }

@@ -64,5 +64,9 @@
   "selectorKappaTrainTitle": {
     "message": "хайповоз с золотым Kappa",
     "description": "Название, используемое Twitch для Золотого поезда Каппы."
+  },
+  "selectorGiftSubHypeTrainTitle": {
+    "message": "Подписка в подарок",
+    "description": "Title used by Twitch for the Discount Hype Train."
   }
 }

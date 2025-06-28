@@ -3,7 +3,7 @@
     "message": "Cowlor's Sidebar - ¡Superpoderes para Twitch!"
   },
   "extensionSlogan": {
-    "message": "¡Mejora tu experiencia en Twitch! Muestra la duración de los streams, efectos visuales para los Hype Trains y una interfaz limpia para los streams en equipo."
+    "message": "¡Mejora tu experiencia en Twitch! ¡Muestra la duración de los streams y efectos visuales!"
   },
   "popupLoading": { "message": "Cargando...", "description": "Texto del botón durante la inicialización." },
   "popupLogin": { "message": "Iniciar sesión en Twitch", "description": "Texto del botón para invitar a iniciar sesión." },
@@ -19,5 +19,6 @@
   "selectorHypeTrainTitle": { "message": "Tren del Hype", "description": "Título utilizado por Twitch para el Hype Train." },
   "selectorSharedHypeTrainTitle": { "message": "Tren del Hype compartido", "description": "Título utilizado por Twitch para el Hype Train compartido." },
   "selectorTreasureTrainTitle": { "message": "Tren del tesoro", "description": "Título utilizado por Twitch para el Tren del tesoro." },
-  "selectorKappaTrainTitle": { "message": "Tren del Kappa dorado", "description": "Título utilizado por Twitch para el Tren de Kappa Dorado." }
+  "selectorKappaTrainTitle": { "message": "Tren del Kappa dorado", "description": "Título utilizado por Twitch para el Tren de Kappa Dorado." },
+  "selectorGiftSubHypeTrainTitle": { "message": "Suscripción de regalo", "description": "Title used by Twitch for the Discount Hype Train." }
 }

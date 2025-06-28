@@ -3,21 +3,22 @@
     "message": "Cowlor's Sidebar - Twitch 超能力 ！"
   },
   "extensionSlogan": {
-    "message": "增強您的 Twitch 體驗 ！顯示直播時長和視覺效果 ！"
+    "message": "增强您的 Twitch 体验 ！显示直播时长和视觉效果 ！"
   },
-  "popupLoading": { "message": "載入中...", "description": "初始化期間的按鈕文字。" },
-  "popupLogin": { "message": "登入 Twitch", "description": "提示登入的按鈕文字。" },
-  "popupLogout": { "message": "從 Twitch 登出", "description": "用於登出的按鈕文字。" },
-  "popupStatusConnected": { "message": "✅ 您已連線 ✅", "description": "使用者登入時的狀態訊息。" },
-  "popupStatusDisconnected": { "message": "請登入以啟動計數器。", "description": "使用者未登入時的狀態訊息。" },
-  "popupReloadMessage": { "message": "請重新載入您的 Twitch 頁面以啟用功能。", "description": "提示重新載入 Twitch 頁面的訊息。" },
-  "popupErrorCommunicating": { "message": "❌ 通訊錯誤 ❌", "description": "彈出視窗的通用錯誤訊息。" },
-  "popupActionFailed": { "message": "❌ 操作失敗 ❌", "description": "登入/登出操作失敗時的錯誤訊息。" },
-  "buttonInProgress": { "message": "進行中...", "description": "操作期間的按鈕文字。" },
-  "notificationTokenExpired": { "message": "Twitch 權杖已過期。請重新登入。", "description": "擴充功能圖示上的通知。" },
-  "notificationApiUnavailable": { "message": "Twitch API 暫時無法使用或連線已中斷。", "description": "擴充功能圖示上的通知。" },
-  "selectorHypeTrainTitle": { "message": "發燒列車", "description": "Twitch 用於 Hype Train 的標題。" },
-  "selectorSharedHypeTrainTitle": { "message": "共享發燒列車", "description": "Twitch 用於分享的 Hype Train 的標題。" },
-  "selectorTreasureTrainTitle": { "message": "寶藏列車", "description": "Twitch 用於寶藏列車的標題。" },
-  "selectorKappaTrainTitle": { "message": "黃金 Kappa 發燒列車", "description": "Twitch 用於金色 Kappa 列車的標題。" }
+  "popupLoading": { "message": "加载中...", "description": "初始化期间的按钮文本。" },
+  "popupLogin": { "message": "登录 Twitch", "description": "提示登录的按钮文本。" },
+  "popupLogout": { "message": "从 Twitch 登出", "description": "用于登出的按钮文本。" },
+  "popupStatusConnected": { "message": "✅ 您已连接 ✅", "description": "用户登录时的状态消息。" },
+  "popupStatusDisconnected": { "message": "请登录以激活计数器。", "description": "用户未登录时的状态消息。" },
+  "popupReloadMessage": { "message": "请重新加载您的 Twitch 页面以启用功能。", "description": "提示重新加载 Twitch 页面的消息。" },
+  "popupErrorCommunicating": { "message": "❌ 通信错误 ❌", "description": "弹出窗口的通用错误消息。" },
+  "popupActionFailed": { "message": "❌ 操作失败 ❌", "description": "登录/登出操作失败时的错误消息。" },
+  "buttonInProgress": { "message": "进行中...", "description": "操作期间的按钮文本。" },
+  "notificationTokenExpired": { "message": "Twitch 令牌已过期。请重新登录。", "description": "扩展程序图标上的通知。" },
+  "notificationApiUnavailable": { "message": "Twitch API 暂时不可用或连接已断开。", "description": "扩展程序图标上的通知。" },
+  "selectorHypeTrainTitle": { "message": "热潮列车", "description": "Twitch 用于 Hype Train 的标题。" },
+  "selectorSharedHypeTrainTitle": { "message": "共享热潮列车", "description": "Twitch 用于共享的 Hype Train 的标题。" },
+  "selectorTreasureTrainTitle": { "message": "宝藏列车", "description": "Twitch 用于宝藏列车的标题。" },
+  "selectorKappaTrainTitle": { "message": "金色 Kappa 列车", "description": "Twitch 用于金色 Kappa 列车的标题。" },
+  "selectorGiftSubHypeTrainTitle": { "message": "赠送订阅", "description": "Title used by Twitch for the Discount Hype Train." }
 }

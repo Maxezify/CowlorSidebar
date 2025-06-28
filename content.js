@@ -35,7 +35,8 @@
         hypeTrainTitle: chrome.i18n.getMessage('selectorHypeTrainTitle'),
         sharedHypeTrainTitle: chrome.i18n.getMessage('selectorSharedHypeTrainTitle'),
         treasureTrainTitle: chrome.i18n.getMessage('selectorTreasureTrainTitle'),
-        kappaTrainTitle: chrome.i18n.getMessage('selectorKappaTrainTitle')
+        kappaTrainTitle: chrome.i18n.getMessage('selectorKappaTrainTitle'),
+        giftSubTrainTitle: chrome.i18n.getMessage('selectorGiftSubHypeTrainTitle')
     };
     
     // AMÉLIORATION SÉCURITÉ: Regex pour valider un nom d'utilisateur Twitch
@@ -51,6 +52,7 @@
             ANY_HYPE_TRAIN_TEXT: `p[title*="${i18n.hypeTrainTitle}"], p[title*="${i18n.sharedHypeTrainTitle}"]`,
             TREASURE_TRAIN_TEXT: `p[title*="${i18n.treasureTrainTitle}"]`,
             KAPPA_TRAIN_TEXT: `p[title*="${i18n.kappaTrainTitle}"]`,
+            GIFT_SUB_TRAIN_ICON: `div[aria-label*="${i18n.giftSubTrainTitle}"]`,
             SHOW_MORE_BUTTON: 'button[data-test-selector="ShowMore"], a[data-test-selector="ShowMore"]',
             GUEST_AVATAR: '.primary-with-small-avatar__mini-avatar',
         },
@@ -69,7 +71,8 @@
                 SHIFTED: 'ht-shifted', // Nouvelle classe pour le décalage
                 BLUE: 'ht-blue', GREEN: 'ht-green', YELLOW: 'ht-yellow',
                 ORANGE: 'ht-orange', RED: 'ht-red', GOLD: 'ht-gold',
-                TREASURE_EFFECT: 'ht-treasure-effect'
+                TREASURE_EFFECT: 'ht-treasure-effect',
+                GIFT_SUB_EFFECT: 'ht-gift-sub-effect'
             },
             SQUAD_CLASSES: {
                 INDICATOR_HIDDEN: 'squad-indicator-hidden',
@@ -126,9 +129,33 @@
             @keyframes sonar-wave { 0% { transform: scale(0.9); opacity: 1; } 100% { transform: scale(2.2); opacity: 0; } }
             @keyframes legendary-sparkle { 0%, 100% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.5); opacity: 1; } }
             @keyframes legendary-crown-float { 0% { transform: translate(-50%, -50%) translateY(-5px) scale(1.1); } 50% { transform: translate(-50%, -50%) translateY(0) scale(1.05); } 100% { transform: translate(-50%, -50%) translateY(-5px) scale(1.1); } }
+            
+            @keyframes shimmer-background-pan {
+                0% { background-position: 200% 0; }
+                100% { background-position: -200% 0; }
+            }
+
             .${CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER} { position: relative; border-radius: 9999px; }
             .${CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER}::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 9999px; pointer-events: none; animation-duration: 1.2s; animation-timing-function: ease-in-out; animation-iteration-count: infinite; will-change: transform, opacity; }
             .${CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER}.${CONFIG.CSS.HYPE_TRAIN_CLASSES.TREASURE_EFFECT}::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 9999px; border: 2px solid; animation: sonar-wave 1.2s ease-out infinite; animation-delay: 0.5s; will-change: transform, opacity; }
+            
+            /* EFFET DE BORDURE SHIMMER POUR GIFT SUB */
+            .${CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER}.${CONFIG.CSS.HYPE_TRAIN_CLASSES.GIFT_SUB_EFFECT}::before {
+                content: '';
+                position: absolute;
+                top: -2px; left: -2px; right: -2px; bottom: -2px;
+                border-radius: 9999px;
+                padding: 2px;
+                background: linear-gradient(90deg, #6a0dad, #9146ff, #d7bfff, #9146ff, #6a0dad);
+                background-size: 300% 100%;
+                -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+                -webkit-mask-composite: xor;
+                mask-composite: exclude;
+                animation: shimmer-background-pan 2.5s linear infinite;
+                will-change: background-position;
+                pointer-events: none;
+            }
+
             .${CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER}.${CONFIG.CSS.HYPE_TRAIN_CLASSES.BLUE}::after { animation-name: ht-pulse-blue; }
             .${CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER}.${CONFIG.CSS.HYPE_TRAIN_CLASSES.GREEN}::after { animation-name: ht-pulse-green; }
             .${CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER}.${CONFIG.CSS.HYPE_TRAIN_CLASSES.YELLOW}::after { animation-name: ht-pulse-yellow; }
@@ -222,69 +249,97 @@
     }
 
     function cleanupHypeTrain(channelLink) {
-        if (!channelLink || channelLink.dataset.hypeTrainActive !== 'true') return;
         const avatarContainer = channelLink.querySelector(CONFIG.SELECTORS.AVATAR_CONTAINER);
         if (avatarContainer) {
-            avatarContainer.classList.remove(...Object.values(CONFIG.CSS.HYPE_TRAIN_CLASSES));
+            const classesToRemove = Object.values(CONFIG.CSS.HYPE_TRAIN_CLASSES);
+            avatarContainer.classList.remove(...classesToRemove);
             avatarContainer.querySelector(`.${CONFIG.CSS.HYPE_TRAIN_CLASSES.LEVEL_TEXT}`)?.remove();
         }
-        const hypeTrainTextContainer = channelLink.querySelector('[data-is-hype-train-container="true"]');
-        if (hypeTrainTextContainer) {
-            hypeTrainTextContainer.classList.remove(CONFIG.CSS_CLASSES.HIDDEN_ELEMENT);
-            hypeTrainTextContainer.removeAttribute('data-is-hype-train-container');
-        }
-        channelLink.removeAttribute('data-hype-train-active');
-    }
-
-    function processHypeTrains() {
-        if (!state.domElements.sidebar) return;
         
-        document.querySelectorAll('[data-hype-train-active="true"]').forEach(containerLink => {
-            if (!containerLink.querySelector(`${CONFIG.SELECTORS.ANY_HYPE_TRAIN_TEXT}, ${CONFIG.SELECTORS.TREASURE_TRAIN_TEXT}, ${CONFIG.SELECTORS.KAPPA_TRAIN_TEXT}`)) {
-                cleanupHypeTrain(containerLink);
-            }
+        channelLink.querySelectorAll('[data-is-hype-train-container="true"]').forEach(el => {
+            el.classList.remove(CONFIG.CSS_CLASSES.HIDDEN_ELEMENT);
+            el.removeAttribute('data-is-hype-train-container');
         });
 
-        const combinedSelector = `${CONFIG.SELECTORS.ANY_HYPE_TRAIN_TEXT}, ${CONFIG.SELECTORS.TREASURE_TRAIN_TEXT}, ${CONFIG.SELECTORS.KAPPA_TRAIN_TEXT}`;
-        state.domElements.sidebar.querySelectorAll(combinedSelector).forEach(textEl => {
-            const channelLink = textEl.closest(CONFIG.SELECTORS.CHANNEL_LINK_ITEM);
-            if (!channelLink || channelLink.dataset.hypeTrainActive === 'true') return;
+        channelLink.removeAttribute('data-hype-train-active');
+    }
+    
+    function processHypeTrains() {
+        if (!state.domElements.sidebar) return;
+
+        state.domElements.sidebar.querySelectorAll(CONFIG.SELECTORS.CHANNEL_LINK_ITEM).forEach(channelLink => {
             const avatarContainer = channelLink.querySelector(CONFIG.SELECTORS.AVATAR_CONTAINER);
             if (!avatarContainer) return;
-            
-            const overlay = document.createElement('span');
-            overlay.className = CONFIG.CSS.HYPE_TRAIN_CLASSES.LEVEL_TEXT;
-            
-            let colorClass;
-            
-            if (textEl.matches(CONFIG.SELECTORS.KAPPA_TRAIN_TEXT)) {
-                colorClass = CONFIG.CSS.HYPE_TRAIN_CLASSES.GOLD;
-                overlay.classList.add('ht-kappa-crown');
-                overlay.textContent = '';
-            } else {
-                const levelMatch = textEl.title.match(/\d+/);
-                const level = levelMatch ? parseInt(levelMatch[0], 10) : 1;
-                colorClass = getHypeTrainColorClass(level);
-                overlay.textContent = level;
+
+            const giftSubIcon = channelLink.querySelector(CONFIG.SELECTORS.GIFT_SUB_TRAIN_ICON);
+            const textEl = channelLink.querySelector(`${CONFIG.SELECTORS.ANY_HYPE_TRAIN_TEXT}, ${CONFIG.SELECTORS.TREASURE_TRAIN_TEXT}, ${CONFIG.SELECTORS.KAPPA_TRAIN_TEXT}`);
+
+            if (!giftSubIcon && !textEl) {
+                if (channelLink.hasAttribute('data-hype-train-active')) {
+                    cleanupHypeTrain(channelLink);
+                }
+                return;
             }
-            
+
             channelLink.dataset.hypeTrainActive = 'true';
-            avatarContainer.classList.add(CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER, colorClass);
-            avatarContainer.appendChild(overlay);
+            avatarContainer.classList.add(CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER);
 
-            const guestAvatar = channelLink.querySelector(CONFIG.SELECTORS.GUEST_AVATAR);
-            if (guestAvatar) {
-                overlay.classList.add(CONFIG.CSS.HYPE_TRAIN_CLASSES.SHIFTED);
+            if (giftSubIcon) {
+                avatarContainer.classList.add(CONFIG.CSS.HYPE_TRAIN_CLASSES.GIFT_SUB_EFFECT);
+                const giftSubIconContainer = giftSubIcon.parentElement;
+                if (giftSubIconContainer && !giftSubIconContainer.hasAttribute('data-is-hype-train-container')) {
+                    giftSubIconContainer.classList.add(CONFIG.CSS_CLASSES.HIDDEN_ELEMENT);
+                    giftSubIconContainer.dataset.isHypeTrainContainer = 'true';
+                }
+            } else {
+                avatarContainer.classList.remove(CONFIG.CSS.HYPE_TRAIN_CLASSES.GIFT_SUB_EFFECT);
             }
 
-            if (textEl.matches(CONFIG.SELECTORS.TREASURE_TRAIN_TEXT)) {
-                avatarContainer.classList.add(CONFIG.CSS.HYPE_TRAIN_CLASSES.TREASURE_EFFECT);
-            }
-            
-            const hypeTrainTextContainer = textEl.parentElement;
-            if (hypeTrainTextContainer) {
-                hypeTrainTextContainer.classList.add(CONFIG.CSS_CLASSES.HIDDEN_ELEMENT);
-                hypeTrainTextContainer.dataset.isHypeTrainContainer = 'true';
+            if (textEl) {
+                let overlay = avatarContainer.querySelector(`.${CONFIG.CSS.HYPE_TRAIN_CLASSES.LEVEL_TEXT}`);
+                if (!overlay) {
+                    overlay = document.createElement('span');
+                    overlay.className = CONFIG.CSS.HYPE_TRAIN_CLASSES.LEVEL_TEXT;
+                    avatarContainer.appendChild(overlay);
+                }
+
+                let colorClass;
+
+                if (textEl.matches(CONFIG.SELECTORS.KAPPA_TRAIN_TEXT)) {
+                    colorClass = CONFIG.CSS.HYPE_TRAIN_CLASSES.GOLD;
+                    overlay.classList.add('ht-kappa-crown');
+                    overlay.textContent = '';
+                } else {
+                    const levelMatch = textEl.title.match(/\d+/);
+                    const level = levelMatch ? parseInt(levelMatch[0], 10) : 1;
+                    colorClass = getHypeTrainColorClass(level);
+                    overlay.textContent = level;
+                }
+                
+                avatarContainer.classList.add(colorClass);
+
+                const guestAvatar = channelLink.querySelector(CONFIG.SELECTORS.GUEST_AVATAR);
+                if (guestAvatar && overlay) {
+                    overlay.classList.add(CONFIG.CSS.HYPE_TRAIN_CLASSES.SHIFTED);
+                }
+
+                if (textEl.matches(CONFIG.SELECTORS.TREASURE_TRAIN_TEXT)) {
+                    avatarContainer.classList.add(CONFIG.CSS.HYPE_TRAIN_CLASSES.TREASURE_EFFECT);
+                }
+
+                const hypeTrainTextContainer = textEl.parentElement;
+                if (hypeTrainTextContainer && !hypeTrainTextContainer.hasAttribute('data-is-hype-train-container')) {
+                    hypeTrainTextContainer.classList.add(CONFIG.CSS_CLASSES.HIDDEN_ELEMENT);
+                    hypeTrainTextContainer.dataset.isHypeTrainContainer = 'true';
+                }
+            } else {
+                const classesToRemove = [
+                    CONFIG.CSS.HYPE_TRAIN_CLASSES.BLUE, CONFIG.CSS.HYPE_TRAIN_CLASSES.GREEN, CONFIG.CSS.HYPE_TRAIN_CLASSES.YELLOW,
+                    CONFIG.CSS.HYPE_TRAIN_CLASSES.ORANGE, CONFIG.CSS.HYPE_TRAIN_CLASSES.RED, CONFIG.CSS.HYPE_TRAIN_CLASSES.GOLD,
+                    CONFIG.CSS.HYPE_TRAIN_CLASSES.TREASURE_EFFECT
+                ];
+                avatarContainer.classList.remove(...classesToRemove);
+                avatarContainer.querySelector(`.${CONFIG.CSS.HYPE_TRAIN_CLASSES.LEVEL_TEXT}`)?.remove();
             }
         });
     }
@@ -452,10 +507,16 @@
     function setupSidebarObserver() {
         if (state.observers.sidebarObserver) state.observers.sidebarObserver.disconnect();
         
-        state.observers.sidebarObserver = new MutationObserver((mutations) => {
+        // Le callback qui sera exécuté à chaque mutation
+        const callback = (mutations) => {
+            // **CORRECTIF :** Déconnecter l'observateur pour éviter les boucles infinies
+            state.observers.sidebarObserver.disconnect();
+
+            // Exécuter les fonctions de traitement du DOM
             processHypeTrains();
             processSquadStreams(); 
             
+            // Gérer les nœuds ajoutés/supprimés pour le compteur de temps
             for (const mutation of mutations) {
                 mutation.removedNodes.forEach(node => {
                     if (node.nodeType === Node.ELEMENT_NODE) {
@@ -482,8 +543,18 @@
                     }
                 });
             }
-        });
-        state.observers.sidebarObserver.observe(state.domElements.sidebar, { childList: true, subtree: true });
+
+            // **CORRECTIF :** Reconnecter l'observateur une fois les modifications terminées
+            if (state.domElements.sidebar) {
+                state.observers.sidebarObserver.observe(state.domElements.sidebar, { childList: true, subtree: true });
+            }
+        };
+        
+        state.observers.sidebarObserver = new MutationObserver(callback);
+        
+        if (state.domElements.sidebar) {
+            state.observers.sidebarObserver.observe(state.domElements.sidebar, { childList: true, subtree: true });
+        }
     }
     
     async function initializeMainFunctionality() {
@@ -506,8 +577,9 @@
             
             await expandFollowedChannels();
             await initialScanForChannels();
-            setupSidebarObserver();
+            setupSidebarObserver(); // L'observateur est maintenant sécurisé
             
+            // Exécuter une première fois manuellement
             processHypeTrains();
             processSquadStreams();
 

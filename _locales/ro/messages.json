@@ -19,5 +19,6 @@
   "selectorHypeTrainTitle": { "message": "Tren cu entuziasm", "description": "Titlu folosit de Twitch pentru Hype Train." },
   "selectorSharedHypeTrainTitle": { "message": "Tren cu entuziasm împărțit", "description": "Titlu folosit de Twitch pentru Hype Train partajat." },
   "selectorTreasureTrainTitle": { "message": "Tren cu comori", "description": "Titlu folosit de Twitch pentru Trenul cu comori." },
-  "selectorKappaTrainTitle": { "message": "Trenul Kappa de Aur", "description": "Titlu folosit de Twitch pentru Trenul Kappa de Aur." }
+  "selectorKappaTrainTitle": { "message": "Trenul Kappa de Aur", "description": "Titlu folosit de Twitch pentru Trenul Kappa de Aur." },
+  "selectorGiftSubHypeTrainTitle": { "message": "Abonament cadou", "description": "Title used by Twitch for the Discount Hype Train." }
 }

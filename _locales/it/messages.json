@@ -64,5 +64,9 @@
   "selectorKappaTrainTitle": {
     "message": "Treno Kappa dorato",
     "description": "Titolo usato da Twitch per il Treno Kappa d'oro."
+  },
+  "selectorGiftSubHypeTrainTitle": {
+    "message": "Abbonamento regalo",
+    "description": "Title used by Twitch for the Discount Hype Train."
   }
 }

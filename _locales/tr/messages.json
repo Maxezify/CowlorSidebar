@@ -64,5 +64,9 @@
   "selectorKappaTrainTitle": {
     "message": "Altın Kappa Train",
     "description": "Twitch tarafından Altın Kappa Treni için kullanılan başlık."
+  },
+  "selectorGiftSubHypeTrainTitle": {
+    "message": "Abonelik Hediye Et",
+    "description": "Title used by Twitch for the Discount Hype Train."
   }
 }

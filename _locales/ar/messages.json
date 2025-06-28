@@ -28,5 +28,9 @@
   "selectorKappaTrainTitle": {
     "message": "قطار Kappa الذهبي",
     "description": "العنوان المستخدم من قبل Twitch لقطار Kappa الذهبي."
+  },
+  "selectorGiftSubHypeTrainTitle": {
+    "message": "إهداء اشتراك",
+    "description": "Title used by Twitch for the Discount Hype Train."
   }
 }

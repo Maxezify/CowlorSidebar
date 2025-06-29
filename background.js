@@ -102,6 +102,8 @@ const CONFIG = {
     STORAGE_TOKEN_KEY: 'twitch_token_encrypted', // Clé de stockage mise à jour
     API_BASE_URL: 'https://api.twitch.tv/helix/streams',
     manifest: chrome.runtime.getManifest(),
+    API_RETRY_ATTEMPTS: 3,
+    API_INITIAL_BACKOFF_MS: 1000
 };
 
 // --- FONCTIONS DE NOTIFICATION ---
@@ -126,10 +128,33 @@ function clearNotification() {
 // --- LOGIQUE API TWITCH ---
 
 /**
- * Récupère les informations de stream pour une liste de chaînes.
- * @param {string[]} channelLogins Les identifiants des chaînes.
- * @returns {Promise<object>} Un objet contenant le succès et les données.
+ * Fonction fetch avec gestion des erreurs et des nouvelles tentatives (exponential backoff).
  */
+async function fetchWithRetry(url, options, attempt = 1) {
+    try {
+        const response = await fetch(url, options);
+
+        if (response.status === 429 && attempt <= CONFIG.API_RETRY_ATTEMPTS) {
+            const delay = CONFIG.API_INITIAL_BACKOFF_MS * Math.pow(2, attempt - 1);
+            console.warn(`Rate limited. Retrying in ${delay}ms... (Attempt ${attempt})`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+            return fetchWithRetry(url, options, attempt + 1);
+        }
+        
+        return response;
+    } catch (error) {
+        // Gérer les erreurs réseau
+        if (attempt <= CONFIG.API_RETRY_ATTEMPTS) {
+            const delay = CONFIG.API_INITIAL_BACKOFF_MS * Math.pow(2, attempt - 1);
+            console.warn(`Network error. Retrying in ${delay}ms... (Attempt ${attempt})`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+            return fetchWithRetry(url, options, attempt + 1);
+        }
+        throw error; // Lancer l'erreur après la dernière tentative
+    }
+}
+
+
 async function getStreamsUptimeBatch(channelLogins) {
     const { token, clientId } = await getApiCredentials();
     if (!token || !clientId) {
@@ -141,25 +166,24 @@ async function getStreamsUptimeBatch(channelLogins) {
 
     const queryParams = channelLogins.map(login => `user_login=${encodeURIComponent(login)}`).join('&');
     const url = `${CONFIG.API_BASE_URL}?${queryParams}`;
+    const options = { headers: { 'Client-ID': clientId, 'Authorization': `Bearer ${token}` } };
 
     try {
-        const response = await fetch(url, { headers: { 'Client-ID': clientId, 'Authorization': `Bearer ${token}` } });
+        const response = await fetchWithRetry(url, options);
 
         if (response.status === 401) {
             await storage.remove(CONFIG.STORAGE_TOKEN_KEY);
             showTokenExpiredNotification();
             return { success: false, error: 'TOKEN_EXPIRED' };
         }
-        if (response.status === 429) {
-            showApiUnavailableNotification();
-            return { success: false, error: 'RATE_LIMITED' };
+        if (!response.ok) {
+            throw new Error(`API fetch failed with status: ${response.status}`);
         }
-        if (!response.ok) throw new Error(`API fetch failed: ${response.status}`);
 
         clearNotification();
         const data = await response.json();
         
-        // SÉCURITÉ : Validation robuste de la réponse de l'API
+        // Validation robuste de la réponse de l'API
         if (!data || !Array.isArray(data.data)) {
             console.error("Invalid API response structure: 'data' array not found.", data);
             throw new Error("Invalid API response structure.");
@@ -198,7 +222,6 @@ async function login() {
 
         if (!accessToken) throw new Error("Access token not found in redirect URL.");
         
-        // SÉCURITÉ : On chiffre le token avant de le stocker
         const encryptedToken = await encryptToken(accessToken);
         await storage.set({ [CONFIG.STORAGE_TOKEN_KEY]: encryptedToken });
         
@@ -219,8 +242,6 @@ async function logout() {
 async function getApiCredentials() {
     const result = await storage.get(CONFIG.STORAGE_TOKEN_KEY);
     const encryptedToken = result[CONFIG.STORAGE_TOKEN_KEY] || null;
-
-    // SÉCURITÉ : On déchiffre le token avant de l'utiliser
     const decryptedToken = await decryptToken(encryptedToken);
 
     return {

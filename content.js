@@ -2,7 +2,7 @@
 (function() {
     'use strict';
 
-    console.log("--- Cowlor's Sidebar Extension Initializing (v.Final-Fix-NewChannels) ---");
+    console.log("--- Cowlor's Sidebar Extension Initializing (v.Final) ---");
 
     // --- UTILITIES ---
 
@@ -25,12 +25,18 @@
             this.maxSize = maxSize;
         }
         set(key, value) {
-            this.cache.delete(key); this.cache.set(key, value);
-            if (this.cache.size > this.maxSize) { this.cache.delete(this.cache.keys().next().value); }
+            this.cache.delete(key);
+            this.cache.set(key, value);
+            if (this.cache.size > this.maxSize) {
+                this.cache.delete(this.cache.keys().next().value);
+            }
         }
         get(key) {
             const value = this.cache.get(key);
-            if (value) { this.cache.delete(key); this.cache.set(key, value); }
+            if (value) {
+                this.cache.delete(key);
+                this.cache.set(key, value);
+            }
             return value;
         }
     }
@@ -65,11 +71,34 @@
             PROCESS_THROTTLE: 200
         },
         CSS: {
-             HYPE_TRAIN_CLASSES: { CONTAINER: 'hype-train-container', LEVEL_TEXT: 'hype-train-level-text', SHIFTED: 'ht-shifted', BLUE: 'ht-blue', GREEN: 'ht-green', YELLOW: 'ht-yellow', ORANGE: 'ht-orange', RED: 'ht-red', GOLD: 'ht-gold', TREASURE_EFFECT: 'ht-treasure-effect', GIFT_SUB_EFFECT: 'ht-gift-sub-effect' },
-             SQUAD_CLASSES: { INDICATOR_HIDDEN: 'squad-indicator-hidden', COUNT_CONTAINER: 'squad-count-container', COUNT_TEXT: 'squad-count-text' }
+             HYPE_TRAIN_CLASSES: {
+                CONTAINER: 'hype-train-container',
+                LEVEL_TEXT: 'hype-train-level-text',
+                SHIFTED: 'ht-shifted',
+                BLUE: 'ht-blue', GREEN: 'ht-green', YELLOW: 'ht-yellow',
+                ORANGE: 'ht-orange', RED: 'ht-red', GOLD: 'ht-gold',
+                TREASURE_EFFECT: 'ht-treasure-effect',
+                GIFT_SUB_EFFECT: 'ht-gift-sub-effect'
+            },
+            SQUAD_CLASSES: {
+                INDICATOR_HIDDEN: 'squad-indicator-hidden',
+                COUNT_CONTAINER: 'squad-count-container',
+                COUNT_TEXT: 'squad-count-text'
+            }
         },
-        UPTIME_COUNTER_STYLE: { textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden', fontSize: '1.4rem', textAlign: 'right', lineHeight: '1.4', marginTop: '-4px' },
-        CSS_CLASSES: { HIDDEN_ELEMENT: 'tch-ext-hidden', CUSTOM_UPTIME_COUNTER: 'my-custom-uptime-counter' }
+        UPTIME_COUNTER_STYLE: {
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            fontSize: '1.4rem',
+            textAlign: 'right', 
+            lineHeight: '1.4',
+            marginTop: '-4px'
+        },
+        CSS_CLASSES: {
+            HIDDEN_ELEMENT: 'tch-ext-hidden',
+            CUSTOM_UPTIME_COUNTER: 'my-custom-uptime-counter'
+        }
     };
 
     // --- STATE MANAGEMENT ---
@@ -311,11 +340,8 @@
         } catch (error) { console.error('[API] Erreur de communication:', error.message); }
     }
 
-    /**
-     * CORRECTION: Nouvelle fonction pour traiter les chaînes ajoutées dynamiquement.
-     */
     function processNewChannelElement(el) {
-        if (state.liveChannelElements.has(el)) return; // Déjà traité
+        if (state.liveChannelElements.has(el)) return;
         const channelLogin = el.href?.split('/').pop()?.toLowerCase();
         if (channelLogin && TWITCH_LOGIN_REGEX.test(channelLogin) && isChannelElementLive(el)) {
             const cachedData = state.domCache.get(channelLogin);
@@ -332,9 +358,7 @@
         if (state.observers.sidebarObserver) state.observers.sidebarObserver.disconnect();
         
         const callback = (mutations) => {
-            throttledProcessUI(); // Pour les Hype Trains (attributs)
-
-            // CORRECTION: Traiter immédiatement les nouvelles chaînes
+            throttledProcessUI();
             for (const mutation of mutations) {
                 if (mutation.type === 'childList') {
                     mutation.addedNodes.forEach(node => {

@@ -1,19 +1,14 @@
+// background.js
 'use strict';
 
-// --- CONFIGURATION ---
-const CONFIG = {
-    TWITCH_AUTH_URL: 'https://id.twitch.tv/oauth2/authorize',
-    STORAGE_TOKEN_KEY: 'twitch_token', // TODO: Le token doit être chiffré pour plus de sécurité.
-    API_BASE_URL: 'https://api.twitch.tv/helix/streams',
-    manifest: chrome.runtime.getManifest(),
-};
+// --- UTILITIES (Promisification & Storage) ---
 
-// --- PROMISIFICATION DES APIS CHROME ---
 const storage = {
     get: (keys) => new Promise(resolve => chrome.storage.local.get(keys, resolve)),
     set: (items) => new Promise(resolve => chrome.storage.local.set(items, resolve)),
     remove: (keys) => new Promise(resolve => chrome.storage.local.remove(keys, resolve)),
 };
+
 const identity = {
     launchWebAuthFlow: (details) => new Promise((resolve, reject) => {
         chrome.identity.launchWebAuthFlow(details, (redirectUrl) => {
@@ -24,7 +19,93 @@ const identity = {
     }),
 };
 
+// --- SECURITÉ (Web Crypto API) ---
+
+/**
+ * Récupère ou génère une clé de chiffrement et la stocke.
+ * @returns {Promise<CryptoKey>} La clé de chiffrement.
+ */
+async function getEncryptionKey() {
+    let keyData = await storage.get('encryption_key');
+    if (keyData.encryption_key) {
+        return await crypto.subtle.importKey(
+            'jwk',
+            keyData.encryption_key,
+            { name: 'AES-GCM' },
+            true,
+            ['encrypt', 'decrypt']
+        );
+    } else {
+        const newKey = await crypto.subtle.generateKey(
+            { name: 'AES-GCM', length: 256 },
+            true,
+            ['encrypt', 'decrypt']
+        );
+        const exportedKey = await crypto.subtle.exportKey('jwk', newKey);
+        await storage.set({ 'encryption_key': exportedKey });
+        return newKey;
+    }
+}
+
+/**
+ * Chiffre une chaîne de caractères (le token).
+ * @param {string} token Le token en clair.
+ * @returns {Promise<string>} Le token chiffré et encodé en base64.
+ */
+async function encryptToken(token) {
+    const key = await getEncryptionKey();
+    const encodedToken = new TextEncoder().encode(token);
+    const iv = crypto.getRandomValues(new Uint8Array(12)); // Vecteur d'initialisation (nonce)
+    const encryptedData = await crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv: iv },
+        key,
+        encodedToken
+    );
+    // On combine le vecteur et les données chiffrées pour le stockage
+    const combined = new Uint8Array(iv.length + encryptedData.byteLength);
+    combined.set(iv, 0);
+    combined.set(new Uint8Array(encryptedData), iv.length);
+    // On retourne le tout en base64 pour un stockage sûr
+    return btoa(String.fromCharCode.apply(null, combined));
+}
+
+/**
+ * Déchiffre une chaîne de caractères (le token).
+ * @param {string | null} encryptedString Le token chiffré en base64.
+ * @returns {Promise<string | null>} Le token en clair ou null en cas d'erreur.
+ */
+async function decryptToken(encryptedString) {
+    if (!encryptedString) return null;
+    try {
+        const key = await getEncryptionKey();
+        const combined = new Uint8Array(atob(encryptedString).split('').map(c => c.charCodeAt(0)));
+        const iv = combined.slice(0, 12);
+        const encryptedData = combined.slice(12);
+        
+        const decryptedData = await crypto.subtle.decrypt(
+            { name: 'AES-GCM', iv: iv },
+            key,
+            encryptedData
+        );
+        return new TextDecoder().decode(decryptedData);
+    } catch (e) {
+        console.error("Erreur de déchiffrement, le token est peut-être corrompu ou la clé a changé.", e);
+        // En cas d'erreur, on supprime l'ancien token pour forcer une reconnexion
+        await storage.remove(CONFIG.STORAGE_TOKEN_KEY);
+        return null;
+    }
+}
+
+// --- CONFIGURATION ---
+const CONFIG = {
+    TWITCH_AUTH_URL: 'https://id.twitch.tv/oauth2/authorize',
+    STORAGE_TOKEN_KEY: 'twitch_token_encrypted', // Clé de stockage mise à jour
+    API_BASE_URL: 'https://api.twitch.tv/helix/streams',
+    manifest: chrome.runtime.getManifest(),
+};
+
 // --- FONCTIONS DE NOTIFICATION ---
+
 function showTokenExpiredNotification() {
     chrome.action.setBadgeText({ text: '!' });
     chrome.action.setBadgeBackgroundColor({ color: '#D93025' });
@@ -42,7 +123,13 @@ function clearNotification() {
     chrome.action.setTitle({ title: '' });
 }
 
-// --- LOGIQUE API ---
+// --- LOGIQUE API TWITCH ---
+
+/**
+ * Récupère les informations de stream pour une liste de chaînes.
+ * @param {string[]} channelLogins Les identifiants des chaînes.
+ * @returns {Promise<object>} Un objet contenant le succès et les données.
+ */
 async function getStreamsUptimeBatch(channelLogins) {
     const { token, clientId } = await getApiCredentials();
     if (!token || !clientId) {
@@ -72,13 +159,14 @@ async function getStreamsUptimeBatch(channelLogins) {
         clearNotification();
         const data = await response.json();
         
-        // AMÉLIORATION SÉCURITÉ : Valider la structure de la réponse de l'API
+        // SÉCURITÉ : Validation robuste de la réponse de l'API
         if (!data || !Array.isArray(data.data)) {
+            console.error("Invalid API response structure: 'data' array not found.", data);
             throw new Error("Invalid API response structure.");
         }
 
         const validStreams = data.data.filter(stream => 
-            typeof stream.user_login === 'string' && typeof stream.started_at === 'string'
+            stream && typeof stream.user_login === 'string' && typeof stream.started_at === 'string'
         );
 
         const results = new Map(validStreams.map(stream => [stream.user_login.toLowerCase(), stream.started_at]));
@@ -91,7 +179,8 @@ async function getStreamsUptimeBatch(channelLogins) {
     }
 }
 
-// --- FONCTIONS MÉTIER ---
+// --- FONCTIONS MÉTIER (Authentification, etc.) ---
+
 async function login() {
     try {
         const redirectUri = chrome.identity.getRedirectURL();
@@ -107,10 +196,13 @@ async function login() {
         const resultUrl = await identity.launchWebAuthFlow({ url: authUrl.href, interactive: true });
         const accessToken = new URL(resultUrl).hash.match(/access_token=([^&]*)/)[1];
 
-        if (!accessToken) throw new Error("Access token not found.");
+        if (!accessToken) throw new Error("Access token not found in redirect URL.");
         
-        await storage.set({ [CONFIG.STORAGE_TOKEN_KEY]: accessToken });
-        console.log('Twitch token stored successfully.');
+        // SÉCURITÉ : On chiffre le token avant de le stocker
+        const encryptedToken = await encryptToken(accessToken);
+        await storage.set({ [CONFIG.STORAGE_TOKEN_KEY]: encryptedToken });
+        
+        console.log('Twitch token stored successfully (encrypted).');
         return true;
     } catch (error) {
         console.error("Login process failed:", error.message);
@@ -121,13 +213,18 @@ async function login() {
 
 async function logout() {
     await storage.remove(CONFIG.STORAGE_TOKEN_KEY);
-    console.log('Token removed. User logged out.');
+    console.log('Encrypted token removed. User logged out.');
 }
 
 async function getApiCredentials() {
     const result = await storage.get(CONFIG.STORAGE_TOKEN_KEY);
+    const encryptedToken = result[CONFIG.STORAGE_TOKEN_KEY] || null;
+
+    // SÉCURITÉ : On déchiffre le token avant de l'utiliser
+    const decryptedToken = await decryptToken(encryptedToken);
+
     return {
-        token: result[CONFIG.STORAGE_TOKEN_KEY] || null,
+        token: decryptedToken,
         clientId: CONFIG.manifest.oauth2.client_id,
     };
 }
@@ -138,6 +235,7 @@ async function getAuthStatus() {
 }
 
 // --- GESTIONNAIRE DE MESSAGES ---
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     (async () => {
         try {
@@ -160,7 +258,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                     result = { isLoggedIn: await getAuthStatus() };
                     break;
                 default:
-                    // Ne rien faire si le type est inconnu
+                    console.warn(`Unknown message type received: ${request.type}`);
                     return; 
             }
             sendResponse(result);
@@ -169,7 +267,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             sendResponse({ success: false, error: error.message });
         }
     })();
-    return true; // Réponse asynchrone
+    return true; // Indique une réponse asynchrone
 });
 
 // --- CYCLE DE VIE DE L'EXTENSION ---

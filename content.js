@@ -127,38 +127,10 @@
         if (document.getElementById(styleId)) return;
         const goldKappaImageUrl = chrome.runtime.getURL('gold_kappa.png');
         const css = `
-            @keyframes light-sweep {
-                0% { background-position: -200% 0; }
-                100% { background-position: 200% 0; }
-            }
-            @keyframes visible-pulse {
-                0%, 100% { opacity: 0.5; }
-                50% { opacity: 1; }
-            }
-            .${CONFIG.CSS_CLASSES.NEW_STREAM_FLASH} {
-                position: relative;
-                overflow: hidden;
-                border-radius: 4px;
-            }
-            .${CONFIG.CSS_CLASSES.NEW_STREAM_FLASH}::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: linear-gradient(
-                    90deg, 
-                    transparent, 
-                    rgba(145, 71, 255, 0.45),
-                    transparent
-                );
-                animation: 
-                    light-sweep 2.2s ease-in-out infinite,
-                    visible-pulse 1.8s ease-in-out infinite;
-                z-index: 0;
-                pointer-events: none;
-            }
+            @keyframes light-sweep { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; }}
+            @keyframes visible-pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; }}
+            .${CONFIG.CSS_CLASSES.NEW_STREAM_FLASH} { position: relative; overflow: hidden; border-radius: 4px;}
+            .${CONFIG.CSS_CLASSES.NEW_STREAM_FLASH}::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient( 90deg, transparent, rgba(145, 71, 255, 0.45), transparent); animation: light-sweep 2.2s ease-in-out infinite, visible-pulse 1.8s ease-in-out infinite; z-index: 0; pointer-events: none; }
             .${CONFIG.CSS_CLASSES.HIDDEN_ELEMENT} { display: none !important; } @keyframes ht-text-color-anim { 0%, 100% { color: white; text-shadow: -1px -1px 0 #1f1f23, 1px -1px 0 #1f1f23, -1px 1px 0 #1f1f23, 1px 1px 0 #1f1f23; } 50% { color: #1f1f23; text-shadow: -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white, 1px 1px 0 white; } } @keyframes ht-pulse-blue { 0%, 100% { background-color: transparent; box-shadow: none; } 50% { background-color: rgba(35, 166, 213, 0.7); box-shadow: inset 0 0 8px 2px #23a6d5, 0 0 12px #23a6d5; } } @keyframes ht-pulse-green { 0%, 100% { background-color: transparent; box-shadow: none; } 50% { background-color: rgba(35, 213, 171, 0.7); box-shadow: inset 0 0 8px 2px #23d5ab, 0 0 12px #23d5ab; } } @keyframes ht-pulse-yellow { 0%, 100% { background-color: transparent; box-shadow: none; } 50% { background-color: rgba(226, 223, 11, 0.7); box-shadow: inset 0 0 8px 2px #E2DF0B, 0 0 12px #E2DF0B; } } @keyframes ht-pulse-orange { 0%, 100% { background-color: transparent; box-shadow: none; } 50% { background-color: rgba(228, 117, 14, 0.7); box-shadow: inset 0 0 8px 2px #E4750E, 0 0 12px #E4750E; } } @keyframes ht-pulse-red { 0%, 100% { background-color: transparent; box-shadow: none; } 50% { background-color: rgba(217, 48, 37, 0.7); box-shadow: inset 0 0 8px 2px #D93025, 0 0 12px #D93025; } } @keyframes sonar-wave { 0% { transform: scale(0.9); opacity: 1; } 100% { transform: scale(2.2); opacity: 0; } } @keyframes legendary-sparkle { 0%, 100% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.5); opacity: 1; } } @keyframes legendary-crown-float { 0% { transform: translate(-50%, -50%) translateY(-5px) scale(1.1); } 50% { transform: translate(-50%, -50%) translateY(0) scale(1.05); } 100% { transform: translate(-50%, -50%) translateY(-5px) scale(1.1); } } @keyframes shimmer-background-pan { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
             .${CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER} { position: relative; border-radius: 9999px; } .${CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER}::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 9999px; pointer-events: none; animation-duration: 1.2s; animation-timing-function: ease-in-out; animation-iteration-count: infinite; will-change: transform, opacity; } .${CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER}.${CONFIG.CSS.HYPE_TRAIN_CLASSES.TREASURE_EFFECT}::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 9999px; border: 2px solid; animation: sonar-wave 1.2s ease-out infinite; animation-delay: 0.5s; will-change: transform, opacity; } .${CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER}.${CONFIG.CSS.HYPE_TRAIN_CLASSES.GIFT_SUB_EFFECT}::before { content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px; border-radius: 9999px; padding: 3px; background: linear-gradient(90deg, #6a0dad, #9146ff, #d7bfff, #9146ff, #6a0dad); background-size: 300% 100%; -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; animation: shimmer-background-pan 2.5s linear infinite; will-change: background-position; pointer-events: none; } .${CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER}.${CONFIG.CSS.HYPE_TRAIN_CLASSES.BLUE}::after { animation-name: ht-pulse-blue; } .${CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER}.${CONFIG.CSS.HYPE_TRAIN_CLASSES.GREEN}::after { animation-name: ht-pulse-green; } .${CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER}.${CONFIG.CSS.HYPE_TRAIN_CLASSES.YELLOW}::after { animation-name: ht-pulse-yellow; } .${CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER}.${CONFIG.CSS.HYPE_TRAIN_CLASSES.ORANGE}::after { animation-name: ht-pulse-orange; } .${CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER}.${CONFIG.CSS.HYPE_TRAIN_CLASSES.RED}::after { animation-name: ht-pulse-red; } .${CONFIG.CSS.HYPE_TRAIN_CLASSES.BLUE} { border-color: #23a6d5; color: #23a6d5; } .${CONFIG.CSS.HYPE_TRAIN_CLASSES.GREEN} { border-color: #23d5ab; color: #23d5ab; } .${CONFIG.CSS.HYPE_TRAIN_CLASSES.YELLOW} { border-color: #E2DF0B; color: #E2DF0B; } .${CONFIG.CSS.HYPE_TRAIN_CLASSES.ORANGE} { border-color: #E4750E; color: #E4750E; } .${CONFIG.CSS.HYPE_TRAIN_CLASSES.RED} { border-color: #D93025; color: #D93025; } .${CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER}.${CONFIG.CSS.HYPE_TRAIN_CLASSES.GOLD}::after { content: ''; background-image: url('${goldKappaImageUrl}'); background-size: 80%; background-position: center; background-repeat: no-repeat; opacity: 0.2; box-shadow: inset 0 0 10px 3px #FFD700, 0 0 20px 5px #FFD700; animation: legendary-sparkle 1.8s ease-in-out infinite; } .${CONFIG.CSS.HYPE_TRAIN_CLASSES.LEVEL_TEXT}.ht-kappa-crown { content: ''; font-size: 28px; color: #FFD700; text-shadow: 0 0 4px black, 0 0 8px gold, 0 0 12px white; animation: legendary-crown-float 2.5s ease-in-out infinite; z-index: 12; will-change: transform; } .${CONFIG.CSS.HYPE_TRAIN_CLASSES.LEVEL_TEXT} { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 16px; font-weight: 900; color: white; text-shadow: -1px -1px 0 #1f1f23, 1px -1px 0 #1f1f23, -1px 1px 0 #1f1f23, 1px 1px 0 #1f1f23; pointer-events: none; z-index: 10; animation: ht-text-color-anim 1.2s ease-in-out infinite; } .${CONFIG.CSS.HYPE_TRAIN_CLASSES.LEVEL_TEXT}.${CONFIG.CSS.HYPE_TRAIN_CLASSES.SHIFTED} { top: 35%; left: 35%; font-size: 13px; } .${CONFIG.CSS.SQUAD_CLASSES.INDICATOR_HIDDEN} { display: none !important; } .${CONFIG.CSS.SQUAD_CLASSES.COUNT_CONTAINER} { position: relative; } .${CONFIG.CSS.SQUAD_CLASSES.COUNT_TEXT} { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 13px; font-weight: bold; text-shadow: none; pointer-events: none; z-index: 1; background-color: rgba(0, 0, 0, 0.7); border-radius: 50%; padding: 0px 4px; line-height: 16px; }
         `;

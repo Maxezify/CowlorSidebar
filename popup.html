@@ -1,14 +1,53 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Content-Security-Policy" content="script-src 'self'; style-src 'self'; object-src 'self';">
-    <title>Cowlor's Sidebar Status</title>
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self'; style-src 'self' 'unsafe-inline'; object-src 'self';">
+    <title>__MSG_extensionName__</title>
     <link rel="stylesheet" href="popup.css">
-</head><body>
-    <h3>Cowlor's Sidebar</h3>
-    <button id="auth-button">__MSG_popupLoading__</button>
-    <p id="status-message"></p>
-    <p id="reload-message"></p> <script src="popup.js"></script>
+</head>
+<body>
+    <div class="header">
+        <h3>__MSG_extensionName__</h3>
+        <button id="auth-button">__MSG_popupLoading__</button>
+        <p id="status-message"></p>
+        <p id="reload-message"></p>
+    </div>
+
+    <div class="live-example-showcase" id="example-container">
+        <h5>__MSG_popupLiveExampleTitle__</h5>
+        <div class="side-nav-card-demo" id="example-card">
+            <div class="demo-avatar-live" id="example-avatar">
+                 <img src="https://static-cdn.jtvnw.net/jtv_user_pictures/d5dc8fed-5b81-4bdd-aead-ab7f8e5fb232-profile_image-70x70.png" alt="Twitch"/>
+                 <span class="hype-train-level-text" id="hype-train-level"></span>
+            </div>
+            <div class="stream-info">
+                <p class="streamer-name">Twitch</p>
+                <p class="stream-category">League of Legends</p>
+            </div>
+            <div class="stream-status">
+                <div class="status-top">
+                    <div class="live-indicator"></div>
+                    <p class="stream-viewers">3,4 k</p>
+                </div>
+                <div class="status-bottom">
+                    <p class="uptime-text">1h 03m</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls-section">
+        <h5>__MSG_popupControlsTitle__</h5>
+        <div class="controls-grid">
+            <label class="control-label"><input type="checkbox" id="toggle-hype-train"> __MSG_popupToggleClassicHypeTrain__</label>
+            <label class="control-label"><input type="checkbox" id="toggle-treasure-train"> __MSG_popupToggleTreasureTrain__</label>
+            <label class="control-label"><input type="checkbox" id="toggle-gift-sub"> __MSG_popupToggleGiftSub__</label>
+            <label class="control-label"><input type="checkbox" id="toggle-kappa-train"> __MSG_popupToggleKappaTrain__</label>
+            <label class="control-label"><input type="checkbox" id="toggle-new-stream"> __MSG_popupToggleNewStream__</label>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
 </body>
 </html>

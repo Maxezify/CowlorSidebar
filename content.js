@@ -157,7 +157,7 @@
 
                 const channelElement = uptimeDisplay.closest(CONFIG.SELECTORS.CHANNEL_LINK_ITEM);
                 if (channelElement) {
-                    if (uptimeSeconds < 600) {
+                    if (uptimeSeconds < 660) {
                         channelElement.classList.add(CONFIG.CSS_CLASSES.NEW_STREAM_FLASH);
                     } else {
                         channelElement.classList.remove(CONFIG.CSS_CLASSES.NEW_STREAM_FLASH);
@@ -336,7 +336,29 @@
         if (channelsForApiUpdate.size > 0) await executeBatchApiUpdate(channelsForApiUpdate);
     }
     
-    // --- MODIFICATION : GESTION DE L'ERREUR "CONTEXT INVALIDATED" ---
+    // --- AJOUT ---
+    // Nouvelle fonction pour scanner les chaînes qui n'ont pas encore de compteur
+    function scanForUnprocessedChannels() {
+        if (!state.domElements.sidebar) return;
+        
+        const channelsToUpdate = new Map();
+        state.domElements.sidebar.querySelectorAll(CONFIG.SELECTORS.CHANNEL_LINK_ITEM).forEach(el => {
+            // Si la chaîne est en live mais n'est pas dans notre liste de suivi, elle est nouvelle
+            if (isChannelElementLive(el) && !state.liveChannelElements.has(el)) {
+                const channelLogin = el.href?.split('/').pop()?.toLowerCase();
+                if (channelLogin && TWITCH_LOGIN_REGEX.test(channelLogin)) {
+                    channelsToUpdate.set(channelLogin, el);
+                }
+            }
+        });
+
+        if (channelsToUpdate.size > 0) {
+            console.log(`[Cowlor's Sidebar] Found ${channelsToUpdate.size} unprocessed live channel(s). Fetching uptime...`);
+            executeBatchApiUpdate(channelsToUpdate);
+        }
+    }
+
+
     async function executeBatchApiUpdate(channelsMap) {
         if (channelsMap.size === 0) return;
         const logins = Array.from(channelsMap.keys());
@@ -353,7 +375,6 @@
                 }
             }
         } catch (error) {
-            // Si le contexte est invalidé, c'est normal (la page change), on ignore l'erreur
             if (error.message.includes('Extension context invalidated')) {
                 console.log("Context invalidated during API call. This is expected during navigation.");
             } else {
@@ -429,12 +450,20 @@
 
     // --- LIFECYCLE & EVENT LISTENERS ---
 
+    // --- MODIFICATION ---
     document.addEventListener('visibilitychange', () => {
-        if (document.hidden && state.animationFrameId) {
-            cancelAnimationFrame(state.animationFrameId);
-            state.animationFrameId = null;
-        } else if (!document.hidden && state.animationFrameId === null) {
-            updateVisibleCountersLoop();
+        if (document.hidden) {
+            if (state.animationFrameId) {
+                cancelAnimationFrame(state.animationFrameId);
+                state.animationFrameId = null;
+            }
+        } else {
+            // Redémarre l'animation des compteurs
+            if (state.animationFrameId === null) {
+                updateVisibleCountersLoop();
+            }
+            // Lance un scan pour rattraper les chaînes manquées
+            scanForUnprocessedChannels();
         }
     });
 

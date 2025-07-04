@@ -20,5 +20,12 @@
   "selectorSharedHypeTrainTitle": { "message": "Wspólny Hype Train", "description": "Tytuł używany przez Twitcha dla współdzielonego Hype Train." },
   "selectorTreasureTrainTitle": { "message": "Pociąg skarbów", "description": "Tytuł używany przez Twitcha dla Pociągu ze skarbami." },
   "selectorKappaTrainTitle": { "message": "Golden Kappa Trainem", "description": "Tytuł używany przez Twitcha dla Złotego Pociągu Kappa." },
-  "selectorGiftSubHypeTrainTitle": { "message": "Subskrypcja w prezencie", "description": "Title used by Twitch for the Discount Hype Train." }
+  "selectorGiftSubHypeTrainTitle": { "message": "Subskrypcja w prezencie", "description": "Title used by Twitch for the Discount Hype Train." },
+  "popupLiveExampleTitle": { "message": "Przykład na Żywo" },
+"popupControlsTitle": { "message": "Włącz dla przykładu:" },
+"popupToggleClassicHypeTrain": { "message": "Klasyczny Hype Train" },
+"popupToggleTreasureTrain": { "message": "Pociąg Skarbów" },
+"popupToggleGiftSub": { "message": "Subskrypcje w Prezencie" },
+"popupToggleKappaTrain": { "message": "Złoty Kappa" },
+"popupToggleNewStream": { "message": "Nowy Stream" }
 }

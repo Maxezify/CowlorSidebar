@@ -68,5 +68,12 @@
   "selectorGiftSubHypeTrainTitle": {
     "message": "Geschenkabo",
     "description": "Title used by Twitch for the Discount Hype Train."
-  }
+  },
+  "popupLiveExampleTitle": { "message": "Live-Beispiel" },
+  "popupControlsTitle": { "message": "Für das Beispiel aktivieren:" },
+  "popupToggleClassicHypeTrain": { "message": "Klassischer Hype-Train" },
+  "popupToggleTreasureTrain": { "message": "Schatz-Train" },
+  "popupToggleGiftSub": { "message": "Geschenk-Abos" },
+  "popupToggleKappaTrain": { "message": "Golden Kappa" },
+  "popupToggleNewStream": { "message": "Neuer Stream" }
 }

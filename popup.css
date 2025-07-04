@@ -1,40 +1,192 @@
-/* popup.css */
+/* =================================
+   popup.css - Fichier Complet
+   ================================= */
 
+/* --- Variables de style Twitch --- */
+:root {
+    --font-base: "Inter", "Roobert", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --font-weight-bold: 700;
+    --font-weight-black: 900;
+    --font-size-example: 13px;
+
+    --color-text-base: #efeff1;
+    --color-text-alt-2: #adadb8;
+    --color-background-live: #eb0400;
+    --color-background-default: #1f1f23;
+    
+    --color-twitch-purple: #9147ff;
+    --color-status-green: #00f593;
+}
+
+/* --- Styles Généraux --- */
 body {
-    font-family: sans-serif;
-    width: 250px;
-    padding: 10px;
+    font-family: var(--font-base);
+    width: 280px;
+    padding: 15px;
     text-align: center;
     color: #fff;
-    
-    /* MODIFIÉ : On utilise un dégradé simple, sans animation et avec moins de couleurs */
     background: linear-gradient(135deg, #6441A5, #2A0845);
 }
 
-h3 {
-    margin-top: 0;
-    color: #fff; 
+h3, h5, button {
+    font-weight: var(--font-weight-bold);
 }
+
+h3 { 
+    margin-top: 0; 
+    color: #fff; 
+    font-size: 16px; 
+}
+
+h5 { font-size: 13px; margin: 0 0 10px 0; color: #fff; text-align: center; }
 
 button {
-    width: 100%;
-    padding: 10px;
-    border-radius: 5px;
-    font-size: 14px;
+    width: 100%; padding: 10px; border-radius: 5px; font-size: 14px;
+    cursor: pointer; color: #fff; background-color: var(--color-twitch-purple);
+    border: none; transition: background-color 0.2s ease;
+}
+button:hover { background-color: #772ce8; }
+
+p { margin: 0; font-size: 12px; color: rgba(255, 255, 255, 0.9); }
+.header { margin-bottom: 20px; }
+#status-message, #reload-message { margin-top: 15px; }
+
+
+/* --- Vitrine "Exemple en Direct" --- */
+.live-example-showcase {
+    background-color: var(--color-background-default);
+    border-radius: 6px; padding: 12px; margin-bottom: 20px;
+}
+
+.side-nav-card-demo {
+    display: grid; grid-template-columns: auto 1fr auto; align-items: center;
+    gap: 10px; padding: 4px; background-color: transparent;
+    position: relative; 
+    /* overflow: hidden; a été retiré pour corriger le clipping */
+    border-radius: 4px;
+}
+
+.demo-avatar-live {
+    width: 32px; height: 32px; border-radius: 50%;
+    position: relative; flex-shrink: 0;
+}
+.demo-avatar-live img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+
+.stream-info { text-align: left; overflow: hidden; }
+
+.streamer-name, .stream-category, .stream-viewers, .uptime-text {
+    font-size: var(--font-size-example);
+}
+.streamer-name {
+    font-weight: var(--font-weight-bold); color: var(--color-text-base);
+    white-space: nowrap; line-height: 1.2;
+}
+.stream-category {
+    color: var(--color-text-alt-2); white-space: nowrap;
+    line-height: 1.2; margin-top: 2px;
+}
+
+.stream-status { text-align: right; align-self: flex-start; }
+.status-top { display: flex; align-items: center; gap: 5px; justify-content: flex-end; }
+.live-indicator { width: 8px; height: 8px; border-radius: 50%; background-color: var(--color-background-live); }
+.stream-viewers { font-weight: var(--font-weight-bold); color: var(--color-text-base); }
+.status-bottom { margin-top: 2px; }
+
+
+/* --- Section des Contrôles Interactifs --- */
+.controls-section {
+    padding: 15px 10px 5px 10px;
+    background-color: rgba(0, 0, 0, 0.15);
+    border-radius: 6px;
+}
+
+.controls-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    text-align: left;
+}
+
+.control-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
     cursor: pointer;
-    font-weight: bold;
-    color: #fff;
-    background-color: #9146ff;
-    border: none;
-    transition: background-color 0.2s ease;
+    padding: 4px;
 }
 
-button:hover {
-    background-color: #772ce8;
+.control-label input[type="checkbox"] {
+    accent-color: var(--color-twitch-purple);
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
 }
 
-p {
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.9);
-    margin-top: 15px;
+
+/* --- Animations & Keyframes --- */
+@keyframes light-sweep { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; }}
+@keyframes visible-pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; }}
+@keyframes ht-text-color-anim { 0%, 100% { color: white; text-shadow: -1px -1px 0 #1f1f23, 1px -1px 0 #1f1f23, -1px 1px 0 #1f1f23, 1px 1px 0 #1f1f23; } 50% { color: #1f1f23; text-shadow: -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white, 1px 1px 0 white; } }
+@keyframes ht-pulse-blue { 0%, 100% { background-color: transparent; box-shadow: none; } 50% { background-color: rgba(35, 166, 213, 0.7); box-shadow: inset 0 0 8px 2px #23a6d5, 0 0 12px #23a6d5; } }
+@keyframes ht-pulse-green { 0%, 100% { background-color: transparent; box-shadow: none; } 50% { background-color: rgba(35, 213, 171, 0.7); box-shadow: inset 0 0 8px 2px #23d5ab, 0 0 12px #23d5ab; } }
+@keyframes ht-pulse-yellow { 0%, 100% { background-color: transparent; box-shadow: none; } 50% { background-color: rgba(226, 223, 11, 0.7); box-shadow: inset 0 0 8px 2px #E2DF0B, 0 0 12px #E2DF0B; } }
+@keyframes ht-pulse-orange { 0%, 100% { background-color: transparent; box-shadow: none; } 50% { background-color: rgba(228, 117, 14, 0.7); box-shadow: inset 0 0 8px 2px #E4750E, 0 0 12px #E4750E; } }
+@keyframes ht-pulse-red { 0%, 100% { background-color: transparent; box-shadow: none; } 50% { background-color: rgba(217, 48, 37, 0.7); box-shadow: inset 0 0 8px 2px #D93025, 0 0 12px #D93025; } }
+@keyframes sonar-wave { 0% { transform: scale(0.9); opacity: 1; } 100% { transform: scale(2.2); opacity: 0; } }
+@keyframes legendary-sparkle { 0%, 100% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.5); opacity: 1; } }
+@keyframes shimmer-background-pan { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+/* --- Classes d'Effets Visuels --- */
+.new-stream-flash { position: relative; }
+.new-stream-flash::before {
+    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(145, 71, 255, 0.45), transparent);
+    z-index: 0; pointer-events: none;
+    animation: light-sweep 2.2s ease-in-out infinite, visible-pulse 1.8s ease-in-out infinite;
+}
+.hype-train-level-text {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    font-size: 16px; font-weight: var(--font-weight-black); pointer-events: none;
+    z-index: 10; display: none; animation: ht-text-color-anim 1.2s ease-in-out infinite;
+}
+.ht-blue::after, .ht-green::after, .ht-yellow::after, .ht-orange::after, .ht-red::after {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    border-radius: 9999px; pointer-events: none; animation-duration: 1.2s;
+    animation-timing-function: ease-in-out; animation-iteration-count: infinite;
+}
+.ht-blue::after { animation-name: ht-pulse-blue; }
+.ht-green::after { animation-name: ht-pulse-green; }
+.ht-yellow::after { animation-name: ht-pulse-yellow; }
+.ht-orange::after { animation-name: ht-pulse-orange; }
+.ht-red::after { animation-name: ht-pulse-red; }
+
+.ht-treasure-effect::before {
+    content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px;
+    border-radius: 9999px; border: 2px solid; animation: sonar-wave 1.2s ease-out infinite; animation-delay: 0.5s;
+}
+.ht-treasure-effect.ht-blue { border-color: #23a6d5; }
+.ht-treasure-effect.ht-green { border-color: #23d5ab; }
+.ht-treasure-effect.ht-yellow { border-color: #E2DF0B; }
+.ht-treasure-effect.ht-orange { border-color: #E4750E; }
+.ht-treasure-effect.ht-red { border-color: #D93025; }
+
+.ht-gift-sub-effect::before {
+    content: ''; position: absolute; top: -3px; left: -3px; right: -3px; bottom: -3px;
+    border-radius: 9999px; padding: 3px; background: linear-gradient(90deg, #6a0dad, var(--color-twitch-purple), #d7bfff, var(--color-twitch-purple), #6a0dad);
+    background-size: 300% 100%; -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude; animation: shimmer-background-pan 2.5s linear infinite;
+}
+.ht-gold::after {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 9999px;
+    pointer-events: none; background-image: url('gold_kappa.png'); background-size: 80%;
+    background-position: center; background-repeat: no-repeat; opacity: 0.2;
+    box-shadow: inset 0 0 10px 3px #FFD700, 0 0 20px 5px #FFD700;
+    animation: legendary-sparkle 1.8s ease-in-out infinite;
+}
+
+/* --- Style pour le statut connecté --- */
+.status-connected {
+    color: var(--color-status-green) !important;
+    font-weight: var(--font-weight-bold);
 }

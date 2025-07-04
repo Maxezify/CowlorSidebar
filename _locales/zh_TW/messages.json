@@ -20,5 +20,12 @@
   "selectorSharedHypeTrainTitle": { "message": "共享热潮列车", "description": "Twitch 用于共享的 Hype Train 的标题。" },
   "selectorTreasureTrainTitle": { "message": "宝藏列车", "description": "Twitch 用于宝藏列车的标题。" },
   "selectorKappaTrainTitle": { "message": "金色 Kappa 列车", "description": "Twitch 用于金色 Kappa 列车的标题。" },
-  "selectorGiftSubHypeTrainTitle": { "message": "赠送订阅", "description": "Title used by Twitch for the Discount Hype Train." }
+  "selectorGiftSubHypeTrainTitle": { "message": "赠送订阅", "description": "Title used by Twitch for the Discount Hype Train." },
+  "popupLiveExampleTitle": { "message": "直播示例" },
+  "popupControlsTitle": { "message": "为示例启用：" },
+  "popupToggleClassicHypeTrain": { "message": "经典热潮列车" },
+  "popupToggleTreasureTrain": { "message": "宝藏列车" },
+  "popupToggleGiftSub": { "message": "赠送订阅" },
+  "popupToggleKappaTrain": { "message": "金色 Kappa" },
+  "popupToggleNewStream": { "message": "新直播" }
 }

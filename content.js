@@ -549,7 +549,7 @@
                     
                     state.isInitialized = false;
                     state.domElements.sidebar = null;
-                    state.liveChannelElements.clear(); // Clear the map when the sidebar is removed
+                    state.liveChannelElements = new WeakMap(); // Clear the map when the sidebar is removed
                     state.visibleUptimeElements.clear();
                     // Optionally, clear domCache here if you want to refetch everything on next initialization
                     // state.domCache.clear();

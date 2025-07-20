@@ -54,7 +54,7 @@
     const CONFIG = {
         SELECTORS: {
             SIDEBAR_PRIMARY: 'div[data-test-selector="side-nav"]',
-             CHANNEL_LINK_ITEM: 'a[data-test-selector="followed-channel"], a[data-test-selector="recommended-channel"], a[data-test-selector="similarity-channel"], a.side-nav-card__link--promoted-followed',
+            CHANNEL_LINK_ITEM: 'a[data-test-selector="followed-channel"], a[data-test-selector="recommended-channel"], a[data-test-selector="similarity-channel"], a.side-nav-card__link--promoted-followed',
             FOLLOWED_CHANNEL_LINK_ITEM: 'a[data-test-selector="followed-channel"]',
             LIVE_INDICATOR: '.tw-channel-status-indicator',
             AVATAR_CONTAINER: '.tw-avatar',
@@ -68,14 +68,15 @@
             PROCESS_THROTTLE: 200
         },
         CSS: {
-             HYPE_TRAIN_CLASSES: {
+            HYPE_TRAIN_CLASSES: {
                 CONTAINER: 'hype-train-container',
                 LEVEL_TEXT: 'hype-train-level-text',
                 SHIFTED: 'ht-shifted',
                 BLUE: 'ht-blue', GREEN: 'ht-green', YELLOW: 'ht-yellow',
                 ORANGE: 'ht-orange', RED: 'ht-red', GOLD: 'ht-gold',
                 TREASURE_EFFECT: 'ht-treasure-effect',
-                GIFT_SUB_EFFECT: 'ht-gift-sub-effect'
+                GIFT_SUB_EFFECT: 'ht-gift-sub-effect',
+                KAPPA_CROWN: 'ht-kappa-crown'
             },
             SQUAD_CLASSES: {
                 INDICATOR_HIDDEN: 'squad-indicator-hidden',
@@ -209,6 +210,7 @@
             el.classList.remove(CONFIG.CSS_CLASSES.HIDDEN_ELEMENT);
         });
         channelLink.removeAttribute('data-hype-train-active');
+        channelLink.removeAttribute('data-hype-train-type');
     }
     
     function processHypeTrains() {
@@ -228,6 +230,24 @@
             channelLink.dataset.hypeTrainActive = 'true';
             avatarContainer.classList.add(CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER);
 
+            // Determine train type
+            let trainType = 'classic';
+            let isKappaTrain = false;
+            let isTreasureTrain = false;
+            
+            if (textEl && textEl.title) {
+                if (textEl.title.includes(i18n.kappaTrainTitle)) {
+                    trainType = 'kappa';
+                    isKappaTrain = true;
+                } else if (textEl.title.includes(i18n.treasureTrainTitle)) {
+                    trainType = 'treasure';
+                    isTreasureTrain = true;
+                }
+            }
+            
+            channelLink.dataset.hypeTrainType = trainType;
+
+            // Handle Gift Sub effect
             if (giftSubIcon) {
                 avatarContainer.classList.add(CONFIG.CSS.HYPE_TRAIN_CLASSES.GIFT_SUB_EFFECT);
                 giftSubIcon.parentElement?.classList.add(CONFIG.CSS_CLASSES.HIDDEN_ELEMENT);
@@ -235,6 +255,7 @@
                 avatarContainer.classList.remove(CONFIG.CSS.HYPE_TRAIN_CLASSES.GIFT_SUB_EFFECT);
             }
 
+            // Handle text-based hype trains
             if (textEl) {
                 let overlay = avatarContainer.querySelector(`.${CONFIG.CSS.HYPE_TRAIN_CLASSES.LEVEL_TEXT}`);
                 if (!overlay) {
@@ -242,19 +263,63 @@
                     overlay.className = CONFIG.CSS.HYPE_TRAIN_CLASSES.LEVEL_TEXT;
                     avatarContainer.appendChild(overlay);
                 }
+                
+                // Extract level from title
                 const levelMatch = textEl.title.match(/\d+/);
                 const level = levelMatch ? parseInt(levelMatch[0], 10) : 1;
-                overlay.textContent = level;
-                avatarContainer.classList.add(getHypeTrainColorClass(level));
+                
+                // Apply appropriate styling based on train type
+                if (isKappaTrain) {
+                    overlay.textContent = '';
+                    overlay.classList.add(CONFIG.CSS.HYPE_TRAIN_CLASSES.KAPPA_CROWN);
+                    avatarContainer.classList.add(CONFIG.CSS.HYPE_TRAIN_CLASSES.GOLD);
+                    // Remove color classes for Kappa train
+                    avatarContainer.classList.remove(CONFIG.CSS.HYPE_TRAIN_CLASSES.BLUE, 
+                                                    CONFIG.CSS.HYPE_TRAIN_CLASSES.GREEN, 
+                                                    CONFIG.CSS.HYPE_TRAIN_CLASSES.YELLOW, 
+                                                    CONFIG.CSS.HYPE_TRAIN_CLASSES.ORANGE, 
+                                                    CONFIG.CSS.HYPE_TRAIN_CLASSES.RED);
+                    avatarContainer.classList.remove(CONFIG.CSS.HYPE_TRAIN_CLASSES.TREASURE_EFFECT);
+                } else {
+                    overlay.textContent = level;
+                    overlay.classList.remove(CONFIG.CSS.HYPE_TRAIN_CLASSES.KAPPA_CROWN);
+                    avatarContainer.classList.remove(CONFIG.CSS.HYPE_TRAIN_CLASSES.GOLD);
+                    
+                    // Apply color class based on level
+                    const colorClass = getHypeTrainColorClass(level);
+                    avatarContainer.classList.remove(CONFIG.CSS.HYPE_TRAIN_CLASSES.BLUE, 
+                                                    CONFIG.CSS.HYPE_TRAIN_CLASSES.GREEN, 
+                                                    CONFIG.CSS.HYPE_TRAIN_CLASSES.YELLOW, 
+                                                    CONFIG.CSS.HYPE_TRAIN_CLASSES.ORANGE, 
+                                                    CONFIG.CSS.HYPE_TRAIN_CLASSES.RED);
+                    avatarContainer.classList.add(colorClass);
+                    
+                    // Apply treasure effect if it's a treasure train
+                    if (isTreasureTrain) {
+                        avatarContainer.classList.add(CONFIG.CSS.HYPE_TRAIN_CLASSES.TREASURE_EFFECT);
+                    } else {
+                        avatarContainer.classList.remove(CONFIG.CSS.HYPE_TRAIN_CLASSES.TREASURE_EFFECT);
+                    }
+                }
+                
+                // Handle shifted positioning for squad streams
                 const guestAvatar = channelLink.querySelector(CONFIG.SELECTORS.GUEST_AVATAR);
                 if (guestAvatar) {
                     overlay.classList.add(CONFIG.CSS.HYPE_TRAIN_CLASSES.SHIFTED);
                 } else {
                     overlay.classList.remove(CONFIG.CSS.HYPE_TRAIN_CLASSES.SHIFTED);
                 }
+                
                 textEl.parentElement?.classList.add(CONFIG.CSS_CLASSES.HIDDEN_ELEMENT);
             } else {
-                const textClasses = [CONFIG.CSS.HYPE_TRAIN_CLASSES.BLUE, CONFIG.CSS.HYPE_TRAIN_CLASSES.GREEN, CONFIG.CSS.HYPE_TRAIN_CLASSES.YELLOW, CONFIG.CSS.HYPE_TRAIN_CLASSES.ORANGE, CONFIG.CSS.HYPE_TRAIN_CLASSES.RED];
+                // No text element, remove all train-specific classes
+                const textClasses = [CONFIG.CSS.HYPE_TRAIN_CLASSES.BLUE, 
+                                   CONFIG.CSS.HYPE_TRAIN_CLASSES.GREEN, 
+                                   CONFIG.CSS.HYPE_TRAIN_CLASSES.YELLOW, 
+                                   CONFIG.CSS.HYPE_TRAIN_CLASSES.ORANGE, 
+                                   CONFIG.CSS.HYPE_TRAIN_CLASSES.RED,
+                                   CONFIG.CSS.HYPE_TRAIN_CLASSES.GOLD,
+                                   CONFIG.CSS.HYPE_TRAIN_CLASSES.TREASURE_EFFECT];
                 avatarContainer.classList.remove(...textClasses);
                 avatarContainer.querySelector(`.${CONFIG.CSS.HYPE_TRAIN_CLASSES.LEVEL_TEXT}`)?.remove();
             }

@@ -1,42 +1,99 @@
-// content.js
+// content.js - Version optimisée qui préserve les fonctionnalités
 (function() {
     'use strict';
 
-    console.log("--- Cowlor's Sidebar Extension Initializing (v.Final) ---");
+    console.log("--- Cowlor's Sidebar Extension Initializing (v.Final Optimized) ---");
 
     // --- UTILITIES ---
     const throttle = (func, limit) => {
         let inThrottle;
+        let lastArgs;
+        let lastContext;
         return function() {
             const args = arguments;
             const context = this;
             if (!inThrottle) {
                 func.apply(context, args);
                 inThrottle = true;
-                setTimeout(() => inThrottle = false, limit);
+                setTimeout(() => {
+                    inThrottle = false;
+                    if (lastArgs) {
+                        func.apply(lastContext, lastArgs);
+                        lastArgs = null;
+                        lastContext = null;
+                    }
+                }, limit);
+            } else {
+                lastArgs = args;
+                lastContext = context;
             }
         };
     };
 
     class LRUCache {
-        constructor(maxSize = 200) {
+        constructor(maxSize = 150) { // Réduit de 200 à 150
             this.cache = new Map();
             this.maxSize = maxSize;
+            this.cleanupCounter = 0;
         }
+        
         set(key, value) {
             this.cache.delete(key);
-            this.cache.set(key, value);
+            this.cache.set(key, {
+                ...value,
+                timestamp: Date.now()
+            });
+            
+            // Nettoyage plus agressif
             if (this.cache.size > this.maxSize) {
-                this.cache.delete(this.cache.keys().next().value);
+                // Supprime les 20% les plus anciens
+                const toDelete = Math.floor(this.maxSize * 0.2);
+                let deleted = 0;
+                for (const [k, v] of this.cache) {
+                    this.cache.delete(k);
+                    deleted++;
+                    if (deleted >= toDelete) break;
+                }
+            }
+            
+            // Nettoyage périodique des entrées anciennes
+            this.cleanupCounter++;
+            if (this.cleanupCounter >= 100) {
+                this.cleanupCounter = 0;
+                this.cleanup();
             }
         }
+        
         get(key) {
             const value = this.cache.get(key);
             if (value) {
+                // Vérifie si l'entrée n'est pas trop ancienne (30 minutes)
+                if (Date.now() - value.timestamp > 30 * 60 * 1000) {
+                    this.cache.delete(key);
+                    return null;
+                }
+                // Rafraîchit l'entrée
                 this.cache.delete(key);
                 this.cache.set(key, value);
+                return value;
             }
             return value;
+        }
+        
+        cleanup() {
+            const now = Date.now();
+            const maxAge = 30 * 60 * 1000; // 30 minutes
+            
+            for (const [key, value] of this.cache) {
+                if (now - value.timestamp > maxAge) {
+                    this.cache.delete(key);
+                }
+            }
+        }
+        
+        clear() {
+            this.cache.clear();
+            this.cleanupCounter = 0;
         }
     }
 
@@ -65,7 +122,9 @@
         },
         TIMINGS_MS: {
             INITIAL_SETTLE_DELAY: 1500,
-            PROCESS_THROTTLE: 200
+            PROCESS_THROTTLE: 200,
+            CLEANUP_INTERVAL: 300000, // 5 minutes
+            API_BATCH_DELAY: 100
         },
         CSS: {
             HYPE_TRAIN_CLASSES: {
@@ -108,8 +167,35 @@
         observers: { sidebarObserver: null, mainObserver: null, uptimeObserver: null },
         isInitialized: false,
         animationFrameId: null,
-        visibleUptimeElements: new Set()
+        visibleUptimeElements: new Set(),
+        cleanupInterval: null,
+        pendingBatch: new Map(),
+        batchTimer: null
     };
+
+    // --- CLEANUP FUNCTIONS ---
+    function schedulePeriodicCleanup() {
+        if (state.cleanupInterval) return;
+        
+        state.cleanupInterval = setInterval(() => {
+            // Nettoie le cache
+            state.domCache.cleanup();
+            
+            // Nettoie les éléments non connectés
+            const toRemove = [];
+            for (const element of state.visibleUptimeElements) {
+                if (!element.isConnected) {
+                    toRemove.push(element);
+                }
+            }
+            toRemove.forEach(el => state.visibleUptimeElements.delete(el));
+            
+            // Force un garbage collection si possible
+            if (window.gc) {
+                window.gc();
+            }
+        }, CONFIG.TIMINGS_MS.CLEANUP_INTERVAL);
+    }
 
     // --- CORE FUNCTIONS ---
     const formatUptime = (totalSeconds) => {
@@ -122,16 +208,36 @@
     const isChannelElementLive = (el) => el?.querySelector(CONFIG.SELECTORS.LIVE_INDICATOR) !== null;
 
     // --- OPTIMIZED UPTIME COUNTER LOGIC ---
-    function updateVisibleCountersLoop() {
+    let lastFrameTime = 0;
+    const FRAME_BUDGET = 16; // 60 FPS
+    
+    function updateVisibleCountersLoop(currentTime) {
         if (state.visibleUptimeElements.size === 0 || document.hidden) {
             state.animationFrameId = null;
             return;
         }
+        
+        // Limite le traitement si on dépasse le budget de frame
+        const deltaTime = currentTime - lastFrameTime;
+        if (deltaTime < FRAME_BUDGET) {
+            state.animationFrameId = requestAnimationFrame(updateVisibleCountersLoop);
+            return;
+        }
+        
+        lastFrameTime = currentTime;
+        
+        // Traite les éléments visibles
+        let processed = 0;
+        const maxToProcess = Math.min(state.visibleUptimeElements.size, 50);
+        
         for (const uptimeDisplay of state.visibleUptimeElements) {
+            if (processed >= maxToProcess) break;
+            
             const startedAt = new Date(uptimeDisplay.dataset.startedAt);
             if (!isNaN(startedAt.getTime())) {
                 const uptimeSeconds = (Date.now() - startedAt.getTime()) / 1000;
                 uptimeDisplay.textContent = formatUptime(uptimeSeconds);
+                
                 const channelElement = uptimeDisplay.closest(CONFIG.SELECTORS.CHANNEL_LINK_ITEM);
                 if (channelElement) {
                     if (uptimeSeconds < 660) {
@@ -141,28 +247,38 @@
                     }
                 }
             }
+            processed++;
         }
+        
         state.animationFrameId = requestAnimationFrame(updateVisibleCountersLoop);
     }
 
     function setupUptimeObserver() {
         if (state.observers.uptimeObserver) state.observers.uptimeObserver.disconnect();
+        
         state.observers.uptimeObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     state.visibleUptimeElements.add(entry.target);
-                    if (state.animationFrameId === null) updateVisibleCountersLoop();
+                    if (state.animationFrameId === null) {
+                        state.animationFrameId = requestAnimationFrame(updateVisibleCountersLoop);
+                    }
                 } else {
                     state.visibleUptimeElements.delete(entry.target);
                 }
             });
-        }, { root: state.domElements.sidebar, threshold: 0.1 });
+        }, { 
+            root: state.domElements.sidebar, 
+            threshold: 0.1,
+            rootMargin: '50px'
+        });
     }
 
     function cleanupChannelDisplay(channelElement) {
         const uptimeDisplay = channelElement.querySelector(`.${CONFIG.CSS_CLASSES.CUSTOM_UPTIME_COUNTER}`);
         if (uptimeDisplay) {
             state.observers.uptimeObserver?.unobserve(uptimeDisplay);
+            state.visibleUptimeElements.delete(uptimeDisplay);
             uptimeDisplay.remove();
         }
         channelElement.classList.remove(CONFIG.CSS_CLASSES.NEW_STREAM_FLASH);
@@ -172,6 +288,7 @@
     function renderLiveState(channelElement, channelLogin, startedAtString) {
         let uptimeDisplay = channelElement.querySelector(`.${CONFIG.CSS_CLASSES.CUSTOM_UPTIME_COUNTER}`);
         const insertionPoint = channelElement.querySelector('.side-nav-card__live-status') || channelElement.querySelector('.side-nav-card__meta');
+        
         if (!uptimeDisplay) {
             if (insertionPoint) {
                 Object.assign(insertionPoint.style, { display: 'flex', flexDirection: 'column', alignItems: 'flex-end' });
@@ -215,7 +332,16 @@
     
     function processHypeTrains() {
         if (!state.domElements.sidebar) return;
-        state.domElements.sidebar.querySelectorAll(CONFIG.SELECTORS.CHANNEL_LINK_ITEM).forEach(channelLink => {
+        
+        const channelLinks = state.domElements.sidebar.querySelectorAll(CONFIG.SELECTORS.CHANNEL_LINK_ITEM);
+        
+        // Limite le nombre d'éléments traités par frame
+        let processed = 0;
+        const maxToProcess = 100;
+        
+        channelLinks.forEach(channelLink => {
+            if (processed >= maxToProcess) return;
+            
             const avatarContainer = channelLink.querySelector(CONFIG.SELECTORS.AVATAR_CONTAINER);
             if (!avatarContainer) return;
             
@@ -323,12 +449,21 @@
                 avatarContainer.classList.remove(...textClasses);
                 avatarContainer.querySelector(`.${CONFIG.CSS.HYPE_TRAIN_CLASSES.LEVEL_TEXT}`)?.remove();
             }
+            
+            processed++;
         });
     }
 
     function processSquadStreams() {
         if (!state.domElements.sidebar) return;
-        state.domElements.sidebar.querySelectorAll(CONFIG.SELECTORS.CHANNEL_LINK_ITEM).forEach(channelLink => {
+        
+        const channelLinks = state.domElements.sidebar.querySelectorAll(CONFIG.SELECTORS.CHANNEL_LINK_ITEM);
+        let processed = 0;
+        const maxToProcess = 100;
+        
+        channelLinks.forEach(channelLink => {
+            if (processed >= maxToProcess) return;
+            
             const guestAvatar = channelLink.querySelector(CONFIG.SELECTORS.GUEST_AVATAR);
             if (guestAvatar && !guestAvatar.querySelector(`.${CONFIG.CSS.SQUAD_CLASSES.COUNT_TEXT}`)) {
                 const squadIndicator = Array.from(channelLink.querySelectorAll('p')).find(p => p.textContent.trim().startsWith('+'));
@@ -344,10 +479,38 @@
                     }
                 }
             }
+            processed++;
         });
     }
 
-    // --- API & INITIALIZATION LOGIC ---
+    // --- OPTIMIZED API BATCH LOGIC ---
+    function processBatch() {
+        if (state.pendingBatch.size === 0) {
+            state.batchTimer = null;
+            return;
+        }
+        
+        const batch = new Map(state.pendingBatch);
+        state.pendingBatch.clear();
+        state.batchTimer = null;
+        
+        executeBatchApiUpdate(batch);
+    }
+
+    function addToBatch(channelLogin, element) {
+        state.pendingBatch.set(channelLogin, element);
+        
+        if (!state.batchTimer) {
+            state.batchTimer = setTimeout(processBatch, CONFIG.TIMINGS_MS.API_BATCH_DELAY);
+        }
+        
+        // Force le traitement si le batch devient trop gros
+        if (state.pendingBatch.size >= 50) {
+            clearTimeout(state.batchTimer);
+            processBatch();
+        }
+    }
+
     async function expandFollowedChannels() {
         return new Promise(resolve => {
             const checkAndClick = () => {
@@ -430,16 +593,24 @@
             if (cachedData) {
                 renderLiveState(el, channelLogin, cachedData.startedAt);
             } else {
-                const channelsForApiUpdate = new Map([[channelLogin, el]]);
-                executeBatchApiUpdate(channelsForApiUpdate);
+                addToBatch(channelLogin, el);
             }
         }
     }
 
     function setupSidebarObserver() {
         if (state.observers.sidebarObserver) state.observers.sidebarObserver.disconnect();
-        const callback = (mutations) => {
-            throttledProcessUI();
+        
+        // Buffer pour les mutations
+        let mutationBuffer = [];
+        let processTimer = null;
+        
+        const processMutations = () => {
+            processTimer = null;
+            if (mutationBuffer.length === 0) return;
+            
+            const mutations = mutationBuffer.splice(0, 100); // Traite max 100 mutations à la fois
+            
             for (const mutation of mutations) {
                 if (mutation.type === 'childList') {
                     mutation.addedNodes.forEach(node => {
@@ -450,7 +621,7 @@
                         node.querySelectorAll(CONFIG.SELECTORS.CHANNEL_LINK_ITEM).forEach(processNewChannelElement);
                     });
                     mutation.removedNodes.forEach(node => {
-                         if (node.nodeType !== Node.ELEMENT_NODE) return;
+                        if (node.nodeType !== Node.ELEMENT_NODE) return;
                         if (node.matches(CONFIG.SELECTORS.CHANNEL_LINK_ITEM)) {
                             cleanupChannelDisplay(node);
                         }
@@ -458,6 +629,26 @@
                     });
                 }
             }
+            
+            // Continue s'il reste des mutations
+            if (mutationBuffer.length > 0) {
+                processTimer = setTimeout(processMutations, 50);
+            }
+        };
+        
+        const callback = (mutations) => {
+            mutationBuffer.push(...mutations);
+            
+            // Limite la taille du buffer
+            if (mutationBuffer.length > 500) {
+                mutationBuffer = mutationBuffer.slice(-250);
+            }
+            
+            if (!processTimer) {
+                processTimer = setTimeout(processMutations, 50);
+            }
+            
+            throttledProcessUI();
         };
         
         state.observers.sidebarObserver = new MutationObserver(callback);
@@ -475,6 +666,7 @@
         state.domElements.sidebar = sidebar;
         
         setupUptimeObserver();
+        schedulePeriodicCleanup();
         
         await new Promise(res => setTimeout(res, CONFIG.TIMINGS_MS.INITIAL_SETTLE_DELAY));
         
@@ -492,31 +684,37 @@
                 cancelAnimationFrame(state.animationFrameId);
                 state.animationFrameId = null;
             }
+            // Nettoie un peu quand la page est cachée
+            if (state.visibleUptimeElements.size > 100) {
+                const toKeep = new Set();
+                let kept = 0;
+                for (const el of state.visibleUptimeElements) {
+                    if (kept < 50 && el.isConnected) {
+                        toKeep.add(el);
+                        kept++;
+                    }
+                }
+                state.visibleUptimeElements = toKeep;
+            }
         } else {
             // When the tab becomes visible
-            if (null === state.animationFrameId) {
-                updateVisibleCountersLoop(); // Restart the animation frame for uptime updates
+            if (state.animationFrameId === null && state.visibleUptimeElements.size > 0) {
+                state.animationFrameId = requestAnimationFrame(updateVisibleCountersLoop);
             }
 
             if (state.domElements.sidebar) {
                 const channelsToProcess = new Map();
                 state.domElements.sidebar.querySelectorAll(CONFIG.SELECTORS.CHANNEL_LINK_ITEM).forEach(el => {
                     const login = el.href?.split("/").pop()?.toLowerCase();
-                    // Check if it's a live channel and if it's already in our liveChannelElements map
-                    // Also check if it's a valid login format
                     if (login && TWITCH_LOGIN_REGEX.test(login) && isChannelElementLive(el)) {
-                        // If the element is not in liveChannelElements, or if its
-                        // associated uptime element is missing (e.g., due to a Twitch DOM re-render)
                         const existingEntry = state.liveChannelElements.get(el);
                         const uptimeElement = el.querySelector("." + CONFIG.CSS_CLASSES.CUSTOM_UPTIME_COUNTER);
 
                         if (!existingEntry || !uptimeElement) {
-                            // If we have it in domCache, use that data to re-render uptime immediately
                             const cachedData = state.domCache.get(login);
                             if (cachedData) {
-                                renderLiveState(el, login, cachedData.startedAt); // Re-create/update the uptime counter
+                                renderLiveState(el, login, cachedData.startedAt);
                             } else {
-                                // Otherwise, add it to the list to fetch via API
                                 channelsToProcess.set(login, el);
                             }
                         }
@@ -529,6 +727,22 @@
                 }
             }
         }
+    });
+
+    // Cleanup lors du déchargement
+    window.addEventListener('beforeunload', () => {
+        if (state.cleanupInterval) {
+            clearInterval(state.cleanupInterval);
+        }
+        if (state.batchTimer) {
+            clearTimeout(state.batchTimer);
+        }
+        if (state.animationFrameId) {
+            cancelAnimationFrame(state.animationFrameId);
+        }
+        state.observers.sidebarObserver?.disconnect();
+        state.observers.mainObserver?.disconnect();
+        state.observers.uptimeObserver?.disconnect();
     });
 
     async function init() {
@@ -549,14 +763,20 @@
                     
                     state.isInitialized = false;
                     state.domElements.sidebar = null;
-                    state.liveChannelElements = new WeakMap(); // Clear the map when the sidebar is removed
+                    state.liveChannelElements = new WeakMap();
                     state.visibleUptimeElements.clear();
-                    // Optionally, clear domCache here if you want to refetch everything on next initialization
-                    // state.domCache.clear();
+                    
+                    // Nettoie le batch en attente
+                    if (state.batchTimer) {
+                        clearTimeout(state.batchTimer);
+                        state.batchTimer = null;
+                    }
+                    state.pendingBatch.clear();
                 }
             });
 
             mainObserver.observe(document.body, { childList: true, subtree: true });
+            state.observers.mainObserver = mainObserver;
 
         } catch (error) {
             if (error.message.includes('Extension context invalidated')) {

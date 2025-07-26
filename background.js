@@ -1,4 +1,4 @@
-// background.js
+// background.js - Version optimisée qui préserve les fonctionnalités
 'use strict';
 
 // --- UTILITIES (Promisification & Storage) ---
@@ -21,20 +21,29 @@ const identity = {
 
 // --- SECURITÉ (Web Crypto API) ---
 
+// Cache pour la clé de chiffrement
+let encryptionKeyCache = null;
+
 /**
  * Récupère ou génère une clé de chiffrement et la stocke.
  * @returns {Promise<CryptoKey>} La clé de chiffrement.
  */
 async function getEncryptionKey() {
+    // Utilise le cache si disponible
+    if (encryptionKeyCache) {
+        return encryptionKeyCache;
+    }
+    
     let keyData = await storage.get('encryption_key');
     if (keyData.encryption_key) {
-        return await crypto.subtle.importKey(
+        encryptionKeyCache = await crypto.subtle.importKey(
             'jwk',
             keyData.encryption_key,
             { name: 'AES-GCM' },
             true,
             ['encrypt', 'decrypt']
         );
+        return encryptionKeyCache;
     } else {
         const newKey = await crypto.subtle.generateKey(
             { name: 'AES-GCM', length: 256 },
@@ -43,6 +52,7 @@ async function getEncryptionKey() {
         );
         const exportedKey = await crypto.subtle.exportKey('jwk', newKey);
         await storage.set({ 'encryption_key': exportedKey });
+        encryptionKeyCache = newKey;
         return newKey;
     }
 }
@@ -92,6 +102,7 @@ async function decryptToken(encryptedString) {
         console.error("Erreur de déchiffrement, le token est peut-être corrompu ou la clé a changé.", e);
         // En cas d'erreur, on supprime l'ancien token pour forcer une reconnexion
         await storage.remove(CONFIG.STORAGE_TOKEN_KEY);
+        encryptionKeyCache = null; // Invalide le cache
         return null;
     }
 }
@@ -103,7 +114,60 @@ const CONFIG = {
     API_BASE_URL: 'https://api.twitch.tv/helix/streams',
     manifest: chrome.runtime.getManifest(),
     API_RETRY_ATTEMPTS: 3,
-    API_INITIAL_BACKOFF_MS: 1000
+    API_INITIAL_BACKOFF_MS: 1000,
+    CACHE_DURATION_MS: 60000, // 1 minute
+    CACHE_CLEANUP_INTERVAL_MS: 300000, // 5 minutes
+    MAX_CACHE_SIZE: 200
+};
+
+// --- CACHE DES RÉPONSES API ---
+const apiCache = {
+    data: new Map(),
+    cleanupInterval: null,
+    
+    init() {
+        // Programme le nettoyage périodique
+        this.cleanupInterval = setInterval(() => this.cleanup(), CONFIG.CACHE_CLEANUP_INTERVAL_MS);
+    },
+    
+    get(key) {
+        const cached = this.data.get(key);
+        if (cached && Date.now() - cached.timestamp < CONFIG.CACHE_DURATION_MS) {
+            return cached.value;
+        }
+        this.data.delete(key);
+        return null;
+    },
+    
+    set(key, value) {
+        this.data.set(key, {
+            value: value,
+            timestamp: Date.now()
+        });
+        
+        // Limite la taille du cache
+        if (this.data.size > CONFIG.MAX_CACHE_SIZE) {
+            const firstKey = this.data.keys().next().value;
+            this.data.delete(firstKey);
+        }
+    },
+    
+    cleanup() {
+        const now = Date.now();
+        for (const [key, cached] of this.data) {
+            if (now - cached.timestamp > CONFIG.CACHE_DURATION_MS) {
+                this.data.delete(key);
+            }
+        }
+    },
+    
+    destroy() {
+        if (this.cleanupInterval) {
+            clearInterval(this.cleanupInterval);
+            this.cleanupInterval = null;
+        }
+        this.data.clear();
+    }
 };
 
 // --- FONCTIONS DE NOTIFICATION ---
@@ -156,12 +220,20 @@ async function fetchWithRetry(url, options, attempt = 1) {
 
 
 async function getStreamsUptimeBatch(channelLogins) {
+    if (channelLogins.length === 0) {
+        return { success: true, data: [] };
+    }
+    
+    // Vérifie le cache pour chaque login
+    const cacheKey = channelLogins.sort().join(',');
+    const cachedResult = apiCache.get(cacheKey);
+    if (cachedResult) {
+        return cachedResult;
+    }
+    
     const { token, clientId } = await getApiCredentials();
     if (!token || !clientId) {
         return { success: false, error: 'NO_TOKEN' };
-    }
-    if (channelLogins.length === 0) {
-        return { success: true, data: [] };
     }
 
     const queryParams = channelLogins.map(login => `user_login=${encodeURIComponent(login)}`).join('&');
@@ -173,6 +245,7 @@ async function getStreamsUptimeBatch(channelLogins) {
 
         if (response.status === 401) {
             await storage.remove(CONFIG.STORAGE_TOKEN_KEY);
+            encryptionKeyCache = null; // Invalide le cache de la clé
             showTokenExpiredNotification();
             return { success: false, error: 'TOKEN_EXPIRED' };
         }
@@ -194,7 +267,12 @@ async function getStreamsUptimeBatch(channelLogins) {
         );
 
         const results = new Map(validStreams.map(stream => [stream.user_login.toLowerCase(), stream.started_at]));
-        return { success: true, data: Array.from(results.entries()) };
+        const result = { success: true, data: Array.from(results.entries()) };
+        
+        // Met en cache le résultat
+        apiCache.set(cacheKey, result);
+        
+        return result;
 
     } catch (error) {
         console.error("[Background API Error]", error.message);
@@ -230,12 +308,15 @@ async function login() {
     } catch (error) {
         console.error("Login process failed:", error.message);
         await storage.remove(CONFIG.STORAGE_TOKEN_KEY);
+        encryptionKeyCache = null; // Invalide le cache
         return false;
     }
 }
 
 async function logout() {
     await storage.remove(CONFIG.STORAGE_TOKEN_KEY);
+    encryptionKeyCache = null; // Invalide le cache
+    apiCache.data.clear(); // Vide le cache API
     console.log('Encrypted token removed. User logged out.');
 }
 
@@ -292,5 +373,20 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 // --- CYCLE DE VIE DE L'EXTENSION ---
-chrome.runtime.onStartup.addListener(clearNotification);
-chrome.runtime.onInstalled.addListener(clearNotification);
+chrome.runtime.onStartup.addListener(() => {
+    clearNotification();
+    apiCache.init();
+});
+
+chrome.runtime.onInstalled.addListener(() => {
+    clearNotification();
+    apiCache.init();
+});
+
+// Nettoie lors de la suspension (pour Manifest V3)
+if (typeof self !== 'undefined' && self.addEventListener) {
+    self.addEventListener('deactivate', () => {
+        apiCache.destroy();
+        encryptionKeyCache = null;
+    });
+}

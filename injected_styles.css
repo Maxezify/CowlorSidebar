@@ -1,44 +1,359 @@
-/* injected-styles.css */
-@keyframes light-sweep { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; }}
-@keyframes visible-pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; }}
+/* injected-styles.css - Version optimisée avec animations originales préservées */
 
-.new-stream-flash { position: relative; overflow: hidden; border-radius: 4px;}
-.new-stream-flash::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient( 90deg, transparent, rgba(145, 71, 255, 0.45), transparent); animation: light-sweep 2.2s ease-in-out infinite, visible-pulse 1.8s ease-in-out infinite; z-index: 0; pointer-events: none; }
+/* --- Variables CSS pour réduire la duplication --- */
+:root {
+  /* Couleurs des Hype Trains */
+  --ht-blue: #23a6d5;
+  --ht-green: #23d5ab;
+  --ht-yellow: #E2DF0B;
+  --ht-orange: #E4750E;
+  --ht-red: #D93025;
+  --ht-gold: #FFD700;
+  
+  /* Couleurs Twitch */
+  --twitch-purple: #9146ff;
+  --twitch-purple-dark: #6a0dad;
+  --twitch-purple-light: #d7bfff;
+  
+  /* Couleurs de base */
+  --text-shadow-dark: #1f1f23;
+  --squad-bg: rgba(0, 0, 0, 0.7);
+  
+  /* Durées d'animation */
+  --anim-light-sweep: 2.2s;
+  --anim-visible-pulse: 1.8s;
+  --anim-ht-pulse: 1.2s;
+  --anim-sonar-wave: 1.2s;
+  --anim-legendary-sparkle: 1.8s;
+  --anim-legendary-crown: 2.5s;
+  --anim-shimmer: 2.5s;
+}
 
-.side-nav-card .tch-ext-hidden { display: none !important;}
+/* --- Support pour l'accessibilité --- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
 
-@keyframes ht-text-color-anim { 0%, 100% { color: white; text-shadow: -1px -1px 0 #1f1f23, 1px -1px 0 #1f1f23, -1px 1px 0 #1f1f23, 1px 1px 0 #1f1f23; } 50% { color: #1f1f23; text-shadow: -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white, 1px 1px 0 white; } }
-@keyframes ht-pulse-blue { 0%, 100% { background-color: transparent; box-shadow: none; } 50% { background-color: rgba(35, 166, 213, 0.7); box-shadow: inset 0 0 8px 2px #23a6d5, 0 0 12px #23a6d5; } }
-@keyframes ht-pulse-green { 0%, 100% { background-color: transparent; box-shadow: none; } 50% { background-color: rgba(35, 213, 171, 0.7); box-shadow: inset 0 0 8px 2px #23d5ab, 0 0 12px #23d5ab; } }
-@keyframes ht-pulse-yellow { 0%, 100% { background-color: transparent; box-shadow: none; } 50% { background-color: rgba(226, 223, 11, 0.7); box-shadow: inset 0 0 8px 2px #E2DF0B, 0 0 12px #E2DF0B; } }
-@keyframes ht-pulse-orange { 0%, 100% { background-color: transparent; box-shadow: none; } 50% { background-color: rgba(228, 117, 14, 0.7); box-shadow: inset 0 0 8px 2px #E4750E, 0 0 12px #E4750E; } }
-@keyframes ht-pulse-red { 0%, 100% { background-color: transparent; box-shadow: none; } 50% { background-color: rgba(217, 48, 37, 0.7); box-shadow: inset 0 0 8px 2px #D93025, 0 0 12px #D93025; } }
-@keyframes sonar-wave { 0% { transform: scale(0.9); opacity: 1; } 100% { transform: scale(2.2); opacity: 0; } }
-@keyframes legendary-sparkle { 0%, 100% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.5); opacity: 1; } }
-@keyframes legendary-crown-float { 0% { transform: translate(-50%, -50%) translateY(-5px) scale(1.1); } 50% { transform: translate(-50%, -50%) translateY(0) scale(1.05); } 100% { transform: translate(-50%, -50%) translateY(-5px) scale(1.1); } }
-@keyframes shimmer-background-pan { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+/* --- Animations originales préservées --- */
+@keyframes light-sweep { 
+  0% { background-position: -200% 0; } 
+  100% { background-position: 200% 0; }
+}
 
-.hype-train-container { position: relative; border-radius: 9999px; }
-.hype-train-container::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 9999px; pointer-events: none; animation-duration: 1.2s; animation-timing-function: ease-in-out; animation-iteration-count: infinite; will-change: transform, opacity; }
-.hype-train-container.ht-treasure-effect::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 9999px; border: 2px solid; animation: sonar-wave 1.2s ease-out infinite; animation-delay: 0.5s; will-change: transform, opacity; }
-.hype-train-container.ht-gift-sub-effect::before { content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px; border-radius: 9999px; padding: 3px; background: linear-gradient(90deg, #6a0dad, #9146ff, #d7bfff, #9146ff, #6a0dad); background-size: 300% 100%; -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; animation: shimmer-background-pan 2.5s linear infinite; will-change: background-position; pointer-events: none; }
+@keyframes visible-pulse { 
+  0%, 100% { opacity: 0.5; } 
+  50% { opacity: 1; }
+}
+
+@keyframes ht-text-color-anim { 
+  0%, 100% { 
+    color: white; 
+    text-shadow: -1px -1px 0 var(--text-shadow-dark), 
+                  1px -1px 0 var(--text-shadow-dark), 
+                 -1px  1px 0 var(--text-shadow-dark), 
+                  1px  1px 0 var(--text-shadow-dark); 
+  } 
+  50% { 
+    color: var(--text-shadow-dark); 
+    text-shadow: -1px -1px 0 white, 
+                  1px -1px 0 white, 
+                 -1px  1px 0 white, 
+                  1px  1px 0 white; 
+  } 
+}
+
+@keyframes ht-pulse-blue { 
+  0%, 100% { 
+    background-color: transparent; 
+    box-shadow: none; 
+  } 
+  50% { 
+    background-color: rgba(35, 166, 213, 0.7); 
+    box-shadow: inset 0 0 8px 2px var(--ht-blue), 0 0 12px var(--ht-blue); 
+  } 
+}
+
+@keyframes ht-pulse-green { 
+  0%, 100% { 
+    background-color: transparent; 
+    box-shadow: none; 
+  } 
+  50% { 
+    background-color: rgba(35, 213, 171, 0.7); 
+    box-shadow: inset 0 0 8px 2px var(--ht-green), 0 0 12px var(--ht-green); 
+  } 
+}
+
+@keyframes ht-pulse-yellow { 
+  0%, 100% { 
+    background-color: transparent; 
+    box-shadow: none; 
+  } 
+  50% { 
+    background-color: rgba(226, 223, 11, 0.7); 
+    box-shadow: inset 0 0 8px 2px var(--ht-yellow), 0 0 12px var(--ht-yellow); 
+  } 
+}
+
+@keyframes ht-pulse-orange { 
+  0%, 100% { 
+    background-color: transparent; 
+    box-shadow: none; 
+  } 
+  50% { 
+    background-color: rgba(228, 117, 14, 0.7); 
+    box-shadow: inset 0 0 8px 2px var(--ht-orange), 0 0 12px var(--ht-orange); 
+  } 
+}
+
+@keyframes ht-pulse-red { 
+  0%, 100% { 
+    background-color: transparent; 
+    box-shadow: none; 
+  } 
+  50% { 
+    background-color: rgba(217, 48, 37, 0.7); 
+    box-shadow: inset 0 0 8px 2px var(--ht-red), 0 0 12px var(--ht-red); 
+  } 
+}
+
+@keyframes sonar-wave { 
+  0% { 
+    transform: scale(0.9); 
+    opacity: 1; 
+  } 
+  100% { 
+    transform: scale(2.2); 
+    opacity: 0; 
+  } 
+}
+
+@keyframes legendary-sparkle { 
+  0%, 100% { 
+    transform: scale(1); 
+    opacity: 0.5; 
+  } 
+  50% { 
+    transform: scale(1.5); 
+    opacity: 1; 
+  } 
+}
+
+@keyframes legendary-crown-float { 
+  0% { 
+    transform: translate(-50%, -50%) translateY(-5px) scale(1.1); 
+  } 
+  50% { 
+    transform: translate(-50%, -50%) translateY(0) scale(1.05); 
+  } 
+  100% { 
+    transform: translate(-50%, -50%) translateY(-5px) scale(1.1); 
+  } 
+}
+
+@keyframes shimmer-background-pan { 
+  0% { background-position: 200% 0; } 
+  100% { background-position: -200% 0; } 
+}
+
+/* --- Classes principales --- */
+.new-stream-flash { 
+  position: relative; 
+  overflow: hidden; 
+  border-radius: 4px;
+}
+
+.new-stream-flash::before { 
+  content: ''; 
+  position: absolute; 
+  top: 0; 
+  left: 0; 
+  width: 100%; 
+  height: 100%; 
+  background: linear-gradient(90deg, transparent, rgba(145, 71, 255, 0.45), transparent); 
+  animation: light-sweep var(--anim-light-sweep) ease-in-out infinite, 
+             visible-pulse var(--anim-visible-pulse) ease-in-out infinite; 
+  z-index: 0; 
+  pointer-events: none; 
+  will-change: background-position, opacity;
+}
+
+/* Optimisation: will-change retiré après l'animation */
+@media (prefers-reduced-motion: no-preference) {
+  .new-stream-flash:not(:hover)::before {
+    will-change: auto;
+  }
+}
+
+.side-nav-card .tch-ext-hidden { 
+  display: none !important;
+}
+
+/* --- Hype Train Container --- */
+.hype-train-container { 
+  position: relative; 
+  border-radius: 9999px; 
+}
+
+.hype-train-container::after { 
+  content: ''; 
+  position: absolute; 
+  top: 0; 
+  left: 0; 
+  right: 0; 
+  bottom: 0; 
+  border-radius: 9999px; 
+  pointer-events: none; 
+  animation-duration: var(--anim-ht-pulse); 
+  animation-timing-function: ease-in-out; 
+  animation-iteration-count: infinite; 
+  will-change: background-color, box-shadow;
+}
+
+/* Treasure Effect */
+.hype-train-container.ht-treasure-effect::before { 
+  content: ''; 
+  position: absolute; 
+  top: 0; 
+  left: 0; 
+  right: 0; 
+  bottom: 0; 
+  border-radius: 9999px; 
+  border: 2px solid; 
+  animation: sonar-wave var(--anim-sonar-wave) ease-out infinite; 
+  animation-delay: 0.5s; 
+  will-change: transform, opacity; 
+}
+
+/* Gift Sub Effect */
+.hype-train-container.ht-gift-sub-effect::before { 
+  content: ''; 
+  position: absolute; 
+  top: -2px; 
+  left: -2px; 
+  right: -2px; 
+  bottom: -2px; 
+  border-radius: 9999px; 
+  padding: 3px; 
+  background: linear-gradient(90deg, 
+    var(--twitch-purple-dark), 
+    var(--twitch-purple), 
+    var(--twitch-purple-light), 
+    var(--twitch-purple), 
+    var(--twitch-purple-dark)); 
+  background-size: 300% 100%; 
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); 
+  -webkit-mask-composite: xor; 
+  mask-composite: exclude; 
+  animation: shimmer-background-pan var(--anim-shimmer) linear infinite; 
+  will-change: background-position; 
+  pointer-events: none; 
+}
+
+/* Hype Train Colors */
 .hype-train-container.ht-blue::after { animation-name: ht-pulse-blue; }
 .hype-train-container.ht-green::after { animation-name: ht-pulse-green; }
 .hype-train-container.ht-yellow::after { animation-name: ht-pulse-yellow; }
 .hype-train-container.ht-orange::after { animation-name: ht-pulse-orange; }
 .hype-train-container.ht-red::after { animation-name: ht-pulse-red; }
-.ht-blue { border-color: #23a6d5; color: #23a6d5; }
-.ht-green { border-color: #23d5ab; color: #23d5ab; }
-.ht-yellow { border-color: #E2DF0B; color: #E2DF0B; }
-.ht-orange { border-color: #E4750E; color: #E4750E; }
-.ht-red { border-color: #D93025; color: #D93025; }
-/* La variable JavaScript 'goldKappaImageUrl' est remplacée par un chemin direct */
-.hype-train-container.ht-gold { overflow: visible !important; }
-.hype-train-container.ht-gold::after { content: ''; background-image: url('chrome-extension://__MSG_@@extension_id__/gold_kappa.png'); background-size: 80%; background-position: center; background-repeat: no-repeat; opacity: 0.2; box-shadow: inset 0 0 10px 3px #FFD700, 0 0 20px 5px #FFD700; animation: legendary-sparkle 1.8s ease-in-out infinite; }
-.hype-train-level-text.ht-kappa-crown { content: ''; font-size: 28px; color: #FFD700; text-shadow: 0 0 4px black, 0 0 8px gold, 0 0 12px white; animation: legendary-crown-float 2.5s ease-in-out infinite; z-index: 12; will-change: transform; }
-.hype-train-level-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 16px; font-weight: 900; color: white; text-shadow: -1px -1px 0 #1f1f23, 1px -1px 0 #1f1f23, -1px 1px 0 #1f1f23, 1px 1px 0 #1f1f23; pointer-events: none; z-index: 10; animation: ht-text-color-anim 1.2s ease-in-out infinite; }
-.hype-train-level-text.ht-shifted { top: 35%; left: 35%; font-size: 13px; }
 
-.squad-indicator-hidden { display: none !important; }
-.squad-count-container { position: relative; }
-.squad-count-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 13px; font-weight: bold; text-shadow: none; pointer-events: none; z-index: 1; background-color: rgba(0, 0, 0, 0.7); border-radius: 50%; padding: 0px 4px; line-height: 16px; }
+.ht-blue { border-color: var(--ht-blue); color: var(--ht-blue); }
+.ht-green { border-color: var(--ht-green); color: var(--ht-green); }
+.ht-yellow { border-color: var(--ht-yellow); color: var(--ht-yellow); }
+.ht-orange { border-color: var(--ht-orange); color: var(--ht-orange); }
+.ht-red { border-color: var(--ht-red); color: var(--ht-red); }
+
+/* Golden Kappa */
+.hype-train-container.ht-gold { 
+  overflow: visible !important; 
+}
+
+.hype-train-container.ht-gold::after { 
+  content: ''; 
+  background-image: url('chrome-extension://__MSG_@@extension_id__/gold_kappa.png'); 
+  background-size: 80%; 
+  background-position: center; 
+  background-repeat: no-repeat; 
+  opacity: 0.2; 
+  box-shadow: inset 0 0 10px 3px var(--ht-gold), 0 0 20px 5px var(--ht-gold); 
+  animation: legendary-sparkle var(--anim-legendary-sparkle) ease-in-out infinite; 
+  will-change: transform, opacity, box-shadow;
+}
+
+/* Hype Train Level Text */
+.hype-train-level-text { 
+  position: absolute; 
+  top: 50%; 
+  left: 50%; 
+  transform: translate(-50%, -50%); 
+  font-size: 16px; 
+  font-weight: 900; 
+  color: white; 
+  text-shadow: -1px -1px 0 var(--text-shadow-dark), 
+                1px -1px 0 var(--text-shadow-dark), 
+               -1px  1px 0 var(--text-shadow-dark), 
+                1px  1px 0 var(--text-shadow-dark); 
+  pointer-events: none; 
+  z-index: 10; 
+  animation: ht-text-color-anim var(--anim-ht-pulse) ease-in-out infinite; 
+  will-change: color, text-shadow;
+}
+
+.hype-train-level-text.ht-shifted { 
+  top: 35%; 
+  left: 35%; 
+  font-size: 13px; 
+}
+
+.hype-train-level-text.ht-kappa-crown { 
+  content: ''; 
+  font-size: 28px; 
+  color: var(--ht-gold); 
+  text-shadow: 0 0 4px black, 0 0 8px gold, 0 0 12px white; 
+  animation: legendary-crown-float var(--anim-legendary-crown) ease-in-out infinite; 
+  z-index: 12; 
+  will-change: transform; 
+}
+
+/* Squad Stream */
+.squad-indicator-hidden { 
+  display: none !important; 
+}
+
+.squad-count-container { 
+  position: relative; 
+}
+
+.squad-count-text { 
+  position: absolute; 
+  top: 50%; 
+  left: 50%; 
+  transform: translate(-50%, -50%); 
+  color: white; 
+  font-size: 13px; 
+  font-weight: bold; 
+  text-shadow: none; 
+  pointer-events: none; 
+  z-index: 1; 
+  background-color: var(--squad-bg); 
+  border-radius: 50%; 
+  padding: 0px 4px; 
+  line-height: 16px; 
+}
+
+/* Optimisation: will-change appliqué dynamiquement via JavaScript pour les éléments actifs */
+@media (prefers-reduced-motion: no-preference) {
+  /* Les éléments non-actifs n'ont pas will-change */
+  .hype-train-container:not([data-hype-train-active])::after,
+  .hype-train-container:not([data-hype-train-active])::before {
+    will-change: auto;
+  }
+  
+  .hype-train-level-text:empty {
+    will-change: auto;
+  }
+}

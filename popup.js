@@ -1,6 +1,15 @@
 'use strict';
 
-// --- Gestion de l'Authentification (logique existante) ---
+// --- OPTIMISATION: Cache pour les messages i18n ---
+const i18nCache = new Map();
+const getI18nMessage = (key) => {
+    if (!i18nCache.has(key)) {
+        i18nCache.set(key, chrome.i18n.getMessage(key));
+    }
+    return i18nCache.get(key);
+};
+
+// --- Gestion de l'Authentification ---
 function sendMessage(message) {
     return new Promise((resolve, reject) => {
         chrome.runtime.sendMessage(message, (response) => {
@@ -19,33 +28,46 @@ async function initializeAuth() {
     const reloadMessage = document.getElementById('reload-message');
     let currentUserIsLoggedIn = false;
 
+    // OPTIMISATION: Pré-cache des messages utilisés
+    const messages = {
+        logout: getI18nMessage('popupLogout'),
+        login: getI18nMessage('popupLogin'),
+        connected: getI18nMessage('popupStatusConnected'),
+        disconnected: getI18nMessage('popupStatusDisconnected'),
+        reload: getI18nMessage('popupReloadMessage'),
+        loading: getI18nMessage('popupLoading'),
+        errorComm: getI18nMessage('popupErrorCommunicating'),
+        actionFailed: getI18nMessage('popupActionFailed'),
+        inProgress: getI18nMessage('buttonInProgress')
+    };
+
     function updateUi(isLoggedIn) {
         currentUserIsLoggedIn = isLoggedIn;
-        authButton.textContent = chrome.i18n.getMessage(isLoggedIn ? 'popupLogout' : 'popupLogin');
-        statusMessage.textContent = chrome.i18n.getMessage(isLoggedIn ? 'popupStatusConnected' : 'popupStatusDisconnected');
+        authButton.textContent = isLoggedIn ? messages.logout : messages.login;
+        statusMessage.textContent = isLoggedIn ? messages.connected : messages.disconnected;
         statusMessage.classList.toggle('status-connected', isLoggedIn);
         reloadMessage.style.display = isLoggedIn ? 'block' : 'none';
-        if (isLoggedIn) reloadMessage.textContent = chrome.i18n.getMessage('popupReloadMessage');
+        if (isLoggedIn) reloadMessage.textContent = messages.reload;
     }
 
-    authButton.textContent = chrome.i18n.getMessage('popupLoading');
+    authButton.textContent = messages.loading;
     try {
         const response = await sendMessage({ type: 'GET_AUTH_STATUS' });
         updateUi(response.isLoggedIn);
     } catch (error) {
-        statusMessage.textContent = chrome.i18n.getMessage('popupErrorCommunicating');
+        statusMessage.textContent = messages.errorComm;
         console.error(error.message);
     }
 
     authButton.addEventListener('click', async () => {
         const actionType = currentUserIsLoggedIn ? 'LOGOUT' : 'LOGIN';
-        authButton.textContent = chrome.i18n.getMessage('buttonInProgress');
+        authButton.textContent = messages.inProgress;
         authButton.disabled = true;
         try {
             const responseAfterAction = await sendMessage({ type: actionType });
             updateUi(responseAfterAction.isLoggedIn);
         } catch (error) {
-            statusMessage.textContent = chrome.i18n.getMessage('popupActionFailed');
+            statusMessage.textContent = messages.actionFailed;
             console.error(error.message);
         } finally {
             authButton.disabled = false;
@@ -53,42 +75,51 @@ async function initializeAuth() {
     });
 }
 
-
 // --- Logique d'interactivité de la démo ---
 document.addEventListener('DOMContentLoaded', () => {
     // Initialise l'authentification
     initializeAuth();
 
-    // **FONCTION DE TRADUCTION CORRIGÉE**
+    // OPTIMISATION: Traduction en batch
     function localizeStaticElements() {
-        // Traduit les éléments simples par leur sélecteur
-        document.title = chrome.i18n.getMessage('extensionName');
-        document.querySelector('h3').textContent = chrome.i18n.getMessage('extensionName');
-        document.querySelector('.live-example-showcase h5').textContent = chrome.i18n.getMessage('popupLiveExampleTitle');
-        document.querySelector('.controls-section h5').textContent = chrome.i18n.getMessage('popupControlsTitle');
-
-        // Traduit les labels des cases à cocher
-        const labelKeys = {
-            'toggle-hype-train': 'popupToggleClassicHypeTrain',
-            'toggle-treasure-train': 'popupToggleTreasureTrain',
-            'toggle-gift-sub': 'popupToggleGiftSub',
-            'toggle-kappa-train': 'popupToggleKappaTrain',
-            'toggle-new-stream': 'popupToggleNewStream'
+        // Cache tous les messages nécessaires
+        const translations = {
+            extensionName: getI18nMessage('extensionName'),
+            liveExample: getI18nMessage('popupLiveExampleTitle'),
+            controls: getI18nMessage('popupControlsTitle'),
+            classicHype: getI18nMessage('popupToggleClassicHypeTrain'),
+            treasure: getI18nMessage('popupToggleTreasureTrain'),
+            giftSub: getI18nMessage('popupToggleGiftSub'),
+            kappa: getI18nMessage('popupToggleKappaTrain'),
+            newStream: getI18nMessage('popupToggleNewStream')
         };
 
-        for (const inputId in labelKeys) {
-            const inputElement = document.getElementById(inputId);
-            if (inputElement && inputElement.parentElement.tagName === 'LABEL') {
-                const labelElement = inputElement.parentElement;
-                // Cible et remplace le nœud de texte qui suit l'input
-                labelElement.childNodes[1].nodeValue = ' ' + chrome.i18n.getMessage(labelKeys[inputId]);
+        // Applique les traductions
+        document.title = translations.extensionName;
+        document.querySelector('h3').textContent = translations.extensionName;
+        document.querySelector('.live-example-showcase h5').textContent = translations.liveExample;
+        document.querySelector('.controls-section h5').textContent = translations.controls;
+
+        // OPTIMISATION: Map direct des IDs aux traductions
+        const labelTranslations = {
+            'toggle-hype-train': translations.classicHype,
+            'toggle-treasure-train': translations.treasure,
+            'toggle-gift-sub': translations.giftSub,
+            'toggle-kappa-train': translations.kappa,
+            'toggle-new-stream': translations.newStream
+        };
+
+        // Applique les traductions aux labels
+        Object.entries(labelTranslations).forEach(([id, text]) => {
+            const input = document.getElementById(id);
+            if (input?.parentElement?.tagName === 'LABEL') {
+                input.parentElement.childNodes[1].nodeValue = ' ' + text;
             }
-        }
+        });
     }
 
     // Appelle la fonction de traduction
     localizeStaticElements();
-
 
     // Références aux éléments
     const exampleAvatar = document.getElementById('example-avatar');
@@ -106,19 +137,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const exclusiveToggles = [toggles.hypeTrain, toggles.treasureTrain, toggles.giftSub, toggles.kappaTrain];
     let hypeTrainInterval = null;
     let currentLevel = 1;
+    
+    // OPTIMISATION: Classes en constantes
     const HYPE_TRAIN_CLASSES = ['ht-blue', 'ht-green', 'ht-yellow', 'ht-orange', 'ht-red'];
+    const CLASS_NAMES = {
+        TREASURE: 'ht-treasure-effect',
+        GIFT_SUB: 'ht-gift-sub-effect',
+        GOLD: 'ht-gold',
+        NEW_STREAM: 'new-stream-flash'
+    };
 
-    function getHypeTrainColorClass(level) {
-        if (level <= 3) return 'ht-blue';
-        if (level <= 7) return 'ht-green';
-        if (level <= 11) return 'ht-yellow';
-        if (level <= 17) return 'ht-orange';
-        return 'ht-red';
-    }
+    // OPTIMISATION: Fonction avec lookup table
+    const LEVEL_COLOR_MAP = {
+        1: 'ht-blue', 2: 'ht-blue', 3: 'ht-blue',
+        4: 'ht-green', 5: 'ht-green', 6: 'ht-green', 7: 'ht-green',
+        8: 'ht-yellow', 9: 'ht-yellow', 10: 'ht-yellow', 11: 'ht-yellow',
+        12: 'ht-orange', 13: 'ht-orange', 14: 'ht-orange', 
+        15: 'ht-orange', 16: 'ht-orange', 17: 'ht-orange'
+    };
+    
+    const getHypeTrainColorClass = (level) => LEVEL_COLOR_MAP[level] || 'ht-red';
     
     function updateHypeTrainVisuals() {
         levelText.textContent = currentLevel;
         const newColorClass = getHypeTrainColorClass(currentLevel);
+        // OPTIMISATION: Une seule opération classList
         exampleAvatar.classList.remove(...HYPE_TRAIN_CLASSES);
         exampleAvatar.classList.add(newColorClass);
     }
@@ -146,11 +189,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function updateEffects() {
-        exampleAvatar.classList.toggle('ht-treasure-effect', toggles.treasureTrain.checked);
-        exampleAvatar.classList.toggle('ht-gift-sub-effect', toggles.giftSub.checked);
-        exampleAvatar.classList.toggle('ht-gold', toggles.kappaTrain.checked);
+        // OPTIMISATION: Utilisation de toggle avec les constantes
+        exampleAvatar.classList.toggle(CLASS_NAMES.TREASURE, toggles.treasureTrain.checked);
+        exampleAvatar.classList.toggle(CLASS_NAMES.GIFT_SUB, toggles.giftSub.checked);
+        exampleAvatar.classList.toggle(CLASS_NAMES.GOLD, toggles.kappaTrain.checked);
         
-        exampleCard.classList.toggle('new-stream-flash', toggles.newStream.checked);
+        exampleCard.classList.toggle(CLASS_NAMES.NEW_STREAM, toggles.newStream.checked);
 
         if (toggles.hypeTrain.checked || toggles.treasureTrain.checked) {
             startHypeTrainAnimation();
@@ -159,6 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // OPTIMISATION: Délégation d'événements
     exclusiveToggles.forEach(checkboxToListen => {
         checkboxToListen.addEventListener('change', (e) => {
             if (e.target.checked) {
@@ -172,9 +217,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    toggles.newStream.addEventListener('change', () => {
-        exampleCard.classList.toggle('new-stream-flash', toggles.newStream.checked);
-    });
+    toggles.newStream.addEventListener('change', updateEffects);
 
     updateEffects();
+    
+    // OPTIMISATION: Nettoyage lors du déchargement
+    window.addEventListener('beforeunload', () => {
+        if (hypeTrainInterval) {
+            clearInterval(hypeTrainInterval);
+        }
+        i18nCache.clear();
+    });
 });

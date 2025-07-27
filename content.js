@@ -1,8 +1,8 @@
-// content.js - Version optimisée qui préserve les fonctionnalités
+// content.js - Version optimisée DOM, sélecteurs et chaînes
 (function() {
     'use strict';
 
-    console.log("--- Cowlor's Sidebar Extension Initializing (v.Final Optimized) ---");
+    console.log("--- Cowlor's Sidebar Extension Initializing (v.Final Ultra-Optimized) ---");
 
     // --- UTILITIES ---
     const throttle = (func, limit) => {
@@ -31,7 +31,7 @@
     };
 
     class LRUCache {
-        constructor(maxSize = 150) { // Réduit de 200 à 150
+        constructor(maxSize = 150) {
             this.cache = new Map();
             this.maxSize = maxSize;
             this.cleanupCounter = 0;
@@ -44,9 +44,7 @@
                 timestamp: Date.now()
             });
             
-            // Nettoyage plus agressif
             if (this.cache.size > this.maxSize) {
-                // Supprime les 20% les plus anciens
                 const toDelete = Math.floor(this.maxSize * 0.2);
                 let deleted = 0;
                 for (const [k, v] of this.cache) {
@@ -56,7 +54,6 @@
                 }
             }
             
-            // Nettoyage périodique des entrées anciennes
             this.cleanupCounter++;
             if (this.cleanupCounter >= 100) {
                 this.cleanupCounter = 0;
@@ -67,12 +64,10 @@
         get(key) {
             const value = this.cache.get(key);
             if (value) {
-                // Vérifie si l'entrée n'est pas trop ancienne (30 minutes)
                 if (Date.now() - value.timestamp > 30 * 60 * 1000) {
                     this.cache.delete(key);
                     return null;
                 }
-                // Rafraîchit l'entrée
                 this.cache.delete(key);
                 this.cache.set(key, value);
                 return value;
@@ -82,7 +77,7 @@
         
         cleanup() {
             const now = Date.now();
-            const maxAge = 30 * 60 * 1000; // 30 minutes
+            const maxAge = 30 * 60 * 1000;
             
             for (const [key, value] of this.cache) {
                 if (now - value.timestamp > maxAge) {
@@ -97,51 +92,76 @@
         }
     }
 
+    // --- OPTIMISATION: Cache des messages i18n ---
+    const i18nCache = {};
+    const getI18nMessage = (key) => {
+        if (!i18nCache[key]) {
+            i18nCache[key] = chrome.i18n.getMessage(key);
+        }
+        return i18nCache[key];
+    };
+
     // --- CONFIGURATION ---
     const i18n = {
-        hypeTrainTitle: chrome.i18n.getMessage('selectorHypeTrainTitle'),
-        sharedHypeTrainTitle: chrome.i18n.getMessage('selectorSharedHypeTrainTitle'),
-        treasureTrainTitle: chrome.i18n.getMessage('selectorTreasureTrainTitle'),
-        kappaTrainTitle: chrome.i18n.getMessage('selectorKappaTrainTitle'),
-        giftSubTrainTitle: chrome.i18n.getMessage('selectorGiftSubHypeTrainTitle'),
+        hypeTrainTitle: getI18nMessage('selectorHypeTrainTitle'),
+        sharedHypeTrainTitle: getI18nMessage('selectorSharedHypeTrainTitle'),
+        treasureTrainTitle: getI18nMessage('selectorTreasureTrainTitle'),
+        kappaTrainTitle: getI18nMessage('selectorKappaTrainTitle'),
+        giftSubTrainTitle: getI18nMessage('selectorGiftSubHypeTrainTitle'),
     };
     
     const TWITCH_LOGIN_REGEX = /^[a-zA-Z0-9_]{3,25}$/;
 
+    // --- OPTIMISATION: Classes CSS en constantes ---
+    const CSS_CLASSES = {
+        // Classes simples pour sélecteurs optimisés
+        SIDEBAR: 'side-nav',
+        CHANNEL_ITEM: 'side-nav-card__link',
+        LIVE_INDICATOR: 'tw-channel-status-indicator',
+        AVATAR: 'tw-avatar',
+        HIDDEN: 'tch-ext-hidden',
+        UPTIME_COUNTER: 'cowlor-uptime-counter',
+        NEW_STREAM: 'new-stream-flash',
+        LIVE_STATUS: 'side-nav-card__live-status',
+        META: 'side-nav-card__meta',
+        GUEST_AVATAR: 'primary-with-small-avatar__mini-avatar',
+        // Hype train classes
+        HT_CONTAINER: 'hype-train-container',
+        HT_LEVEL_TEXT: 'hype-train-level-text',
+        HT_SHIFTED: 'ht-shifted',
+        HT_BLUE: 'ht-blue',
+        HT_GREEN: 'ht-green',
+        HT_YELLOW: 'ht-yellow',
+        HT_ORANGE: 'ht-orange',
+        HT_RED: 'ht-red',
+        HT_GOLD: 'ht-gold',
+        HT_TREASURE: 'ht-treasure-effect',
+        HT_GIFT_SUB: 'ht-gift-sub-effect',
+        HT_KAPPA_CROWN: 'ht-kappa-crown',
+        // Squad classes
+        SQUAD_HIDDEN: 'squad-indicator-hidden',
+        SQUAD_CONTAINER: 'squad-count-container',
+        SQUAD_TEXT: 'squad-count-text'
+    };
+
     const CONFIG = {
         SELECTORS: {
-            SIDEBAR_PRIMARY: 'div[data-test-selector="side-nav"]',
+            // OPTIMISATION: Sélecteurs simplifiés
+            SIDEBAR_PRIMARY: `div[data-test-selector="${CSS_CLASSES.SIDEBAR}"]`,
             CHANNEL_LINK_ITEM: 'a[data-test-selector="followed-channel"], a[data-test-selector="recommended-channel"], a[data-test-selector="similarity-channel"], a.side-nav-card__link--promoted-followed',
             FOLLOWED_CHANNEL_LINK_ITEM: 'a[data-test-selector="followed-channel"]',
-            LIVE_INDICATOR: '.tw-channel-status-indicator',
-            AVATAR_CONTAINER: '.tw-avatar',
+            LIVE_INDICATOR: `.${CSS_CLASSES.LIVE_INDICATOR}`,
+            AVATAR_CONTAINER: `.${CSS_CLASSES.AVATAR}`,
             TEXT_HYPE_TRAIN: `p[title*="${i18n.hypeTrainTitle}"], p[title*="${i18n.sharedHypeTrainTitle}"], p[title*="${i18n.treasureTrainTitle}"], p[title*="${i18n.kappaTrainTitle}"]`,
             GIFT_SUB_TRAIN_ICON: `div[aria-label*="${i18n.giftSubTrainTitle}"]`,
             SHOW_MORE_BUTTON: 'button[data-test-selector="ShowMore"], a[data-test-selector="ShowMore"]',
-            GUEST_AVATAR: '.primary-with-small-avatar__mini-avatar',
+            GUEST_AVATAR: `.${CSS_CLASSES.GUEST_AVATAR}`,
         },
         TIMINGS_MS: {
             INITIAL_SETTLE_DELAY: 1500,
             PROCESS_THROTTLE: 200,
-            CLEANUP_INTERVAL: 300000, // 5 minutes
+            CLEANUP_INTERVAL: 300000,
             API_BATCH_DELAY: 100
-        },
-        CSS: {
-            HYPE_TRAIN_CLASSES: {
-                CONTAINER: 'hype-train-container',
-                LEVEL_TEXT: 'hype-train-level-text',
-                SHIFTED: 'ht-shifted',
-                BLUE: 'ht-blue', GREEN: 'ht-green', YELLOW: 'ht-yellow',
-                ORANGE: 'ht-orange', RED: 'ht-red', GOLD: 'ht-gold',
-                TREASURE_EFFECT: 'ht-treasure-effect',
-                GIFT_SUB_EFFECT: 'ht-gift-sub-effect',
-                KAPPA_CROWN: 'ht-kappa-crown'
-            },
-            SQUAD_CLASSES: {
-                INDICATOR_HIDDEN: 'squad-indicator-hidden',
-                COUNT_CONTAINER: 'squad-count-container',
-                COUNT_TEXT: 'squad-count-text'
-            }
         },
         UPTIME_COUNTER_STYLE: {
             textOverflow: 'ellipsis',
@@ -151,11 +171,6 @@
             textAlign: 'right', 
             lineHeight: '1.4',
             marginTop: '-4px'
-        },
-        CSS_CLASSES: {
-            HIDDEN_ELEMENT: 'tch-ext-hidden',
-            CUSTOM_UPTIME_COUNTER: 'cowlor-uptime-counter',
-            NEW_STREAM_FLASH: 'new-stream-flash'
         }
     };
 
@@ -170,7 +185,9 @@
         visibleUptimeElements: new Set(),
         cleanupInterval: null,
         pendingBatch: new Map(),
-        batchTimer: null
+        batchTimer: null,
+        animationsEnabled: !document.hidden, // OPTIMISATION: Désactive les animations si caché
+        documentFragment: null // OPTIMISATION: Fragment réutilisable
     };
 
     // --- CLEANUP FUNCTIONS ---
@@ -178,10 +195,8 @@
         if (state.cleanupInterval) return;
         
         state.cleanupInterval = setInterval(() => {
-            // Nettoie le cache
             state.domCache.cleanup();
             
-            // Nettoie les éléments non connectés
             const toRemove = [];
             for (const element of state.visibleUptimeElements) {
                 if (!element.isConnected) {
@@ -190,7 +205,6 @@
             }
             toRemove.forEach(el => state.visibleUptimeElements.delete(el));
             
-            // Force un garbage collection si possible
             if (window.gc) {
                 window.gc();
             }
@@ -198,26 +212,31 @@
     }
 
     // --- CORE FUNCTIONS ---
+    // OPTIMISATION: Template string réutilisable
+    const uptimeTemplate = {
+        hours: '',
+        minutes: ''
+    };
+    
     const formatUptime = (totalSeconds) => {
         if (totalSeconds === null || isNaN(totalSeconds)) return '...';
-        const h = Math.floor(totalSeconds / 3600);
-        const m = Math.floor((totalSeconds % 3600) / 60);
-        return `${String(h)}h ${String(m).padStart(2, '0')}m`;
+        uptimeTemplate.hours = Math.floor(totalSeconds / 3600);
+        uptimeTemplate.minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+        return `${uptimeTemplate.hours}h ${uptimeTemplate.minutes}m`;
     };
 
     const isChannelElementLive = (el) => el?.querySelector(CONFIG.SELECTORS.LIVE_INDICATOR) !== null;
 
     // --- OPTIMIZED UPTIME COUNTER LOGIC ---
     let lastFrameTime = 0;
-    const FRAME_BUDGET = 16; // 60 FPS
+    const FRAME_BUDGET = 16;
     
     function updateVisibleCountersLoop(currentTime) {
-        if (state.visibleUptimeElements.size === 0 || document.hidden) {
+        if (state.visibleUptimeElements.size === 0 || document.hidden || !state.animationsEnabled) {
             state.animationFrameId = null;
             return;
         }
         
-        // Limite le traitement si on dépasse le budget de frame
         const deltaTime = currentTime - lastFrameTime;
         if (deltaTime < FRAME_BUDGET) {
             state.animationFrameId = requestAnimationFrame(updateVisibleCountersLoop);
@@ -226,24 +245,25 @@
         
         lastFrameTime = currentTime;
         
-        // Traite les éléments visibles
         let processed = 0;
         const maxToProcess = Math.min(state.visibleUptimeElements.size, 50);
+        const now = Date.now();
         
         for (const uptimeDisplay of state.visibleUptimeElements) {
             if (processed >= maxToProcess) break;
             
-            const startedAt = new Date(uptimeDisplay.dataset.startedAt);
-            if (!isNaN(startedAt.getTime())) {
-                const uptimeSeconds = (Date.now() - startedAt.getTime()) / 1000;
+            const startedAt = uptimeDisplay._startedAtCache || (uptimeDisplay._startedAtCache = new Date(uptimeDisplay.dataset.startedAt).getTime());
+            if (!isNaN(startedAt)) {
+                const uptimeSeconds = (now - startedAt) / 1000;
                 uptimeDisplay.textContent = formatUptime(uptimeSeconds);
                 
-                const channelElement = uptimeDisplay.closest(CONFIG.SELECTORS.CHANNEL_LINK_ITEM);
+                // OPTIMISATION: Cache le channelElement
+                const channelElement = uptimeDisplay._channelElement || (uptimeDisplay._channelElement = uptimeDisplay.closest(CONFIG.SELECTORS.CHANNEL_LINK_ITEM));
                 if (channelElement) {
                     if (uptimeSeconds < 660) {
-                        channelElement.classList.add(CONFIG.CSS_CLASSES.NEW_STREAM_FLASH);
+                        channelElement.classList.add(CSS_CLASSES.NEW_STREAM);
                     } else {
-                        channelElement.classList.remove(CONFIG.CSS_CLASSES.NEW_STREAM_FLASH);
+                        channelElement.classList.remove(CSS_CLASSES.NEW_STREAM);
                     }
                 }
             }
@@ -260,11 +280,14 @@
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     state.visibleUptimeElements.add(entry.target);
-                    if (state.animationFrameId === null) {
+                    if (state.animationFrameId === null && state.animationsEnabled) {
                         state.animationFrameId = requestAnimationFrame(updateVisibleCountersLoop);
                     }
                 } else {
                     state.visibleUptimeElements.delete(entry.target);
+                    // OPTIMISATION: Nettoie le cache
+                    delete entry.target._startedAtCache;
+                    delete entry.target._channelElement;
                 }
             });
         }, { 
@@ -275,26 +298,34 @@
     }
 
     function cleanupChannelDisplay(channelElement) {
-        const uptimeDisplay = channelElement.querySelector(`.${CONFIG.CSS_CLASSES.CUSTOM_UPTIME_COUNTER}`);
+        const uptimeDisplay = channelElement.querySelector(`.${CSS_CLASSES.UPTIME_COUNTER}`);
         if (uptimeDisplay) {
             state.observers.uptimeObserver?.unobserve(uptimeDisplay);
             state.visibleUptimeElements.delete(uptimeDisplay);
+            delete uptimeDisplay._startedAtCache;
+            delete uptimeDisplay._channelElement;
             uptimeDisplay.remove();
         }
-        channelElement.classList.remove(CONFIG.CSS_CLASSES.NEW_STREAM_FLASH);
+        channelElement.classList.remove(CSS_CLASSES.NEW_STREAM);
         state.liveChannelElements.delete(channelElement);
     }
     
     function renderLiveState(channelElement, channelLogin, startedAtString) {
-        let uptimeDisplay = channelElement.querySelector(`.${CONFIG.CSS_CLASSES.CUSTOM_UPTIME_COUNTER}`);
-        const insertionPoint = channelElement.querySelector('.side-nav-card__live-status') || channelElement.querySelector('.side-nav-card__meta');
+        let uptimeDisplay = channelElement.querySelector(`.${CSS_CLASSES.UPTIME_COUNTER}`);
+        const insertionPoint = channelElement.querySelector(`.${CSS_CLASSES.LIVE_STATUS}`) || 
+                             channelElement.querySelector(`.${CSS_CLASSES.META}`);
         
         if (!uptimeDisplay) {
             if (insertionPoint) {
-                Object.assign(insertionPoint.style, { display: 'flex', flexDirection: 'column', alignItems: 'flex-end' });
+                // OPTIMISATION: Modification DOM groupée
+                Object.assign(insertionPoint.style, { 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    alignItems: 'flex-end' 
+                });
             }
             uptimeDisplay = document.createElement('div');
-            uptimeDisplay.className = `${CONFIG.CSS_CLASSES.CUSTOM_UPTIME_COUNTER} tw-c-text-alt-2`;
+            uptimeDisplay.className = `${CSS_CLASSES.UPTIME_COUNTER} tw-c-text-alt-2`;
             Object.assign(uptimeDisplay.style, CONFIG.UPTIME_COUNTER_STYLE);
             insertionPoint?.appendChild(uptimeDisplay);
             state.observers.uptimeObserver?.observe(uptimeDisplay);
@@ -305,27 +336,41 @@
 
     // --- HYPE TRAIN & SQUAD LOGIC ---
     const throttledProcessUI = throttle(() => {
-        processHypeTrains();
-        processSquadStreams();
+        if (state.animationsEnabled) {
+            processHypeTrains();
+            processSquadStreams();
+        }
     }, CONFIG.TIMINGS_MS.PROCESS_THROTTLE);
 
-    function getHypeTrainColorClass(level) {
-        if (level <= 3) return CONFIG.CSS.HYPE_TRAIN_CLASSES.BLUE;
-        if (level <= 7) return CONFIG.CSS.HYPE_TRAIN_CLASSES.GREEN;
-        if (level <= 11) return CONFIG.CSS.HYPE_TRAIN_CLASSES.YELLOW;
-        if (level <= 17) return CONFIG.CSS.HYPE_TRAIN_CLASSES.ORANGE;
-        return CONFIG.CSS.HYPE_TRAIN_CLASSES.RED;
-    }
+    // OPTIMISATION: Lookup table pour les couleurs
+    const HYPE_TRAIN_COLOR_MAP = {
+        1: CSS_CLASSES.HT_BLUE, 2: CSS_CLASSES.HT_BLUE, 3: CSS_CLASSES.HT_BLUE,
+        4: CSS_CLASSES.HT_GREEN, 5: CSS_CLASSES.HT_GREEN, 6: CSS_CLASSES.HT_GREEN, 7: CSS_CLASSES.HT_GREEN,
+        8: CSS_CLASSES.HT_YELLOW, 9: CSS_CLASSES.HT_YELLOW, 10: CSS_CLASSES.HT_YELLOW, 11: CSS_CLASSES.HT_YELLOW,
+        12: CSS_CLASSES.HT_ORANGE, 13: CSS_CLASSES.HT_ORANGE, 14: CSS_CLASSES.HT_ORANGE, 
+        15: CSS_CLASSES.HT_ORANGE, 16: CSS_CLASSES.HT_ORANGE, 17: CSS_CLASSES.HT_ORANGE
+    };
+
+    const getHypeTrainColorClass = (level) => HYPE_TRAIN_COLOR_MAP[level] || CSS_CLASSES.HT_RED;
+
+    // OPTIMISATION: Array constant pour les classes à retirer
+    const HYPE_TRAIN_COLOR_CLASSES = [
+        CSS_CLASSES.HT_BLUE, CSS_CLASSES.HT_GREEN, CSS_CLASSES.HT_YELLOW,
+        CSS_CLASSES.HT_ORANGE, CSS_CLASSES.HT_RED, CSS_CLASSES.HT_GOLD,
+        CSS_CLASSES.HT_TREASURE
+    ];
 
     function cleanupHypeTrain(channelLink) {
         const avatarContainer = channelLink.querySelector(CONFIG.SELECTORS.AVATAR_CONTAINER);
         if (avatarContainer) {
-            avatarContainer.classList.remove(...Object.values(CONFIG.CSS.HYPE_TRAIN_CLASSES));
-            avatarContainer.querySelector(`.${CONFIG.CSS.HYPE_TRAIN_CLASSES.LEVEL_TEXT}`)?.remove();
+            // OPTIMISATION: Une seule opération classList
+            avatarContainer.classList.remove(...HYPE_TRAIN_COLOR_CLASSES, CSS_CLASSES.HT_CONTAINER, CSS_CLASSES.HT_GIFT_SUB);
+            const levelText = avatarContainer.querySelector(`.${CSS_CLASSES.HT_LEVEL_TEXT}`);
+            if (levelText) levelText.remove();
         }
-        channelLink.querySelectorAll(`.${CONFIG.CSS_CLASSES.HIDDEN_ELEMENT}`).forEach(el => {
-            el.classList.remove(CONFIG.CSS_CLASSES.HIDDEN_ELEMENT);
-        });
+        const hiddenElements = channelLink.querySelectorAll(`.${CSS_CLASSES.HIDDEN}`);
+        hiddenElements.forEach(el => el.classList.remove(CSS_CLASSES.HIDDEN));
+        
         channelLink.removeAttribute('data-hype-train-active');
         channelLink.removeAttribute('data-hype-train-type');
     }
@@ -335,33 +380,31 @@
         
         const channelLinks = state.domElements.sidebar.querySelectorAll(CONFIG.SELECTORS.CHANNEL_LINK_ITEM);
         
-        // Limite le nombre d'éléments traités par frame
         let processed = 0;
         const maxToProcess = 100;
         
-        channelLinks.forEach(channelLink => {
-            if (processed >= maxToProcess) return;
+        for (const channelLink of channelLinks) {
+            if (processed >= maxToProcess) break;
             
             const avatarContainer = channelLink.querySelector(CONFIG.SELECTORS.AVATAR_CONTAINER);
-            if (!avatarContainer) return;
+            if (!avatarContainer) continue;
             
             const giftSubIcon = channelLink.querySelector(CONFIG.SELECTORS.GIFT_SUB_TRAIN_ICON);
             const textEl = channelLink.querySelector(CONFIG.SELECTORS.TEXT_HYPE_TRAIN);
 
             if (!giftSubIcon && !textEl) {
                 if (channelLink.hasAttribute('data-hype-train-active')) cleanupHypeTrain(channelLink);
-                return;
+                continue;
             }
 
             channelLink.dataset.hypeTrainActive = 'true';
-            avatarContainer.classList.add(CONFIG.CSS.HYPE_TRAIN_CLASSES.CONTAINER);
+            avatarContainer.classList.add(CSS_CLASSES.HT_CONTAINER);
 
-            // Determine train type
             let trainType = 'classic';
             let isKappaTrain = false;
             let isTreasureTrain = false;
             
-            if (textEl && textEl.title) {
+            if (textEl?.title) {
                 if (textEl.title.includes(i18n.kappaTrainTitle)) {
                     trainType = 'kappa';
                     isKappaTrain = true;
@@ -373,85 +416,54 @@
             
             channelLink.dataset.hypeTrainType = trainType;
 
-            // Handle Gift Sub effect
             if (giftSubIcon) {
-                avatarContainer.classList.add(CONFIG.CSS.HYPE_TRAIN_CLASSES.GIFT_SUB_EFFECT);
-                giftSubIcon.parentElement?.classList.add(CONFIG.CSS_CLASSES.HIDDEN_ELEMENT);
+                avatarContainer.classList.add(CSS_CLASSES.HT_GIFT_SUB);
+                giftSubIcon.parentElement?.classList.add(CSS_CLASSES.HIDDEN);
             } else {
-                avatarContainer.classList.remove(CONFIG.CSS.HYPE_TRAIN_CLASSES.GIFT_SUB_EFFECT);
+                avatarContainer.classList.remove(CSS_CLASSES.HT_GIFT_SUB);
             }
 
-            // Handle text-based hype trains
             if (textEl) {
-                let overlay = avatarContainer.querySelector(`.${CONFIG.CSS.HYPE_TRAIN_CLASSES.LEVEL_TEXT}`);
+                let overlay = avatarContainer.querySelector(`.${CSS_CLASSES.HT_LEVEL_TEXT}`);
                 if (!overlay) {
                     overlay = document.createElement('span');
-                    overlay.className = CONFIG.CSS.HYPE_TRAIN_CLASSES.LEVEL_TEXT;
+                    overlay.className = CSS_CLASSES.HT_LEVEL_TEXT;
                     avatarContainer.appendChild(overlay);
                 }
                 
-                // Extract level from title
                 const levelMatch = textEl.title.match(/\d+/);
                 const level = levelMatch ? parseInt(levelMatch[0], 10) : 1;
                 
-                // Apply appropriate styling based on train type
                 if (isKappaTrain) {
                     overlay.textContent = '';
-                    overlay.classList.add(CONFIG.CSS.HYPE_TRAIN_CLASSES.KAPPA_CROWN);
-                    avatarContainer.classList.add(CONFIG.CSS.HYPE_TRAIN_CLASSES.GOLD);
-                    // Remove color classes for Kappa train
-                    avatarContainer.classList.remove(CONFIG.CSS.HYPE_TRAIN_CLASSES.BLUE, 
-                                                    CONFIG.CSS.HYPE_TRAIN_CLASSES.GREEN, 
-                                                    CONFIG.CSS.HYPE_TRAIN_CLASSES.YELLOW, 
-                                                    CONFIG.CSS.HYPE_TRAIN_CLASSES.ORANGE, 
-                                                    CONFIG.CSS.HYPE_TRAIN_CLASSES.RED);
-                    avatarContainer.classList.remove(CONFIG.CSS.HYPE_TRAIN_CLASSES.TREASURE_EFFECT);
+                    overlay.classList.add(CSS_CLASSES.HT_KAPPA_CROWN);
+                    // OPTIMISATION: Une seule opération de classes
+                    avatarContainer.classList.remove(...HYPE_TRAIN_COLOR_CLASSES);
+                    avatarContainer.classList.add(CSS_CLASSES.HT_GOLD);
                 } else {
                     overlay.textContent = level;
-                    overlay.classList.remove(CONFIG.CSS.HYPE_TRAIN_CLASSES.KAPPA_CROWN);
-                    avatarContainer.classList.remove(CONFIG.CSS.HYPE_TRAIN_CLASSES.GOLD);
+                    overlay.classList.remove(CSS_CLASSES.HT_KAPPA_CROWN);
                     
-                    // Apply color class based on level
                     const colorClass = getHypeTrainColorClass(level);
-                    avatarContainer.classList.remove(CONFIG.CSS.HYPE_TRAIN_CLASSES.BLUE, 
-                                                    CONFIG.CSS.HYPE_TRAIN_CLASSES.GREEN, 
-                                                    CONFIG.CSS.HYPE_TRAIN_CLASSES.YELLOW, 
-                                                    CONFIG.CSS.HYPE_TRAIN_CLASSES.ORANGE, 
-                                                    CONFIG.CSS.HYPE_TRAIN_CLASSES.RED);
+                    avatarContainer.classList.remove(...HYPE_TRAIN_COLOR_CLASSES);
                     avatarContainer.classList.add(colorClass);
                     
-                    // Apply treasure effect if it's a treasure train
                     if (isTreasureTrain) {
-                        avatarContainer.classList.add(CONFIG.CSS.HYPE_TRAIN_CLASSES.TREASURE_EFFECT);
-                    } else {
-                        avatarContainer.classList.remove(CONFIG.CSS.HYPE_TRAIN_CLASSES.TREASURE_EFFECT);
+                        avatarContainer.classList.add(CSS_CLASSES.HT_TREASURE);
                     }
                 }
                 
-                // Handle shifted positioning for squad streams
                 const guestAvatar = channelLink.querySelector(CONFIG.SELECTORS.GUEST_AVATAR);
-                if (guestAvatar) {
-                    overlay.classList.add(CONFIG.CSS.HYPE_TRAIN_CLASSES.SHIFTED);
-                } else {
-                    overlay.classList.remove(CONFIG.CSS.HYPE_TRAIN_CLASSES.SHIFTED);
-                }
+                overlay.classList.toggle(CSS_CLASSES.HT_SHIFTED, !!guestAvatar);
                 
-                textEl.parentElement?.classList.add(CONFIG.CSS_CLASSES.HIDDEN_ELEMENT);
+                textEl.parentElement?.classList.add(CSS_CLASSES.HIDDEN);
             } else {
-                // No text element, remove all train-specific classes
-                const textClasses = [CONFIG.CSS.HYPE_TRAIN_CLASSES.BLUE, 
-                                   CONFIG.CSS.HYPE_TRAIN_CLASSES.GREEN, 
-                                   CONFIG.CSS.HYPE_TRAIN_CLASSES.YELLOW, 
-                                   CONFIG.CSS.HYPE_TRAIN_CLASSES.ORANGE, 
-                                   CONFIG.CSS.HYPE_TRAIN_CLASSES.RED,
-                                   CONFIG.CSS.HYPE_TRAIN_CLASSES.GOLD,
-                                   CONFIG.CSS.HYPE_TRAIN_CLASSES.TREASURE_EFFECT];
-                avatarContainer.classList.remove(...textClasses);
-                avatarContainer.querySelector(`.${CONFIG.CSS.HYPE_TRAIN_CLASSES.LEVEL_TEXT}`)?.remove();
+                avatarContainer.classList.remove(...HYPE_TRAIN_COLOR_CLASSES);
+                avatarContainer.querySelector(`.${CSS_CLASSES.HT_LEVEL_TEXT}`)?.remove();
             }
             
             processed++;
-        });
+        }
     }
 
     function processSquadStreams() {
@@ -461,26 +473,26 @@
         let processed = 0;
         const maxToProcess = 100;
         
-        channelLinks.forEach(channelLink => {
-            if (processed >= maxToProcess) return;
+        for (const channelLink of channelLinks) {
+            if (processed >= maxToProcess) break;
             
             const guestAvatar = channelLink.querySelector(CONFIG.SELECTORS.GUEST_AVATAR);
-            if (guestAvatar && !guestAvatar.querySelector(`.${CONFIG.CSS.SQUAD_CLASSES.COUNT_TEXT}`)) {
+            if (guestAvatar && !guestAvatar.querySelector(`.${CSS_CLASSES.SQUAD_TEXT}`)) {
                 const squadIndicator = Array.from(channelLink.querySelectorAll('p')).find(p => p.textContent.trim().startsWith('+'));
                 if (squadIndicator) {
                     const count = squadIndicator.textContent.match(/\d+/)?.[0];
                     if (count) {
-                        squadIndicator.classList.add(CONFIG.CSS.SQUAD_CLASSES.INDICATOR_HIDDEN);
+                        squadIndicator.classList.add(CSS_CLASSES.SQUAD_HIDDEN);
                         const countText = document.createElement('span');
-                        countText.className = CONFIG.CSS.SQUAD_CLASSES.COUNT_TEXT;
+                        countText.className = CSS_CLASSES.SQUAD_TEXT;
                         countText.textContent = count;
-                        guestAvatar.classList.add(CONFIG.CSS.SQUAD_CLASSES.COUNT_CONTAINER);
+                        guestAvatar.classList.add(CSS_CLASSES.SQUAD_CONTAINER);
                         guestAvatar.appendChild(countText);
                     }
                 }
             }
             processed++;
-        });
+        }
     }
 
     // --- OPTIMIZED API BATCH LOGIC ---
@@ -504,7 +516,6 @@
             state.batchTimer = setTimeout(processBatch, CONFIG.TIMINGS_MS.API_BATCH_DELAY);
         }
         
-        // Force le traitement si le batch devient trop gros
         if (state.pendingBatch.size >= 50) {
             clearTimeout(state.batchTimer);
             processBatch();
@@ -534,26 +545,31 @@
     async function initialScanForChannels() {
         if (!state.domElements.sidebar) return;
         const channelsForApiUpdate = new Map();
-        state.domElements.sidebar.querySelectorAll(CONFIG.SELECTORS.CHANNEL_LINK_ITEM).forEach(el => {
+        const channelLinks = state.domElements.sidebar.querySelectorAll(CONFIG.SELECTORS.CHANNEL_LINK_ITEM);
+        
+        for (const el of channelLinks) {
             const channelLogin = el.href?.split('/').pop()?.toLowerCase();
             if (channelLogin && TWITCH_LOGIN_REGEX.test(channelLogin) && isChannelElementLive(el)) {
                 channelsForApiUpdate.set(channelLogin, el);
             }
-        });
+        }
+        
         if (channelsForApiUpdate.size > 0) await executeBatchApiUpdate(channelsForApiUpdate);
     }
     
     function scanForUnprocessedChannels() {
         if (!state.domElements.sidebar) return;
         const channelsToUpdate = new Map();
-        state.domElements.sidebar.querySelectorAll(CONFIG.SELECTORS.CHANNEL_LINK_ITEM).forEach(el => {
+        const channelLinks = state.domElements.sidebar.querySelectorAll(CONFIG.SELECTORS.CHANNEL_LINK_ITEM);
+        
+        for (const el of channelLinks) {
             if (isChannelElementLive(el) && !state.liveChannelElements.has(el)) {
                 const channelLogin = el.href?.split('/').pop()?.toLowerCase();
                 if (channelLogin && TWITCH_LOGIN_REGEX.test(channelLogin)) {
                     channelsToUpdate.set(channelLogin, el);
                 }
             }
-        });
+        }
 
         if (channelsToUpdate.size > 0) {
             console.log(`[Cowlor's Sidebar] Found ${channelsToUpdate.size} unprocessed live channel(s). Fetching uptime...`);
@@ -568,6 +584,9 @@
             const response = await chrome.runtime.sendMessage({ type: 'GET_UPTIMES_FOR_CHANNELS', logins });
             if (response?.success) {
                 const uptimeData = new Map(response.data);
+                // OPTIMISATION: Utilisation d'un DocumentFragment
+                const fragment = state.documentFragment || (state.documentFragment = document.createDocumentFragment());
+                
                 for (const [login, element] of channelsMap) {
                     const startedAtString = uptimeData.get(login.toLowerCase());
                     if (document.body.contains(element)) {
@@ -601,7 +620,6 @@
     function setupSidebarObserver() {
         if (state.observers.sidebarObserver) state.observers.sidebarObserver.disconnect();
         
-        // Buffer pour les mutations
         let mutationBuffer = [];
         let processTimer = null;
         
@@ -609,7 +627,7 @@
             processTimer = null;
             if (mutationBuffer.length === 0) return;
             
-            const mutations = mutationBuffer.splice(0, 100); // Traite max 100 mutations à la fois
+            const mutations = mutationBuffer.splice(0, 100);
             
             for (const mutation of mutations) {
                 if (mutation.type === 'childList') {
@@ -630,7 +648,6 @@
                 }
             }
             
-            // Continue s'il reste des mutations
             if (mutationBuffer.length > 0) {
                 processTimer = setTimeout(processMutations, 50);
             }
@@ -639,7 +656,6 @@
         const callback = (mutations) => {
             mutationBuffer.push(...mutations);
             
-            // Limite la taille du buffer
             if (mutationBuffer.length > 500) {
                 mutationBuffer = mutationBuffer.slice(-250);
             }
@@ -680,6 +696,8 @@
     // --- LIFECYCLE & EVENT LISTENERS ---
     document.addEventListener('visibilitychange', () => {
         if (document.hidden) {
+            // OPTIMISATION: Désactive les animations quand caché
+            state.animationsEnabled = false;
             if (state.animationFrameId) {
                 cancelAnimationFrame(state.animationFrameId);
                 state.animationFrameId = null;
@@ -697,18 +715,21 @@
                 state.visibleUptimeElements = toKeep;
             }
         } else {
-            // When the tab becomes visible
+            // OPTIMISATION: Réactive les animations
+            state.animationsEnabled = true;
             if (state.animationFrameId === null && state.visibleUptimeElements.size > 0) {
                 state.animationFrameId = requestAnimationFrame(updateVisibleCountersLoop);
             }
 
             if (state.domElements.sidebar) {
                 const channelsToProcess = new Map();
-                state.domElements.sidebar.querySelectorAll(CONFIG.SELECTORS.CHANNEL_LINK_ITEM).forEach(el => {
+                const channelLinks = state.domElements.sidebar.querySelectorAll(CONFIG.SELECTORS.CHANNEL_LINK_ITEM);
+                
+                for (const el of channelLinks) {
                     const login = el.href?.split("/").pop()?.toLowerCase();
                     if (login && TWITCH_LOGIN_REGEX.test(login) && isChannelElementLive(el)) {
                         const existingEntry = state.liveChannelElements.get(el);
-                        const uptimeElement = el.querySelector("." + CONFIG.CSS_CLASSES.CUSTOM_UPTIME_COUNTER);
+                        const uptimeElement = el.querySelector(`.${CSS_CLASSES.UPTIME_COUNTER}`);
 
                         if (!existingEntry || !uptimeElement) {
                             const cachedData = state.domCache.get(login);
@@ -719,7 +740,7 @@
                             }
                         }
                     }
-                });
+                }
 
                 if (channelsToProcess.size > 0) {
                     console.log(`[Cowlor's Sidebar] Found ${channelsToProcess.size} unprocessed live channel(s) after visibility change. Fetching uptime...`);
@@ -743,6 +764,8 @@
         state.observers.sidebarObserver?.disconnect();
         state.observers.mainObserver?.disconnect();
         state.observers.uptimeObserver?.disconnect();
+        // OPTIMISATION: Nettoie les caches
+        Object.keys(i18nCache).forEach(key => delete i18nCache[key]);
     });
 
     async function init() {
